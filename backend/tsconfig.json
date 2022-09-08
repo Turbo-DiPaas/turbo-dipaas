@@ -1,0 +1,22 @@
+{
+   "compilerOptions": {
+      "target": "esnext",
+      "allowJs": true,
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "strict": true,
+      "forceConsistentCasingInFileNames": true,
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "noEmit": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+   },
+   "files": [
+   ],
+   "include": [
+      "src/**/*.ts"
+   ],
+   "exclude": ["node_modules", "src/**/*.spec.ts"]
+}

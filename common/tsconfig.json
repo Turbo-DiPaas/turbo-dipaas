@@ -1,0 +1,18 @@
+{
+   "compilerOptions": {
+      "target": "es6",
+      "skipLibCheck": true,
+      "declaration": true,
+      "emitDeclarationOnly": true,
+      "outDir": "dist",
+      "declarationMap": true,
+      "module": "commonjs",
+      "lib": [
+            "es6"
+        ],
+   },
+   "include": [
+      "src/**/*.ts"
+   ],
+   "exclude": ["node_modules", "src/**/*.spec.ts"],
+}

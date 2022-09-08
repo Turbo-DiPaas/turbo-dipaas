@@ -1,0 +1,16 @@
+{
+  "name": "live-evm-debugger-common",
+  "version": "1.0.0",
+  "author": "Rafal Kalinowski <deliriusz.eth>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "@types/node": "^18.7.13",
+    "ethers": "^5.5.2",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "build": "tsc --declaration --emitDeclarationOnly --outDir dist"
+  }
+}
