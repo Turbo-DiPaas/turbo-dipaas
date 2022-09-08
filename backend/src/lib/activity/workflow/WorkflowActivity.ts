@@ -1,14 +1,10 @@
 import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/ActivityResult'
+import ActivityBase from '../ActivityBase'
 
-export default abstract class ActivityBase {
-   id: string
-   name: string
-   resourceIds: string[]
+export default abstract class WorkflowActivity extends ActivityBase {
 
    constructor(id: string, name: string, resourceIds: string[] = []) {
-      this.id = id
-      this.name = name
-      this.resourceIds = resourceIds
+      super(id, name, resourceIds)
    }
 
 
