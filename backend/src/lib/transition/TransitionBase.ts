@@ -1,11 +1,8 @@
-import ActivityBase from "../activity/ActivityBase"
-import WorkflowActivity from "../activity/workflow/WorkflowActivity"
-
 export default abstract class TransitionBase {
-   from: ActivityBase
-   to: WorkflowActivity[]
+   from: string
+   to: string
 
-   constructor(from: ActivityBase, to: WorkflowActivity[] = []) {
+   constructor(from: string, to: string) {
       this.from = from
       this.to = to
    }

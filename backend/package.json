@@ -31,7 +31,8 @@
     "typechain": "^5.2.0"
   },
   "scripts": {
-    "server": "env-cmd -f ./src/config/.env.local yarn nodemon src/index.ts"
+    "server": "env-cmd -f ./src/config/.env.local yarn nodemon src/index.ts",
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha 'test/**/*.ts'"
   },
   "dependencies": {
     "nodemon": "^2.0.19",

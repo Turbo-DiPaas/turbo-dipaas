@@ -1,22 +1,26 @@
 import WorkflowActivity from "../lib/activity/workflow/WorkflowActivity";
 import Workflow from "./Workflow";
 import WorkflowContext from "./WorkflowContext";
-import WorkflowRunnerBase from "./WorkflowRunnerBase";
 
 //TODO: implement
 
-export default class WorkflowRunner extends WorkflowRunnerBase {
+export default abstract class WorkflowRunnerBase {
+   workflow: Workflow
+   context: WorkflowContext
+
    constructor(workflow: Workflow, context: WorkflowContext) {
-      super(workflow, context)
+      this.workflow = workflow
+      this.context = context
    }
 
-   start() {
-   }
+   abstract start(): void
 
-   stop() {
-   }
+   abstract stop(): void
 
    getNextActivities(): WorkflowActivity[] {
       return []
+   }
+
+   protected prepareActivityGraph() {
    }
 }
