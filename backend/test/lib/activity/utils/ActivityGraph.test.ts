@@ -2,6 +2,7 @@ import chai, { expect } from 'chai'
 import ActivityGraph from '../../../../src/lib/activity/utils/ActivityGraph'
 import NoOpActivity from '../../../../src/lib/activity/workflow/NoOpActivity'
 import AlwaysTransition from '../../../../src/lib/transition/AlwaysTransition'
+import Scheduler from "../../../../src/lib/activity/trigger/impl/Scheduler";
 
 describe('ActivityGraph', () => {
     describe('basic structure', () => {
@@ -15,7 +16,7 @@ describe('ActivityGraph', () => {
             //            |
             //            h
             activityGraph = new ActivityGraph()
-            activityGraph.addActivity(new NoOpActivity('a', 'act-a'))
+            activityGraph.addActivity(new Scheduler('a', 'act-a'))
             activityGraph.addActivity(new NoOpActivity('b', 'act-b'))
             activityGraph.addActivity(new NoOpActivity('c', 'act-c'))
             activityGraph.addActivity(new NoOpActivity('d', 'act-d'))
@@ -60,7 +61,6 @@ describe('ActivityGraph', () => {
             expect(ch2[2]?.transition.to).to.be.equal('g')
         })
 
-        /* TODO: correct parents
         it('properly gets all the parents from the bottom element', async () => {
            const par1 = activityGraph.getParentIds('e')
            expect(par1[0]).to.be.equal('b')
@@ -74,6 +74,11 @@ describe('ActivityGraph', () => {
            const par3 = activityGraph.getParentIds('d')
            expect(par3[0]).to.be.equal('a')
            expect(par3.length).to.be.equal(1)
-        })*/
+        })
+
+        it('properly gets root element', async () => {
+            const rootElement = activityGraph.getRootId()
+            expect(rootElement).to.be.equal('a')
+        })
     })
 })

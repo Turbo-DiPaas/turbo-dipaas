@@ -1,34 +1,40 @@
 import TransitionBase from "../../transition/TransitionBase";
 import ActivityBase from "../ActivityBase";
 import ActivityNode from "./ActivityNode";
+import WorkflowTriggerBase from "../trigger/WorkflowTriggerBase";
+import AlwaysTransition from "../../transition/AlwaysTransition";
 
 //TODO: implement parents mapping properly
+//TODO: take groups into consideration
 export default class ActivityGraph {
    activityNodes: Map<string, ActivityNode[]> = new Map()
    activityIdMapping: Map<string, ActivityBase> = new Map()
+   rootElement!: string
 
    addActivity(activity: ActivityBase) {
       this.activityIdMapping.set(activity.id, activity)
+      if (activity instanceof WorkflowTriggerBase) {
+         this.rootElement = activity.id
+      }
    }
 
+   //TODO: check if different kind of transactions works here in cases that children has anything other than always transaction
+   // hint - it probably doesn't
    addTransition(transition: TransitionBase) {
-      if (this.activityNodes.has(transition.from)) {
-         const nodes = this.activityNodes.get(transition.from) ?? []
-         const node = new ActivityNode(transition)
-         node.addParent(transition.from)
-         this.activityNodes.set(transition.from, [...nodes, node])
-         // for (const node of nodes) {
-         //    node.addParent(transition.from)
-         // }
-      } else {
-         const node = new ActivityNode(transition)
-         node.addParent(transition.from)
-         this.activityNodes.set(transition.from, [node])
+      const node = new ActivityNode(transition)
+      this.activityNodes.set(transition.from, [...this.activityNodes.get(transition.from) ?? [], node])
+
+      if (transition.to) {
+         const nodes = this.activityNodes.get(transition.to!) ?? [new ActivityNode(new AlwaysTransition(transition.to!))]
+         nodes.map((node) => {
+            node.addParent(transition.from)
+         })
+         this.activityNodes.set(transition.to!, nodes)
       }
    }
 
    getRootId(): string {
-      return ""
+      return this.rootElement
    }
 
    getChildren(id: string): {activity: ActivityBase, transition: TransitionBase}[] {
@@ -39,9 +45,9 @@ export default class ActivityGraph {
       const children = this.activityNodes.get(id)!
       for (const node of children) {
          const transition = node.transition
-         if (this.activityIdMapping.has(transition.to)) {
+         if (this.activityIdMapping.has(transition.to!)) {
             returnData.push({
-               activity: this.activityIdMapping.get(transition.to),
+               activity: this.activityIdMapping.get(transition.to!),
                transition: transition
             })
          }
