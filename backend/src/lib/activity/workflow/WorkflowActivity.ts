@@ -3,8 +3,8 @@ import ActivityBase from '../ActivityBase'
 
 export default abstract class WorkflowActivity extends ActivityBase {
 
-   constructor(id: string, name: string, resourceIds: string[] = []) {
-      super(id, name, resourceIds)
+   constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
+      super(id, name, params, resourceIds)
    }
 
 

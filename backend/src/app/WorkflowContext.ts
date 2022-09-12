@@ -1,9 +1,13 @@
 import { ActivityResult } from "turbo-dipaas-common/dist/types/activity/ActivityResult";
 
-//TODO: implement
 export default class WorkflowContext {
-   activityResultContext: Map<string, ActivityResult> = new Map()
+   protected activityResultContext: Map<string, ActivityResult> = new Map()
 
-   addActivityResult(result: ActivityResult): void {
+   addActivityResult(activityId: string, result: ActivityResult): void {
+      this.activityResultContext.set(activityId, result)
+   }
+
+   getActivityResult(activityId: string): ActivityResult | undefined {
+      return this.activityResultContext.get(activityId)
    }
 }

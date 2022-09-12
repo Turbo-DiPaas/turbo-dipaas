@@ -2,8 +2,8 @@ import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/Activity
 import WorkflowTriggerBase from '../WorkflowTriggerBase'
 
 export default class Scheduler extends WorkflowTriggerBase {
-   constructor(id: string, name: string, resourceIds: string[] = []) {
-      super(id, name, resourceIds)
+   constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
+      super(id, name, params, resourceIds)
    }
 
    //TODO: change from immediate one time run to scheduler

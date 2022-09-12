@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai'
 import ActivityGraph from '../../../../src/lib/activity/utils/ActivityGraph'
 import NoOpActivity from '../../../../src/lib/activity/workflow/NoOpActivity'
-import AlwaysTransition from '../../../../src/lib/transition/AlwaysTransition'
+import SuccessTransition from '../../../../src/lib/transition/SuccessTransition'
 import Scheduler from "../../../../src/lib/activity/trigger/impl/Scheduler";
 
 describe('ActivityGraph', () => {
@@ -25,14 +25,14 @@ describe('ActivityGraph', () => {
             activityGraph.addActivity(new NoOpActivity('g', 'act-g'))
             activityGraph.addActivity(new NoOpActivity('h', 'act-h'))
 
-            activityGraph.addTransition(new AlwaysTransition('a', 'b'))
-            activityGraph.addTransition(new AlwaysTransition('a', 'd'))
-            activityGraph.addTransition(new AlwaysTransition('b', 'c'))
-            activityGraph.addTransition(new AlwaysTransition('b', 'e'))
-            activityGraph.addTransition(new AlwaysTransition('d', 'e'))
-            activityGraph.addTransition(new AlwaysTransition('d', 'f'))
-            activityGraph.addTransition(new AlwaysTransition('d', 'g'))
-            activityGraph.addTransition(new AlwaysTransition('e', 'h'))
+            activityGraph.addTransition(new SuccessTransition('a', 'b'))
+            activityGraph.addTransition(new SuccessTransition('a', 'd'))
+            activityGraph.addTransition(new SuccessTransition('b', 'c'))
+            activityGraph.addTransition(new SuccessTransition('b', 'e'))
+            activityGraph.addTransition(new SuccessTransition('d', 'e'))
+            activityGraph.addTransition(new SuccessTransition('d', 'f'))
+            activityGraph.addTransition(new SuccessTransition('d', 'g'))
+            activityGraph.addTransition(new SuccessTransition('e', 'h'))
         })
 
         it('properly gets all the children from the top element', async () => {
