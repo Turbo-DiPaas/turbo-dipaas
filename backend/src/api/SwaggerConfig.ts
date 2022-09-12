@@ -11,6 +11,6 @@ const options = {
    },
    apis: []
 }
-const specs = swaggerJsdoc(options);
+const swaggerConfiguration = swaggerJsdoc(options);
 
-export default specs;
+export default swaggerConfiguration;
