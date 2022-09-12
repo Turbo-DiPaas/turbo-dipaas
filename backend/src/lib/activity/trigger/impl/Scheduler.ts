@@ -1,14 +1,21 @@
 import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/ActivityResult'
 import WorkflowTriggerBase from '../WorkflowTriggerBase'
 
-export default abstract class Scheduler extends WorkflowTriggerBase {
-   constructor(id: string, name: string, resourceIds: string[] = []) {
-      super(id, name, resourceIds)
+export default class Scheduler extends WorkflowTriggerBase {
+   constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
+      super(id, name, params, resourceIds)
    }
 
-   //TODO: implement
+   //TODO: change from immediate one time run to scheduler
+   async start(notifyFunction: (res: ActivityResult) => void): Promise<void> {
+      notifyFunction(await this.invoke())
+   }
 
-   start(): void {}
-   stop(): void {}
-   invoke(): Promise<ActivityResult> {return {} as ActivityResult}
+   async stop(): Promise<void> {}
+   invoke(): Promise<ActivityResult> {
+      return Promise.resolve({
+         status: 200,
+         returnData: new Map()
+      } as ActivityResult)
+   }
 }

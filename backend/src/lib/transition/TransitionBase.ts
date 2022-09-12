@@ -1,14 +1,15 @@
-import ActivityBase from "../activity/ActivityBase"
-import WorkflowActivity from "../activity/workflow/WorkflowActivity"
+import WorkflowContext from "../../app/WorkflowContext";
 
 export default abstract class TransitionBase {
-   from: ActivityBase
-   to: WorkflowActivity[]
+   from: string
+   to?: string
+   condition?: string
 
-   constructor(from: ActivityBase, to: WorkflowActivity[] = []) {
+   constructor(from: string, to?: string, condition?: string) {
       this.from = from
       this.to = to
+      this.condition = condition
    }
 
-   abstract canTransact(condition: string): boolean
+   abstract canTransact(context: WorkflowContext): boolean
 }

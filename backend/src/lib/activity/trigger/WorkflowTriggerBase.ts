@@ -1,12 +1,13 @@
-import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/ActivityResult'
 import ActivityBase from '../ActivityBase'
+import {ActivityResult} from "../../../../../common/src/types/activity/ActivityResult";
 
 export default abstract class WorkflowTriggerBase extends ActivityBase {
-   constructor(id: string, name: string, resourceIds: string[] = []) {
-      super(id, name, resourceIds)
+
+   constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
+      super(id, name, params, resourceIds)
    }
 
-   abstract start(): void
-   abstract stop(): void
-   abstract invoke(): Promise<ActivityResult>
+   //TODO: think about using RxJS Observables
+   abstract start(notifyFunction: (res: ActivityResult) => void): Promise<void>
+   abstract stop(): Promise<void>
 }

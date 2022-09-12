@@ -1,18 +1,12 @@
 import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/ActivityResult'
-import WorkflowTriggerBase from '../WorkflowTriggerBase'
+import WorkflowActivity from './WorkflowActivity'
 
-export default class EVMEventTrigger extends WorkflowTriggerBase {
+export default class NoOpActivity extends WorkflowActivity {
+
    constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
       super(id, name, params, resourceIds)
    }
 
-   //TODO: implement
-   start(): Promise<void> {
-      return Promise.resolve()
-   }
-   stop(): Promise<void> {
-      return Promise.resolve()
-   }
 
    invoke(): Promise<ActivityResult> {
       return Promise.resolve({

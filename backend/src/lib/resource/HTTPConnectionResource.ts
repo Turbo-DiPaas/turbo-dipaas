@@ -1,5 +1,5 @@
 import { URL } from "url";
-import { ResourceTypeEnum } from "../../types/enums";
+import { ResourceTypeEnum } from 'turbo-dipaas-common/dist/enums/ResourceTypeEnum'
 import ResourceBase from "./ResourceBase";
 
 export default class HTTPConnectionResource extends ResourceBase {
