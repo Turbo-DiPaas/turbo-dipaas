@@ -2,6 +2,7 @@ import express from 'express'
 import swaggerUiExpress from 'swagger-ui-express'
 import swaggerConfiguration from './OpenApiConfig'
 import activitiesRouter from './routes/designer/activities'
+import resourcesRouter from './routes/designer/resources'
 
 const app = express();
 
@@ -13,6 +14,7 @@ const run = ({port = 4000}) => {
       swaggerUiExpress.setup(swaggerConfiguration)
    )
    app.use("/designer/activities", activitiesRouter);
+   app.use("/designer/resources", resourcesRouter);
 
    app.listen(port);
 }
