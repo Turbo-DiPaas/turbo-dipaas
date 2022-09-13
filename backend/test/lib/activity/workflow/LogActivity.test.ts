@@ -1,10 +1,10 @@
 import chai, { expect } from 'chai'
-import sinon from 'sinon';
+import sinon, {SinonSpy} from 'sinon';
 import LogActivity from "../../../../src/lib/activity/workflow/LogActivity";
 
 describe('LogActivity', () => {
     let logActivity: LogActivity
-    let spy: any
+    let spy: SinonSpy
     const message = '1234dfgjh'
     beforeEach(() => {
         spy = sinon.spy(console, 'log');

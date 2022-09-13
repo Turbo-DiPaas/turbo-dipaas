@@ -3,11 +3,13 @@ import ActivityGraph from "../lib/activity/utils/ActivityGraph";
 import {ActivityResult} from "../../../common/src/types/activity/ActivityResult";
 import {ActivityTransition} from "../types/ActivityTransition";
 import {WorkflowProcessState} from "../../../common/src/enums/WorkflowProcessState";
+import ActivityBase from "../lib/activity/ActivityBase";
 
 export default class WorkflowProcess {
    context: WorkflowContext
    activityGraph: ActivityGraph
    currentState: WorkflowProcessState
+   currentActivities: Map<string, ActivityBase> = new Map()
 
    constructor(activityGraph: ActivityGraph) {
       this.activityGraph = activityGraph
@@ -22,44 +24,53 @@ export default class WorkflowProcess {
       this.context.addActivityResult(starterActivityId, starterActivityResult)
       this.currentState = WorkflowProcessState.Running
       this.activityGraph.getChildren(starterActivityId)
-          .map((v) => {
-             this.processActivityTransition(v)
-                 .finally(() => {
-                    this.currentState = WorkflowProcessState.Finished
-                    console.log("ACTIVITY GRAPH FINISHED")
-                 })
-          })
+         .map((v) => {
+            this.processActivityTransition(v)
+         })
    }
 
    async processActivityTransition(activityTransition?: ActivityTransition) {
       if (activityTransition?.transition.canTransact(this.context)
-          && !this.context.getActivityResult(activityTransition?.activity.id)) {
+         && !this.context.getActivityResult(activityTransition?.activity.id)) {
          const activity = activityTransition!.activity
+         this.currentActivities.set(activity.id, activity)
+
          activity.invoke()
-             .then((v) => {
-                this.context.addActivityResult(activity.id, v)
-             })
-             .catch((e) => {
-                this.context.addActivityResult(activity.id,
-                    {
-                       status: 500,
-                       error: e,
-                       returnData: new Map()
-                    })
-             })
-             .finally(() => {
-                const activityTransitions = this.activityGraph.getChildren(activity.id)
-                activityTransitions.map((v) => {
-                   this.processActivityTransition(v)
-                })
-             })
+            .then((v) => {
+               this.context.addActivityResult(activity.id, v)
+            })
+            .catch((e) => {
+               this.context.addActivityResult(activity.id,
+                  {
+                     status: 500,
+                     error: e,
+                     returnData: new Map()
+                  })
+            })
+            .finally(() => {
+               this.currentActivities.delete(activity.id)
+               const activityTransitions = this.activityGraph.getChildren(activity.id)
+
+               if (this.currentState !== WorkflowProcessState.Stopping
+                  && this.currentState !== WorkflowProcessState.Stopped) {
+
+                  activityTransitions.map((v) => {
+                     this.currentActivities.set(v.activity.id, v.activity)
+                     this.processActivityTransition(v)
+                  })
+               }
+
+               if(this.currentActivities.size === 0 && activityTransitions.length === 0) {
+                  this.currentState = WorkflowProcessState.Finished
+               }
+            })
       }
    }
 
    stop(): void {
       this.currentState = WorkflowProcessState.Stopping
 
-      //the logic goes here
+      this.currentActivities.clear()
 
       this.currentState = WorkflowProcessState.Stopped
    }
