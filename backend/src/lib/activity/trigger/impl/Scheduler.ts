@@ -1,6 +1,8 @@
-import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/ActivityResult'
+import {ActivityResult} from 'turbo-dipaas-common/src/types/activity/ActivityResult'
 import WorkflowTriggerBase from '../WorkflowTriggerBase'
 import cron, {ScheduledTask} from 'node-cron'
+import {WorkflowProcessState} from "turbo-dipaas-common/src/enums/WorkflowProcessState";
+import WorkflowContext from "../../../../app/WorkflowContext";
 
 export default class Scheduler extends WorkflowTriggerBase {
    currentTriggerDate!: Date
@@ -11,6 +13,7 @@ export default class Scheduler extends WorkflowTriggerBase {
    }
 
    async start(notifyFunction: (res: ActivityResult) => void): Promise<void> {
+      this.currentState = WorkflowProcessState.Running
       const cronExpression = this.params.get('cronExpression')
       if (this.params.get('runOnce') === true) {
          this.currentTriggerDate = new Date
@@ -33,9 +36,11 @@ export default class Scheduler extends WorkflowTriggerBase {
       if (this.cronTask) {
          this.cronTask.stop()
       }
+
+      this.currentState = WorkflowProcessState.Finished
    }
 
-   invoke(): Promise<ActivityResult> {
+   invoke(context: WorkflowContext = new WorkflowContext()): Promise<ActivityResult> {
       const returnData = new Map()
       returnData.set('date', this.currentTriggerDate)
 

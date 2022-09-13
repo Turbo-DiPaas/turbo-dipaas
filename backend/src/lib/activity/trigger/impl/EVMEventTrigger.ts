@@ -1,5 +1,6 @@
-import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/ActivityResult'
+import { ActivityResult } from 'turbo-dipaas-common/src/types/activity/ActivityResult'
 import WorkflowTriggerBase from '../WorkflowTriggerBase'
+import WorkflowContext from "../../../../app/WorkflowContext";
 
 export default class EVMEventTrigger extends WorkflowTriggerBase {
    constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
@@ -14,7 +15,7 @@ export default class EVMEventTrigger extends WorkflowTriggerBase {
       return Promise.resolve()
    }
 
-   invoke(): Promise<ActivityResult> {
+   invoke(context: WorkflowContext): Promise<ActivityResult> {
       return Promise.resolve({
          status: 200,
          returnData: new Map()

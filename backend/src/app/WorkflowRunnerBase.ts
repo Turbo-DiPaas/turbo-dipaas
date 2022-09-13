@@ -2,7 +2,7 @@ import Workflow from "./Workflow";
 import WorkflowContext from "./WorkflowContext";
 import ActivityGraph from "../lib/activity/utils/ActivityGraph";
 import WorkflowTriggerBase from "../lib/activity/trigger/WorkflowTriggerBase";
-import {ActivityResult} from "../../../common/src/types/activity/ActivityResult";
+import {ActivityResult} from "turbo-dipaas-common/src/types/activity/ActivityResult";
 import WorkflowProcess from "./WorkflowProcess";
 
 export default abstract class WorkflowRunnerBase {

@@ -5,5 +5,6 @@ export enum WorkflowProcessState {
    Paused,
    Stopping,
    Stopped,
-   Finished
+   Finished,
+   Failed
 }

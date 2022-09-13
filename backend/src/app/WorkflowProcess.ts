@@ -1,8 +1,8 @@
 import WorkflowContext from "./WorkflowContext";
 import ActivityGraph from "../lib/activity/utils/ActivityGraph";
-import {ActivityResult} from "../../../common/src/types/activity/ActivityResult";
+import {ActivityResult} from "turbo-dipaas-common/src/types/activity/ActivityResult";
 import {ActivityTransition} from "../types/ActivityTransition";
-import {WorkflowProcessState} from "../../../common/src/enums/WorkflowProcessState";
+import {WorkflowProcessState} from "turbo-dipaas-common/src/enums/WorkflowProcessState";
 import ActivityBase from "../lib/activity/ActivityBase";
 
 export default class WorkflowProcess {
@@ -35,7 +35,7 @@ export default class WorkflowProcess {
          const activity = activityTransition!.activity
          this.currentActivities.set(activity.id, activity)
 
-         activity.invoke()
+         activity.invoke(this.context)
             .then((v) => {
                this.context.addActivityResult(activity.id, v)
             })
