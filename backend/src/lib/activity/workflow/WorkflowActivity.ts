@@ -1,4 +1,4 @@
-import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/ActivityResult'
+import { ActivityResult } from 'turbo-dipaas-common/src/types/activity/ActivityResult'
 import ActivityBase from '../ActivityBase'
 
 export default abstract class WorkflowActivity extends ActivityBase {

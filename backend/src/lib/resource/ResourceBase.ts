@@ -1,4 +1,4 @@
-import { ResourceTypeEnum } from 'turbo-dipaas-common/dist/enums/ResourceTypeEnum'
+import { ResourceTypeEnum } from 'turbo-dipaas-common/src/enums/ResourceTypeEnum'
 
 export default class ResourceBase {
    id: string
