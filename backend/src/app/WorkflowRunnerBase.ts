@@ -33,7 +33,6 @@ export default abstract class WorkflowRunnerBase {
          const newProcess = new WorkflowProcess(this.activityGraph)
          this.runningProcesses.push(newProcess)
 
-         // TODO: run each process in new thread
          newProcess.start(activityResult)
       })
    }

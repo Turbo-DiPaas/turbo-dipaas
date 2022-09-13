@@ -27,8 +27,11 @@ describe('WorkflowProcess', () => {
                 return logProps
             }
 
+            const schedulerOpts = new Map()
+            schedulerOpts.set('runOnce', true)
+
             activityGraph = new ActivityGraph()
-            activityGraph.addActivity(new Scheduler('a', 'act-a'))
+            activityGraph.addActivity(new Scheduler('a', 'act-a', schedulerOpts))
             activityGraph.addActivity(new LogActivity('b', 'act-b', increment()))
             activityGraph.addActivity(new LogActivity('c', 'act-c', increment()))
             activityGraph.addActivity(new LogActivity('d', 'act-d', increment()))
