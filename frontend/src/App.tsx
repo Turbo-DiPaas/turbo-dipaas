@@ -4,9 +4,14 @@ import Workspace from './workspace/Workspace';
 
 function App() {
   return (
-    <div style={{height: '1300px',width: '1300px'}} className="App">
-      <Workspace></Workspace>
-    </div>
+    <>
+      <div style={{height: '500px',width: '1300px'}} className="App">
+        <Workspace></Workspace>
+      </div>
+      <div>
+
+      </div>
+    </>
   );
 }
 
