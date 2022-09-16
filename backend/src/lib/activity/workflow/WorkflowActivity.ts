@@ -13,7 +13,7 @@ export default abstract class WorkflowActivity extends ActivityBase {
    /**
     * Actual activity running code - each activity should implement it
     */
-   protected abstract run(): Promise<ActivityResult>
+   protected abstract run(params?: Map<string, any>): Promise<ActivityResult>
 
    /**
     * Process wrapper, adding common logic for every activity
@@ -21,9 +21,7 @@ export default abstract class WorkflowActivity extends ActivityBase {
    invoke(context: WorkflowContext): Promise<ActivityResult> {
       this.currentState = WorkflowProcessState.Running
 
-      this.params = evaluateProps(this.params, context)
-
-      return this.run()
+      return this.run(evaluateProps(this.params, context))
          .then(res => {
             // we just set proper state when finished, returning original resource
             this.currentState = res.error ? WorkflowProcessState.Failed : WorkflowProcessState.Finished

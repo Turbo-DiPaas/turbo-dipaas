@@ -7,7 +7,7 @@ export default class NoOpActivity extends WorkflowActivity {
       super(id, name, params, resourceIds)
    }
 
-   protected run(): Promise<ActivityResult> {
+   protected run(params: Map<string, any> = this.params): Promise<ActivityResult> {
       return Promise.resolve({
          status: 200,
          returnData: new Map()

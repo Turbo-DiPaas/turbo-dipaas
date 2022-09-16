@@ -16,7 +16,6 @@ describe('LogActivity', () => {
     beforeEach(() => {
         spy = sinon.spy(console, 'log');
         logActivity = new LogActivity('a', 'log activity')
-        logActivity.params = new Map<string, any>()
         logActivity.params.set('message', message)
     })
 
