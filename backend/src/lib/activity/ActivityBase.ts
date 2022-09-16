@@ -3,10 +3,10 @@ import {WorkflowProcessState} from "turbo-dipaas-common/src/enums/WorkflowProces
 import WorkflowContext from "../../app/WorkflowContext";
 
 export default abstract class ActivityBase {
-   id: string
-   name: string
+   readonly id: string
+   readonly name: string
    resourceIds: string[]
-   params: Map<string, any>
+   readonly params: Map<string, any>
    currentState: WorkflowProcessState
 
    constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {

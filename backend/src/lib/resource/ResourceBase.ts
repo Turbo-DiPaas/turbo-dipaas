@@ -1,10 +1,10 @@
 import { ResourceTypeEnum } from 'turbo-dipaas-common/src/enums/ResourceTypeEnum'
 
 export default class ResourceBase {
-   id: string
-   name: string
-   type: ResourceTypeEnum
-   params: Map<string, any>
+   readonly id: string
+   readonly name: string
+   readonly type: ResourceTypeEnum
+   protected readonly params: Map<string, any>
 
    constructor(id: string, name: string, type: ResourceTypeEnum, params: Map<string, any>) {
       this.id = id
@@ -14,8 +14,6 @@ export default class ResourceBase {
    }
 
    getProperty(id: string): any | undefined {
-      this.params.has(id)
-         ? this.params.get(id)
-         : undefined
+      this.params.get(id)
    }
 }
