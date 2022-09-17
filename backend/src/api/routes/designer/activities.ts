@@ -1,39 +1,30 @@
 import express from 'express'
+import { ActivityDetailsStruct } from 'turbo-dipaas-common/dist/types/api/design/ActivityStruct'
+import { ActivityCategoryEnum, ActivityEnum, InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum } from '../../../../../common/src/enums/DesignStructEnum';
 
 const activitiesRouter = express.Router();
-const activities = [
+const activities: ActivityDetailsStruct[] = [
     {
         'id': 'c9b3bc42-332a-11ed-a261-0242ac120002',
         'name': 'Send transaction',
         'description': 'send transaction',
         'updated': '2022-09-01T00:00:00Z',
-        'category': 'Smart Contracts',
+        'category': ActivityCategoryEnum.GENERAL,
+        'type': ActivityEnum.SEND_TRANSACTION,
         'structure': {
             tabs: [
                 {
-                    'type': 'general',
-                    'name': 'General',
-                    'descriptioon': 'General tab',
+                    'type': TabEnum.GENERAL,
+                    'name': TabEnum.GENERAL,
+                    'description': 'General tab',
                     'fields': [
                         {
                             'name': 'Input field 1',
-                            'type': 'string'
+                            'type': InputFieldTypeEnum.FREE_INPUT
                         },
                         {
                             'name': 'Input field 2',
-                            'type': 'dropdown',
-                            'options': [
-                                'option1',
-                                'option2'
-                            ]
-                        },
-                        {
-                            'name': 'Input field 3',
-                            'type': 'number'
-                        },
-                        {
-                            'name': 'Input field 4',
-                            'type': 'radio',
+                            'type': SelectFieldTypeEnum.DROPDOWN,
                             'options': [
                                 'option1',
                                 'option2'
@@ -45,83 +36,22 @@ const activities = [
         }
     },
     {
-        'id': 'c9b3bf80-332a-11ed-a261-0242ac120002',
-        'name': 'Call contract',
-        'description': 'Call contract',
+        'id': 'fcf3fc60-3353-11ed-a261-0242ac120002',
+        'name': 'Log',
+        'description': 'logs message to the stdout',
         'updated': '2022-09-01T00:00:00Z',
-        'category': 'Smart Contracts',
+        'category': ActivityCategoryEnum.GENERAL,
+        'type': ActivityEnum.LOG_ACTIVITY,
         'structure': {
             tabs: [
                 {
-                    'type': 'general',
-                    'name': 'General',
-                    'descriptioon': 'General tab',
+                    'type': TabEnum.GENERAL,
+                    'name': TabEnum.GENERAL,
+                    'description': 'General tab',
                     'fields': [
                         {
-                            'name': 'Input field 1',
-                            'type': 'string'
-                        },
-                        {
-                            'name': 'Input field 2',
-                            'type': 'dropdown',
-                            'options': [
-                                'option1',
-                                'option2'
-                            ]
-                        },
-                        {
-                            'name': 'Input field 3',
-                            'type': 'number'
-                        },
-                        {
-                            'name': 'Input field 4',
-                            'type': 'radio',
-                            'options': [
-                                'option1',
-                                'option2'
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-    },
-    {
-        'id': 'c9b3c3cc-332a-11ed-a261-0242ac120002',
-        'name': 'Get file',
-        'description': 'Get file',
-        'updated': '2022-09-01T00:00:00Z',
-        'category': 'IPFS',
-        'structure': {
-            tabs: [
-                {
-                    'type': 'general',
-                    'name': 'General',
-                    'descriptioon': 'General tab',
-                    'fields': [
-                        {
-                            'name': 'Input field 1',
-                            'type': 'string'
-                        },
-                        {
-                            'name': 'Input field 2',
-                            'type': 'dropdown',
-                            'options': [
-                                'option1',
-                                'option2'
-                            ]
-                        },
-                        {
-                            'name': 'Input field 3',
-                            'type': 'number'
-                        },
-                        {
-                            'name': 'Input field 4',
-                            'type': 'radio',
-                            'options': [
-                                'option1',
-                                'option2'
-                            ]
+                            'name': 'message',
+                            'type': InputFieldTypeEnum.FREE_INPUT
                         }
                     ]
                 }
@@ -142,6 +72,11 @@ const activities = [
 *             category: 
 *               type: string
 *               example: 'Smart Contracts'
+*             type:
+*               type: string
+*               example: LogActivity
+*             structure: 
+*               $ref: '#/components/schemas/Structure'
 *     ActivitiesResponse:
 *       type: object
 *       properties:
@@ -160,9 +95,6 @@ const activities = [
 *               format: date-time
 *         - $ref: '#/components/schemas/Activity'
 *         - type: object
-*         - properties:
-*             structure: 
-*                 $ref: '#/components/schemas/Structure'
 *           
 */
 
@@ -184,13 +116,7 @@ activitiesRouter.get('/', (request, response) => {
         'updated': '2022-09-01T00:00:00Z',
         'activities': 
             activities.map(activity => {
-                return {
-                    id: activity.id,
-                    name: activity.name,
-                    description: activity.description,
-                    updated: activity.updated,
-                    category: activity.category
-                };
+                return activity
             })
     })
 });

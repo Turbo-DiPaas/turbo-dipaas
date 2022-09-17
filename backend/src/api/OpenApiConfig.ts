@@ -89,7 +89,7 @@ const options = {
          version: "0.1.0"
       }
    },
-   apis: ["**/routes/designer/*.ts", '**/OpenApiConfig.ts']
+   apis: ["**/routes/designer/*.ts", '**/OpenApiConfig.ts', "**/routes/runner/*.ts", "**/api/design/*.ts"]
 }
 const swaggerConfiguration = swaggerJsdoc(options);
 

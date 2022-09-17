@@ -1,7 +1,9 @@
 import express from 'express'
+import { InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum } from '../../../../../common/src/enums/DesignStructEnum';
+import {ResourceDetailsStruct} from 'turbo-dipaas-common/dist/types/api/design/ResourceStruct'
 
 const resourcesRouter = express.Router();
-const resources = [
+const resources: ResourceDetailsStruct[] = [
     {
         'id': 'some-random-uuid',
         'name': 'Polygon EVM connection',
@@ -9,64 +11,24 @@ const resources = [
         'updated': '2022-09-01T00:00:00Z',
         'icon': '/assets/resource-small.png',
         'structure': {
-            'fields': [
+            tabs: [
                 {
-                    'name': 'Input field 1',
-                    'type': 'string'
-                },
-                {
-                    'name': 'Input field 2',
-                    'type': 'dropdown',
-                    'options': [
-                        'option1',
-                        'option2'
-                    ]
-                },
-                {
-                    'name': 'Input field 3',
-                    'type': 'number'
-                },
-                {
-                    'name': 'Input field 4',
-                    'type': 'radio',
-                    'options': [
-                        'option1',
-                        'option2'
-                    ]
-                }
-            ]
-        }
-    },
-    {
-        'id': 'some-random-uuid2',
-        'name': 'Files',
-        'description': '(IPFS connection)',
-        'updated': '2022-09-01T00:00:00Z',
-        'icon': '/assets/resource-small.png',
-        'structure': {
-            'fields': [
-                {
-                    'name': 'Input field 1',
-                    'type': 'string'
-                },
-                {
-                    'name': 'Input field 2',
-                    'type': 'dropdown',
-                    'options': [
-                        'option1',
-                        'option2'
-                    ]
-                },
-                {
-                    'name': 'Input field 3',
-                    'type': 'number'
-                },
-                {
-                    'name': 'Input field 4',
-                    'type': 'radio',
-                    'options': [
-                        'option1',
-                        'option2'
+                    'type': TabEnum.GENERAL,
+                    'name': TabEnum.GENERAL,
+                    'description': 'General tab',
+                    'fields': [
+                        {
+                            'name': 'Input field 1',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        },
+                        {
+                            'name': 'Input field 2',
+                            'type': SelectFieldTypeEnum.DROPDOWN,
+                            'options': [
+                                'option1',
+                                'option2'
+                            ]
+                        }
                     ]
                 }
             ]
@@ -85,6 +47,8 @@ const resources = [
 *             icon: 
 *               type: string
 *               example: '/assets/resource-small.png'
+*             structure:
+*               $ref: '#/components/schemas/Structure'
 *     ResourcesResponse:
 *       type: object
 *       properties:
@@ -103,9 +67,6 @@ const resources = [
 *               format: date-time
 *         - $ref: '#/components/schemas/Resource'
 *         - type: object
-*         - properties:
-*             structure: 
-*                 $ref: '#/components/schemas/Structure'
 *           
 */
 
@@ -127,13 +88,7 @@ resourcesRouter.get('/', (request, response) => {
         'updated': '2022-09-01T00:00:00Z',
         'resources': 
             resources.map(resource => {
-                return {
-                    id: resource.id,
-                    name: resource.name,
-                    description: resource.description,
-                    updated: resource.updated,
-                    icon: resource.icon
-                };
+                return {resource};
             })
     })
 })
