@@ -1,4 +1,4 @@
-import { ActivityResult } from "turbo-dipaas-common/dist/types/activity/ActivityResult";
+import { ActivityResult } from "turbo-dipaas-common/src/types/activity/ActivityResult";
 
 export default class WorkflowContext {
    protected activityResultContext: Map<string, ActivityResult> = new Map()

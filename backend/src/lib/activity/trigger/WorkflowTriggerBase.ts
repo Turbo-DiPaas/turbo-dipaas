@@ -1,5 +1,5 @@
 import ActivityBase from '../ActivityBase'
-import {ActivityResult} from "../../../../../common/src/types/activity/ActivityResult";
+import {ActivityResult} from "turbo-dipaas-common/src/types/activity/ActivityResult";
 
 export default abstract class WorkflowTriggerBase extends ActivityBase {
 

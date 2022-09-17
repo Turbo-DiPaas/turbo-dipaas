@@ -1,5 +1,5 @@
-import { ActivityResult } from 'turbo-dipaas-common/dist/types/activity/ActivityResult'
-import WorkflowActivity from './WorkflowActivity'
+import { ActivityResult } from 'turbo-dipaas-common/src/types/activity/ActivityResult'
+import WorkflowActivity from '../WorkflowActivity'
 
 export default class LogActivity extends WorkflowActivity {
 
@@ -7,7 +7,7 @@ export default class LogActivity extends WorkflowActivity {
       super(id, name, params, resourceIds)
    }
 
-   invoke(): Promise<ActivityResult> {
+   protected run(): Promise<ActivityResult> {
       console.log(this.params.get('message'))
 
       return Promise.resolve({

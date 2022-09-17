@@ -2,7 +2,7 @@ import chai, { expect } from 'chai'
 import ActivityGraph from '../../src/lib/activity/utils/ActivityGraph'
 import SuccessTransition from '../../src/lib/transition/SuccessTransition'
 import Scheduler from "../../src/lib/activity/trigger/impl/Scheduler";
-import LogActivity from "../../src/lib/activity/workflow/LogActivity";
+import LogActivity from "../../src/lib/activity/workflow/impl/LogActivity";
 import WorkflowProcess from "../../src/app/WorkflowProcess";
 import WorkflowTriggerBase from "../../src/lib/activity/trigger/WorkflowTriggerBase";
 
@@ -27,8 +27,11 @@ describe('WorkflowProcess', () => {
                 return logProps
             }
 
+            const schedulerOpts = new Map()
+            schedulerOpts.set('runOnce', true)
+
             activityGraph = new ActivityGraph()
-            activityGraph.addActivity(new Scheduler('a', 'act-a'))
+            activityGraph.addActivity(new Scheduler('a', 'act-a', schedulerOpts))
             activityGraph.addActivity(new LogActivity('b', 'act-b', increment()))
             activityGraph.addActivity(new LogActivity('c', 'act-c', increment()))
             activityGraph.addActivity(new LogActivity('d', 'act-d', increment()))
