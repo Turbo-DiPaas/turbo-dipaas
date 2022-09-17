@@ -68,6 +68,12 @@ const exampleWorkflow: Workflow = {
                 "id": "trigger",
                 "type": TriggerActivityEnum.SCHEDULER,
                 "name": "Scheduler activity",
+                "params": [
+                    {
+                        "name": "runOnce",
+                        "value": true
+                    }
+                ],
                 "position": {
                     x: 4,
                     y: 4

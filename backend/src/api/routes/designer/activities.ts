@@ -1,6 +1,6 @@
 import express from 'express'
 import { ActivityDetailsStruct } from 'turbo-dipaas-common/dist/types/api/design/ActivityStruct'
-import { ActivityCategoryEnum, ActivityEnum, InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum } from '../../../../../common/src/enums/DesignStructEnum';
+import { ActivityCategoryEnum, ActivityEnum, InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum, TriggerActivityEnum } from '../../../../../common/src/enums/DesignStructEnum';
 
 const activitiesRouter = express.Router();
 const activities: ActivityDetailsStruct[] = [
@@ -52,6 +52,29 @@ const activities: ActivityDetailsStruct[] = [
                         {
                             'name': 'message',
                             'type': InputFieldTypeEnum.FREE_INPUT
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        'id': 'fcf3fc60-3353-11ed-a261-0242ac120003',
+        'name': 'Scheduler',
+        'description': 'schedule trigger',
+        'updated': '2022-09-01T00:00:00Z',
+        'category': ActivityCategoryEnum.GENERAL,
+        'type': TriggerActivityEnum.SCHEDULER,
+        'structure': {
+            tabs: [
+                {
+                    'type': TabEnum.GENERAL,
+                    'name': TabEnum.GENERAL,
+                    'description': 'General tab',
+                    'fields': [
+                        {
+                            'name': 'runOnce',
+                            'type': InputFieldTypeEnum.BOOLEAN
                         }
                     ]
                 }

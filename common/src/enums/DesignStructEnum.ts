@@ -9,7 +9,8 @@ export enum ActivityEnum {
 }
 
 export enum InputFieldTypeEnum {
-    FREE_INPUT
+    FREE_INPUT,
+    BOOLEAN
 }
 
 export enum ResourceEnum {
