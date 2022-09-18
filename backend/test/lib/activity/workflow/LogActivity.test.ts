@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai'
 import sinon, {SinonSpy} from 'sinon';
-import LogActivity from "../../../../src/lib/activity/workflow/impl/LogActivity";
+import LogActivity from "../../../../src/lib/activity/workflow/impl/general/LogActivity";
 import WorkflowContext from "../../../../src/app/WorkflowContext";
 import ActivityResultPropsMock from "../mock/ActivityResultPropsMock";
 
