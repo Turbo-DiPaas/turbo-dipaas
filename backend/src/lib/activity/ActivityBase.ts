@@ -1,6 +1,8 @@
 import { ActivityResult } from 'turbo-dipaas-common/src/types/activity/ActivityResult'
 import {WorkflowProcessState} from "turbo-dipaas-common/src/enums/WorkflowProcessState";
 import WorkflowContext from "../../app/WorkflowContext";
+import {Constructor} from "../../types/Constructor";
+import Container from "typedi";
 
 export default abstract class ActivityBase {
    readonly id: string
@@ -18,4 +20,15 @@ export default abstract class ActivityBase {
    }
 
    abstract invoke(context: WorkflowContext): Promise<ActivityResult>
+
+   getResource<TFilter>(filterType: Constructor<TFilter>): TFilter | undefined {
+      for (let v of this.resourceIds) {
+         const resource = Container.get(v)
+         if (resource instanceof filterType) {
+            return resource
+         }
+      }
+
+      return undefined
+   }
 }

@@ -14,6 +14,6 @@ export default class ResourceBase {
    }
 
    getProperty(id: string): any | undefined {
-      this.params.get(id)
+      return this.params.get(id)
    }
 }
