@@ -1,5 +1,5 @@
 import express from 'express'
-import { ActivityDetailsStruct } from 'turbo-dipaas-common/dist/types/api/design/ActivityStruct'
+import { ActivityDetailsStruct } from 'turbo-dipaas-common/src/types/api/design/ActivityStruct'
 import { ActivityCategoryEnum, ActivityEnum, InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum, TriggerActivityEnum } from '../../../../../common/src/enums/DesignStructEnum';
 
 const activitiesRouter = express.Router();

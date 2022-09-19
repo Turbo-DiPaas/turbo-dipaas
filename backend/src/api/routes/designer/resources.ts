@@ -1,6 +1,6 @@
 import express from 'express'
-import { InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum } from '../../../../../common/src/enums/DesignStructEnum';
-import {ResourceDetailsStruct} from 'turbo-dipaas-common/dist/types/api/design/ResourceStruct'
+import { InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum } from 'turbo-dipaas-common/src/enums/DesignStructEnum';
+import {ResourceDetailsStruct} from 'turbo-dipaas-common/src/types/api/design/ResourceStruct'
 
 const resourcesRouter = express.Router();
 const resources: ResourceDetailsStruct[] = [

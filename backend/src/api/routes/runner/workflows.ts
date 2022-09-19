@@ -1,9 +1,9 @@
 import express from 'express'
 import WorkflowProcess from '../../../app/WorkflowProcess';
 import ActivityGraph from '../../../lib/activity/utils/ActivityGraph';
-import { Activity } from 'turbo-dipaas-common/dist/types/api/workflow/Activity'
-import { Transition } from 'turbo-dipaas-common/dist/types/api/workflow/Transition';
-import { Workflow } from 'turbo-dipaas-common/dist/types/api/workflow/Workflow';
+import { Activity } from 'turbo-dipaas-common/src/types/api/workflow/Activity'
+import { Transition } from 'turbo-dipaas-common/src/types/api/workflow/Transition';
+import { Workflow } from 'turbo-dipaas-common/src/types/api/workflow/Workflow';
 import SuccessTransition from '../../../lib/transition/SuccessTransition';
 import WorkflowTriggerBase from '../../../lib/activity/trigger/WorkflowTriggerBase';
 import { ActivityList } from '../../../lib/activity/ActivityList';
