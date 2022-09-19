@@ -1,9 +1,9 @@
 import {ActivityResult} from 'turbo-dipaas-common/src/types/activity/ActivityResult'
-import WorkflowTriggerBase from '../WorkflowTriggerBase'
+import WorkflowTriggerBase from '../../WorkflowTriggerBase'
 import cron, {ScheduledTask} from 'node-cron'
 import {WorkflowProcessState} from "turbo-dipaas-common/src/enums/WorkflowProcessState";
-import WorkflowContext from "../../../../app/WorkflowContext";
-import {evaluateProps} from "../../../../app/utils/context/contextResolver";
+import WorkflowContext from "../../../../../app/WorkflowContext";
+import {evaluateProps} from "../../../../../app/utils/context/contextResolver";
 
 export default class Scheduler extends WorkflowTriggerBase {
    currentTriggerDate!: Date
@@ -24,7 +24,6 @@ export default class Scheduler extends WorkflowTriggerBase {
    }
 
    async start(notifyFunction: (res: ActivityResult) => void): Promise<void> {
-      this.currentState = WorkflowProcessState.Running
       const evaluatedParams = await evaluateProps(this.params, new WorkflowContext())
       const cronExpression = evaluatedParams.get('cronExpression')
 

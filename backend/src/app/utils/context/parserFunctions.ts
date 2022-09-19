@@ -18,6 +18,10 @@ const addFunctions = () => {
       return parseInt(val, 10)
    });
 
+   mozjexl.addTransform('parsejson', function(val: string) {
+      return JSON.parse(val)
+   });
+
    mozjexl.addTransform('length', function(val: string) {
       return val.length
    });

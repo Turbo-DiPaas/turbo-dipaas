@@ -16,7 +16,6 @@ chai.use(solidity) // solidiity matchers, e.g. expect().to.be.revertedWith("mess
 
 describe('InvokeEVMActivity', () => {
     let invokeEVMActivity: InvokeEVMActivity
-    let provider: MockProvider
     let storageContract: Storage
     const context = new WorkflowContext()
 
@@ -24,13 +23,8 @@ describe('InvokeEVMActivity', () => {
     const connResId = 'evmconnres'
 
     beforeEach(async () => {
-        // provider = new MockProvider({ ganacheOptions: { gasLimit: 100000000 } })
-        // storageContract = (await waffle.deployContract(provider.getSigner(0), StorageArtifact, [])) as Storage
-
         const Storage = await ethers.getContractFactory("Storage")
         storageContract = await Storage.deploy() as Storage
-
-        // storageContract = (await waffle.deployContract(provider.getSigner(0), StorageArtifact, [])) as Storage
 
         const abiResParams = new Map()
         abiResParams.set('abi', StorageArtifact.abi)
@@ -62,4 +56,19 @@ describe('InvokeEVMActivity', () => {
         expect(result.status).to.be.equal(200)
     })
 
+    it('retrieves smart contract state properly', async () => {
+        invokeEVMActivity.params.set('selectedFunction', '"store"')
+        invokeEVMActivity.params.set('transactionParams', [39])
+        const result = await invokeEVMActivity.invoke(context)
+
+        expect(await storageContract.retrieve()).to.be.equal(39)
+        expect(result.status).to.be.equal(200)
+
+        invokeEVMActivity.params.set('selectedFunction', '"retrieve"')
+        invokeEVMActivity.params.set('transactionParams', [])
+        const retrieveResult = await invokeEVMActivity.invoke(context)
+
+        expect(retrieveResult.status).to.be.equal(200)
+        expect(retrieveResult.returnData.get('callResult')).to.be.eql(['39'])
+    })
 })

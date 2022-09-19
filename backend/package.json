@@ -38,6 +38,7 @@
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha 'test/**/*.test.ts'"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "ethers": "^5.7.1",
     "mozjexl": "^1.1.6",
     "node-cron": "^3.0.2",
