@@ -23,7 +23,7 @@ describe('WorkflowProcess', () => {
             const increment = () => {
                 i += 1
                 const logProps: Map<string, any> = new Map()
-                logProps.set('message', `logging number ${i}`)
+                logProps.set('message', '"' + `logging number ${i}` + '"')
                 return logProps
             }
 
@@ -54,7 +54,7 @@ describe('WorkflowProcess', () => {
 
         it('should run basic workflow without issues', async () => {
             const startActivity = activityGraph.activityIdMapping.get(activityGraph.getRootId()) as WorkflowTriggerBase
-            startActivity.start(res => {
+            await startActivity.start(res => {
                 workflowProcess.start(res)
             })
 

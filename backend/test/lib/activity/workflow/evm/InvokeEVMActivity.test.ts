@@ -18,7 +18,6 @@ describe('InvokeEVMActivity', () => {
     let invokeEVMActivity: InvokeEVMActivity
     let provider: MockProvider
     let storageContract: Storage
-    // let spy: SinonSpy
     const context = new WorkflowContext()
 
     const abiResourceId = 'abires'
@@ -27,7 +26,6 @@ describe('InvokeEVMActivity', () => {
     beforeEach(async () => {
         // provider = new MockProvider({ ganacheOptions: { gasLimit: 100000000 } })
         // storageContract = (await waffle.deployContract(provider.getSigner(0), StorageArtifact, [])) as Storage
-        // spy = sinon.spy(console, 'log');
 
         const Storage = await ethers.getContractFactory("Storage")
         storageContract = await Storage.deploy() as Storage
@@ -46,11 +44,7 @@ describe('InvokeEVMActivity', () => {
         ])
 
         invokeEVMActivity = new InvokeEVMActivity('a', 'invoke evm activity', new Map(), [abiResourceId, connResId])
-        invokeEVMActivity.params.set('transactionRecipient', storageContract.address)
-    })
-
-    afterEach(() => {
-        // spy.restore()
+        invokeEVMActivity.params.set('transactionRecipient', '"' + storageContract.address + '"')
     })
 
     it('retrieves resource with proper type', async () => {
@@ -60,7 +54,7 @@ describe('InvokeEVMActivity', () => {
     })
 
     it('allows to change smart contract state', async () => {
-        invokeEVMActivity.params.set('selectedFunction', 'store')
+        invokeEVMActivity.params.set('selectedFunction', '"store"')
         invokeEVMActivity.params.set('transactionParams', [5])
         const result = await invokeEVMActivity.invoke(context)
 

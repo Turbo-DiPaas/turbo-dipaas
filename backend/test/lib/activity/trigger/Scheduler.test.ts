@@ -21,7 +21,7 @@ describe('Scheduler trigger', () => {
 
       spy = sinon.spy(console, 'log');
       const logProps: Map<string, any> = new Map()
-      logProps.set('message', message)
+      logProps.set('message', '"' + message + '"')
       schedulerProps = new Map()
 
       activityGraph = new ActivityGraph()
@@ -45,14 +45,15 @@ describe('Scheduler trigger', () => {
          workflowProcess.start(res)
       })
       const dateAfter = new Date()
+      await new Promise((resolve) => setTimeout(resolve, 100))
 
-      expect(dateAfter.getTime() - dateBefore.getTime()).to.be.lt(100)
+      expect(dateAfter.getTime() - dateBefore.getTime()).to.be.lt(200)
       expect(spy.calledWith(message)).to.be.true
       expect(spy.calledOnce).to.be.true
    });
 
    it('should run scheduler according to cron expression when one is passed', async () => {
-      schedulerProps.set('cronExpression', '* * * * * *') // run every second
+      schedulerProps.set('cronExpression', '"* * * * * *"') // run every second
       activityGraph.addActivity(new Scheduler('a', 'act-a', schedulerProps))
 
       const startActivity = activityGraph.activityIdMapping.get('a') as WorkflowTriggerBase
@@ -62,16 +63,16 @@ describe('Scheduler trigger', () => {
       })
 
       // wait 5,5 secs to allow scheduler to run for some time
-      await new Promise((resolve, reject) => setTimeout(resolve, 5500))
+      await new Promise((resolve) => setTimeout(resolve, 5500))
 
       expect(spy.calledWith(message)).to.be.true
       expect(spy.callCount).to.be.gte(4)
       expect(spy.callCount).to.be.lte(6)
    });
 
-   it('should fail when crong cron expression is passed', async () => {
+   it('should fail when wrong cron expression is passed', async () => {
       let executionCount = 0
-      schedulerProps.set('cronExpression', '70 * -1 * *')
+      schedulerProps.set('cronExpression', '"70 * -1 * *"')
       activityGraph.addActivity(new Scheduler('a', 'act-a', schedulerProps))
 
       const startActivity = activityGraph.activityIdMapping.get('a') as WorkflowTriggerBase
