@@ -1,8 +1,9 @@
 import {ActivityResult} from 'turbo-dipaas-common/src/types/activity/ActivityResult'
-import WorkflowTriggerBase from '../WorkflowTriggerBase'
+import WorkflowTriggerBase from '../../WorkflowTriggerBase'
 import cron, {ScheduledTask} from 'node-cron'
 import {WorkflowProcessState} from "turbo-dipaas-common/src/enums/WorkflowProcessState";
-import WorkflowContext from "../../../../app/WorkflowContext";
+import WorkflowContext from "../../../../../app/WorkflowContext";
+import {evaluateProps} from "../../../../../app/utils/context/contextResolver";
 
 export default class Scheduler extends WorkflowTriggerBase {
    currentTriggerDate!: Date
@@ -12,10 +13,21 @@ export default class Scheduler extends WorkflowTriggerBase {
       super(id, name, params, resourceIds)
    }
 
+   protected run(params: Map<string, any> = this.params): Promise<ActivityResult> {
+      const returnData = new Map()
+      returnData.set('date', this.currentTriggerDate)
+
+      return Promise.resolve({
+         status: 200,
+         returnData: returnData
+      } as ActivityResult)
+   }
+
    async start(notifyFunction: (res: ActivityResult) => void): Promise<void> {
-      this.currentState = WorkflowProcessState.Running
-      const cronExpression = this.params.get('cronExpression')
-      if (this.params.get('runOnce') === true) {
+      const evaluatedParams = await evaluateProps(this.params, new WorkflowContext())
+      const cronExpression = evaluatedParams.get('cronExpression')
+
+      if (evaluatedParams.get('runOnce') == true) {
          this.currentTriggerDate = new Date
          notifyFunction(await this.invoke())
       } else if (cronExpression && cron.validate(cronExpression)) {
@@ -38,15 +50,5 @@ export default class Scheduler extends WorkflowTriggerBase {
       }
 
       this.currentState = WorkflowProcessState.Finished
-   }
-
-   invoke(context: WorkflowContext = new WorkflowContext()): Promise<ActivityResult> {
-      const returnData = new Map()
-      returnData.set('date', this.currentTriggerDate)
-
-      return Promise.resolve({
-         status: 200,
-         returnData: returnData
-      } as ActivityResult)
    }
 }
