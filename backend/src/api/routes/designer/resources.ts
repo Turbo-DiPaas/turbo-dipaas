@@ -1,39 +1,135 @@
 import express from 'express'
-import { InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum } from '../../../../../common/src/enums/DesignStructEnum';
-import {ResourceDetailsStruct} from 'turbo-dipaas-common/dist/types/api/design/ResourceStruct'
+import { InputFieldTypeEnum, TabEnum } from '../../../../../common/src/enums/DesignStructEnum';
+import { ResourceDetailsStruct } from 'turbo-dipaas-common/dist/types/api/design/ResourceStruct'
 
 const resourcesRouter = express.Router();
-const resources: ResourceDetailsStruct[] = [
-    {
-        'id': 'some-random-uuid',
-        'name': 'Polygon EVM connection',
-        'description': 'Polygon EVM connection',
-        'updated': '2022-09-01T00:00:00Z',
-        'icon': '/assets/resource-small.png',
-        'structure': {
-            tabs: [
-                {
-                    'type': TabEnum.GENERAL,
-                    'name': TabEnum.GENERAL,
-                    'description': 'General tab',
-                    'fields': [
-                        {
-                            'name': 'Input field 1',
-                            'type': InputFieldTypeEnum.FREE_INPUT
-                        },
-                        {
-                            'name': 'Input field 2',
-                            'type': SelectFieldTypeEnum.DROPDOWN,
-                            'options': [
-                                'option1',
-                                'option2'
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
+
+const evmEbiResource: ResourceDetailsStruct = {
+    'id': 'some-random-uuid',
+    'name': 'EVMABIResource',
+    'description': 'EVM ABI resource',
+    'updated': '2022-09-01T00:00:00Z',
+    'structure': {
+        tabs: [
+            {
+                'type': TabEnum.GENERAL,
+                'name': TabEnum.GENERAL,
+                'description': 'General tab',
+                'fields': [
+                    {
+                        'name': 'abi',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    }
+                ]
+            }
+        ]
     }
+};
+const privateKeyResource: ResourceDetailsStruct = {
+    'id': 'some-random-uuid',
+    'name': 'PreivateKeyResource',
+    'description': 'private key',
+    'updated': '2022-09-01T00:00:00Z',
+    'structure': {
+        tabs: [
+            {
+                'type': TabEnum.GENERAL,
+                'name': TabEnum.GENERAL,
+                'description': 'General tab',
+                'fields': [
+                    {
+                        'name': 'privateKey',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    }
+                ]
+            }
+        ]
+    }
+};
+const genericEVMConnectionResource: ResourceDetailsStruct = {
+    'id': 'some-random-uuid',
+    'name': 'GenericEVMConnectionResource',
+    'description': 'EVM connection',
+    'updated': '2022-09-01T00:00:00Z',
+    'structure': {
+        tabs: [
+            {
+                'type': TabEnum.GENERAL,
+                'name': TabEnum.GENERAL,
+                'description': 'General tab',
+                'fields': [
+                    {
+                        'name': 'privateKey',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'url',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    }
+                ]
+            }
+        ]
+    }
+};
+const httpConnectionResource: ResourceDetailsStruct = {
+    'id': 'some-random-uuid',
+    'name': 'HTTPConnection',
+    'description': 'http connection',
+    'updated': '2022-09-01T00:00:00Z',
+    'structure': {
+        tabs: [
+            {
+                'type': TabEnum.GENERAL,
+                'name': TabEnum.GENERAL,
+                'description': 'General tab',
+                'fields': [
+                    {
+                        'name': 'url',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'protocol',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'host',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'port',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'path',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'query',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'method',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'timeout',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    },
+                    {
+                        'name': 'headers',
+                        'type': InputFieldTypeEnum.FREE_INPUT
+                    }
+                ]
+            }
+        ]
+    }
+};
+
+const resources: ResourceDetailsStruct[] = [
+    evmEbiResource,
+    privateKeyResource,
+    genericEVMConnectionResource,
+    httpConnectionResource
 ]
 /**
 * @openapi

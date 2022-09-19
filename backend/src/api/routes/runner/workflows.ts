@@ -8,7 +8,7 @@ import SuccessTransition from '../../../lib/transition/SuccessTransition';
 import WorkflowTriggerBase from '../../../lib/activity/trigger/WorkflowTriggerBase';
 import { ActivityList } from '../../../lib/activity/ActivityList';
 import { randomUUID } from 'crypto';
-import { ActivityEnum, TriggerActivityEnum } from '../../../../../common/src/enums/DesignStructEnum';
+import { ActivityEnum, TriggerActivityEnum } from 'turbo-dipaas-common/src/enums/DesignStructEnum';
 
 const workflowsRouter = express.Router();
 const workflows: Map<string, WorkflowProcess> = new Map();

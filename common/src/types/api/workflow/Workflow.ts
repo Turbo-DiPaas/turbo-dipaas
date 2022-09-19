@@ -10,7 +10,7 @@ export type Structure = {
 }
 
 export type Workflow = {
-    id: Id,
+    id?: Id,
     name: Name,
     description?: LongText,
     updated: CustomDate,

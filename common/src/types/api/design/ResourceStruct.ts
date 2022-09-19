@@ -4,7 +4,7 @@ import { ObjectStruct } from "./ObjectStruct";
 import { StructureStruct } from "./StructureStruct";
 
 export type ResourceStruct = ObjectStruct & {
-    icon: Icon
+    icon?: Icon
 }
 
 export type ResourceDetailsStruct = ResourceStruct & {

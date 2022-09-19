@@ -1,16 +1,20 @@
 export enum ActivityCategoryEnum {
     SMART_CONTRACT = 'Smart Contract',
-    GENERAL = 'General'
+    GENERAL = 'General',
+    EVN = 'Evm',
+    SCHEDULER = 'Scheduler'
 }
 
 export enum ActivityEnum {
     LOG_ACTIVITY = 'LogActivity',
-    SEND_TRANSACTION = 'SendTransaction'
+    SEND_TRANSACTION = 'SendTransaction',
+    NO_OP = 'NoOpActivity',
+    MAPPER = 'MapperActivity'
 }
 
 export enum InputFieldTypeEnum {
-    FREE_INPUT,
-    BOOLEAN
+    FREE_INPUT = 'FreeInput',
+    BOOLEAN = 'Boolean'
 }
 
 export enum ResourceEnum {
@@ -19,7 +23,7 @@ export enum ResourceEnum {
 }
 
 export enum SelectFieldTypeEnum {
-    DROPDOWN
+    DROPDOWN = 'DropDown'
 }
 
 export enum TabEnum {
@@ -30,5 +34,6 @@ export enum TabEnum {
 }
 
 export enum TriggerActivityEnum {
-    SCHEDULER = 'Scheduler'
+    SCHEDULER = 'Scheduler',
+    EVM_EVENT_TRIGGER = 'EVMEventTrigger'
 }
