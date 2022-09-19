@@ -3,13 +3,9 @@ import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Node, Position,
 import { useSelector, useDispatch } from 'react-redux'
 import { incrementByAmount, setBlockData } from '../redux/reducers/workspaceNode'
 
-import TextUpdaterNode from './TextUpdaterNode';
-
 const rfStyle = {
   backgroundColor: '#EFEFEF',
 };
-
-const onPaneClick = (event) => console.log('onPaneClick', event);
 
 const initialNodes = [
   {
@@ -23,40 +19,12 @@ const initialNodes = [
 let id = 1;
 const getId = () => `${id++}`;
 
-// const initialNodes: Node[] = [
-//   { id: 'node-1', type: 'textUpdater', position: { x: 0, y: -400 }, data: { value: 123 } },
-//   {
-//     id: 'node-2',
-//     type: 'output',
-//     targetPosition: Position.Top,
-//     position: { x: 0, y: -300 },
-//     data: { label: 'node 2' },
-//   },
-//   {
-//     id: 'node-3',
-//     type: 'output',
-//     targetPosition: Position.Top,
-//     position: { x: 200, y: -300 },
-//     data: { label: 'node 3' },
-//   },
-// ];
-
-// const initialEdges = [
-//   { id: 'edge-1', source: 'node-1', target: 'node-2', sourceHandle: 'a' },
-//   { id: 'edge-2', source: 'node-1', target: 'node-3', sourceHandle: 'b' },
-// ];
-
-// we define the nodeTypes outside of the component to prevent re-renderings
-// you could also use useMemo inside the component
-const nodeTypes = { textUpdater: TextUpdaterNode };
 
 const fitViewOptions = {
   padding: 10,
 };
 
 function Workspace() {
-  // const [nodes, setNodes] = useState(initialNodes);
-  // const [edges, setEdges] = useState(initialEdges);
   const [captureElementClick, setCaptureElementClick] = useState(true);
   const count = useSelector((state: any) => state.counter.value);
   const blockData = useSelector((state: any) => state.counter.blockData);
@@ -66,12 +34,6 @@ function Workspace() {
     dispatch(setBlockData(node.data.label));
   }
 
-  // const onNodesChange = useCallback(
-  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-  //   [setNodes]
-  // );
-
-  ////////////////////
   const reactFlowWrapper = useRef<any>(null);
   const connectingNodeId = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -111,20 +73,16 @@ function Workspace() {
   return (
     <div className="wrapper"  style={{height: '500px',width: '1300px'}}  ref={reactFlowWrapper}>
       <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onConnectStart={onConnectStart}
-              onConnectStop={onConnectStop}
-              fitView
-              fitViewOptions={fitViewOptions}
-        // nodes={nodes}
-        // edges={edges}
-        // onNodesChange={onNodesChange}
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onConnectStart={onConnectStart}
+        onConnectStop={onConnectStop}
+        fitView
+        fitViewOptions={fitViewOptions}
         onNodeClick={captureElementClick ? onNodeClick : undefined}
-        // nodeTypes={nodeTypes}
         style={rfStyle}
       />
       <span>{count}</span>
