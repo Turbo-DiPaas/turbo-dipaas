@@ -6,10 +6,10 @@ import {WorkflowProcessState} from "turbo-dipaas-common/src/enums/WorkflowProces
 import ActivityBase from "../lib/activity/ActivityBase";
 
 export default class WorkflowProcess {
-   context: WorkflowContext
-   activityGraph: ActivityGraph
-   currentState: WorkflowProcessState
-   currentActivities: Map<string, ActivityBase> = new Map()
+   readonly context: WorkflowContext
+   readonly activityGraph: ActivityGraph
+   readonly currentActivities: Map<string, ActivityBase> = new Map()
+   protected currentState: WorkflowProcessState
 
    constructor(activityGraph: ActivityGraph) {
       this.activityGraph = activityGraph
@@ -29,7 +29,7 @@ export default class WorkflowProcess {
          })
    }
 
-   async processActivityTransition(activityTransition?: ActivityTransition) {
+   async processActivityTransition(activityTransition?: ActivityTransition): Promise<void> {
       if (activityTransition?.transition.canTransact(this.context)
          && !this.context.getActivityResult(activityTransition?.activity.id)) {
          const activity = activityTransition!.activity

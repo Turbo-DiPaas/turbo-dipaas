@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai'
 import sinon, {SinonSpy} from 'sinon';
-import LogActivity from "../../../../src/lib/activity/workflow/impl/LogActivity";
+import LogActivity from "../../../../src/lib/activity/workflow/impl/general/LogActivity";
 import WorkflowContext from "../../../../src/app/WorkflowContext";
 import ActivityResultPropsMock from "../mock/ActivityResultPropsMock";
 
@@ -16,7 +16,6 @@ describe('LogActivity', () => {
     beforeEach(() => {
         spy = sinon.spy(console, 'log');
         logActivity = new LogActivity('a', 'log activity')
-        logActivity.params = new Map<string, any>()
         logActivity.params.set('message', message)
     })
 

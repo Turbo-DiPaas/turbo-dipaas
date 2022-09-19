@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai'
 import ActivityGraph from '../../../../src/lib/activity/utils/ActivityGraph'
-import NoOpActivity from '../../../../src/lib/activity/workflow/impl/NoOpActivity'
+import NoOpActivity from '../../../../src/lib/activity/workflow/impl/general/NoOpActivity'
 import SuccessTransition from '../../../../src/lib/transition/SuccessTransition'
 import Scheduler from "../../../../src/lib/activity/trigger/impl/Scheduler";
 

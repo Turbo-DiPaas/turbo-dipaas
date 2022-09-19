@@ -2,9 +2,9 @@ import chai, { expect } from 'chai'
 import ActivityGraph from '../../src/lib/activity/utils/ActivityGraph'
 import SuccessTransition from '../../src/lib/transition/SuccessTransition'
 import Scheduler from "../../src/lib/activity/trigger/impl/Scheduler";
-import LogActivity from "../../src/lib/activity/workflow/impl/LogActivity";
 import WorkflowProcess from "../../src/app/WorkflowProcess";
 import WorkflowTriggerBase from "../../src/lib/activity/trigger/WorkflowTriggerBase";
+import LogActivity from "../../src/lib/activity/workflow/impl/general/LogActivity";
 
 describe('WorkflowProcess', () => {
     describe('multiple paths run', () => {

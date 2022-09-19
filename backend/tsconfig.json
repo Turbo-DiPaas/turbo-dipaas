@@ -14,9 +14,11 @@
       "experimentalDecorators": true,
    },
    "files": [
+      "./hardhat.config.ts"
    ],
    "include": [
-      "src/**/*.ts"
+      "src/**/*.ts",
+      "test/**/*"
    ],
    "exclude": ["node_modules", "src/**/*.spec.ts"]
 }
