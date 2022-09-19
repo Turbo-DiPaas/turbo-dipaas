@@ -13,7 +13,7 @@ const callService = async <T>(uri: string, requestOptions: RequestInit = DEFAULT
 
    var responseContent: ResponseContent<T> = { isOk: false, status: 500 };
 
-   return fetch(`${process.env.APP_BACKEND_URL}/${uri}`, options)
+   return fetch(`${process.env.REACT_APP_BACKEND_URL}/${uri}`, options)
       .then(response => {
 
          responseContent = { isOk: response.ok, status: response.status }

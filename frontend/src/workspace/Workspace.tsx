@@ -64,7 +64,7 @@ function Workspace() {
   const onNodeClick = (event, node) => {
     dispatch(incrementByAmount(2));
     dispatch(setBlockData(node.data.label));
-  } 
+  }
 
   // const onNodesChange = useCallback(
   //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
