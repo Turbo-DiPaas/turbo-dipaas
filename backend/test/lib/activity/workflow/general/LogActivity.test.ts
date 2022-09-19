@@ -1,8 +1,8 @@
 import chai, { expect } from 'chai'
 import sinon, {SinonSpy} from 'sinon';
-import LogActivity from "../../../../src/lib/activity/workflow/impl/general/LogActivity";
-import WorkflowContext from "../../../../src/app/WorkflowContext";
-import ActivityResultPropsMock from "../mock/ActivityResultPropsMock";
+import LogActivity from "../../../../../src/lib/activity/workflow/impl/general/LogActivity";
+import WorkflowContext from "../../../../../src/app/WorkflowContext";
+import ActivityResultPropsMock from "../../mock/ActivityResultPropsMock";
 
 describe('LogActivity', () => {
     let logActivity: LogActivity
@@ -16,7 +16,7 @@ describe('LogActivity', () => {
     beforeEach(() => {
         spy = sinon.spy(console, 'log');
         logActivity = new LogActivity('a', 'log activity')
-        logActivity.params.set('message', message)
+        logActivity.params.set('message', '"' + message + '"')
     })
 
     afterEach(() => {
@@ -37,7 +37,7 @@ describe('LogActivity', () => {
     })
 
     it('injects message data from context', async () => {
-        logActivity.params.set('message', 'test ${b.name} ${b.value} ${b.check} working')
+        logActivity.params.set('message', '"test " + b.name + " " + b.value + " " + b.check + " working"')
         await logActivity.invoke(context)
 
         expect(spy.calledWith('test props mock 250 true working')).to.be.true

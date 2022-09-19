@@ -1,4 +1,9 @@
 import WorkflowContext from "../../WorkflowContext";
+// @ts-ignore
+import mozjexl from 'mozjexl';
+import {addFunctions} from "./parserFunctions";
+
+addFunctions()
 
 /**
  * At this time
@@ -6,41 +11,23 @@ import WorkflowContext from "../../WorkflowContext";
  * @param context current workflow context
  * @returns new map containing evaluated values
  */
-const evaluateProps = (props: Map<string, any>, context: WorkflowContext): Map<string, any> => {
+const evaluateProps = async (props: Map<string, any>, context: WorkflowContext): Promise<Map<string, any>> => {
    const resultMap: Map<string, any> = new Map()
+   const workflowContextObject: any = context.getWorkflowContextObject()
+   const evaluationPromises: Promise<any>[] = []
 
    props.forEach((v, k) => {
-      if (v && typeof v === 'string') {
-         const matches = getPlaceholders(v)
-         matches.forEach((placeholder) => {
-            const [activity, prop] = placeholder.split('.')
-            const activityResult = context.getActivityResult(activity)
-
-            v = replacePlaceholder(v, placeholder, activityResult?.returnData.get(prop) ?? '')
+      //TODO: check if json stringify always returns proper values
+      const evalValue = typeof v !== 'string' ? JSON.stringify(v) : v
+      evaluationPromises.push(
+         mozjexl.eval(evalValue, workflowContextObject).then((res: any) => {
+            resultMap.set(k, res)
          })
-         resultMap.set(k, v)
-      } else {
-         resultMap.set(k, v)
-      }
+      )
    })
+
+   await Promise.all(evaluationPromises)
 
    return resultMap
 }
-
-const replacePlaceholder = (txt: string, placeholder: string, substitution: string): string => {
-   return txt.replace(`\${${placeholder}}`, substitution)
-}
-
-const getPlaceholders = (txt: string): string[] => {
-   let regex = /(\${(.+?\..+?)})/g
-   let matches = [];
-   let match = regex.exec(txt);
-   while (match != null) {
-      matches.push(match[2]);
-      match = regex.exec(txt);
-   }
-
-   return matches
-}
-
-export {evaluateProps, getPlaceholders}
+export {evaluateProps}
