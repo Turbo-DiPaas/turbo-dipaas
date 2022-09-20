@@ -1,6 +1,7 @@
 import ResponseContent from "../../types/interface/ResponseContent";
 import {callService} from "../ServiceBase";
 import {ActivitiesResponseType, ActivityResponseType} from "turbo-dipaas-common/src/types/api/design/ActivityStruct";
+import {InputFieldTypeEnum,ResourceEnum} from "../../types/enums/DesignStructEnum";
 
 //TODO: remove when backend is working
 const activities: ActivitiesResponseType = {
@@ -22,11 +23,11 @@ const activities: ActivitiesResponseType = {
                   "fields": [
                      {
                         "name": "Input field 1",
-                        "type": 0
+                        "type": InputFieldTypeEnum.FREE_INPUT
                      },
                      {
                         "name": "Input field 2",
-                        "type": 0,
+                        "type": InputFieldTypeEnum.DROPDOWN,
                         "options": [
                            "option1",
                            "option2"
@@ -52,8 +53,40 @@ const activities: ActivitiesResponseType = {
                   "description": "General tab",
                   "fields": [
                      {
+                        "name": "log resource",
+                        "type": InputFieldTypeEnum.RESOURCE_REF,
+                        "resourceType": ResourceEnum.EVM_CONNECTION
+                     },
+                     {
+                        "name": "name",
+                        "type": InputFieldTypeEnum.FREE_INPUT
+                     },
+                     {
+                        "name": "description",
+                        "type": InputFieldTypeEnum.FREE_INPUT
+                     },
+                  ]
+               },
+               {
+                  "type": "Input",
+                  "name": "Input mapping",
+                  "description": "Input mapping",
+                  "fields": [
+                     {
                         "name": "message",
-                        "type": 0
+                        "type": InputFieldTypeEnum.FREE_INPUT
+                     },
+                     {
+                        "name": "Input field 2",
+                        "type": InputFieldTypeEnum.DROPDOWN,
+                        "options": [
+                           "option1",
+                           "option2"
+                        ]
+                     },
+                     {
+                        "name": "check",
+                        "type": InputFieldTypeEnum.BOOLEAN
                      }
                   ]
                }
@@ -76,7 +109,7 @@ const activities: ActivitiesResponseType = {
                   "fields": [
                      {
                         "name": "runOnce",
-                        "type": 1
+                        "type": InputFieldTypeEnum.FREE_INPUT
                      }
                   ]
                }
