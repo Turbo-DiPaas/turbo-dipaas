@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import {AppState, NodeData} from "../../types/interface/AppState";
 import {ActivityDetailsStruct} from "turbo-dipaas-common/src/types/api/design/ActivityStruct";
 import {ResourceDetailsStruct} from "turbo-dipaas-common/src/types/api/design/ResourceStruct";
 import {Workflow} from "turbo-dipaas-common/src/types/api/workflow/Workflow";
+import {AppState, NodeData} from "../../types/interface/AppState";
 
 const initialState: AppState = {
   selectedActivityNode: {label: 'example', id: 'xyz'},
