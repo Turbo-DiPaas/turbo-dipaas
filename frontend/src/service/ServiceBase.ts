@@ -3,7 +3,7 @@ import ResponseContent from "../types/interface/ResponseContent";
 const DEFAULT_REQUEST_OPTIONS: RequestInit = {
    method: "GET",
    mode: "cors",
-   credentials: "include",
+   // credentials: "include",
 }
 
 const callService = async <T>(uri: string, requestOptions: RequestInit = DEFAULT_REQUEST_OPTIONS): Promise<ResponseContent<T>> => {

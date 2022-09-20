@@ -96,7 +96,8 @@ const exampleWorkflow: Workflow = {
                 "from": "act-1",
                 "to": "act-3"
             }
-        ]
+        ],
+        resources: []
     }
 }
 

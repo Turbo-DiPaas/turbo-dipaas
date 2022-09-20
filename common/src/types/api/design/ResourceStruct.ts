@@ -12,7 +12,7 @@ export type ResourceDetailsStruct = ResourceStruct & {
 }
 
 export type ResourcesResponseType = DesignResponse & {
-    resources: ResourceStruct[]
+    resources: ResourceDetailsStruct[]
 }
 
 export type ResourceResponseType = DesignResponse & ResourceDetailsStruct

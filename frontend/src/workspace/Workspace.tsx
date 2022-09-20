@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Node, Background,Position, useEdgesState, useNodesState, useReactFlow, BackgroundVariant } from 'react-flow-renderer';
 import { useSelector, useDispatch } from 'react-redux'
-import {setActivityCatalog, setBlockData, setWorkflow} from '../redux/reducers/workspaceNode'
+import {setActivityCatalog, setBlockData, setResourceCatalog, setWorkflow} from '../redux/reducers/workspaceNode'
 import TextUpdaterNode from './TextUpdaterNode';
 import {getActivities} from "../service/designer/Activity";
 import {AppStateReducer} from "../types/interface/AppState";
@@ -9,6 +9,7 @@ import PropertiesTab from "../component/properties-panel/PropertiesTab";
 import ConnectionLine from './ConnectionLine';
 import {Activity} from "turbo-dipaas-common/src/types/api/workflow/Activity";
 import {ResourceEnum} from "../types/enums/DesignStructEnum";
+import {getResources} from "../service/designer/Resource";
 
 const rfStyle = {
   // backgroundColor: '#EFEFEF',
@@ -59,6 +60,10 @@ function Workspace() {
        .then((v) => {
          dispatch(setActivityCatalog(v.data?.activities ?? []))
        })
+     getResources()
+        .then((v) => {
+           dispatch(setResourceCatalog(v.data?.resources ?? []))
+        })
   }, [])
 
   // const onNodesChange = useCallback(

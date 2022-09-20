@@ -1,6 +1,6 @@
 import express from 'express'
 import { ActivityDetailsStruct } from 'turbo-dipaas-common/src/types/api/design/ActivityStruct'
-import { ActivityCategoryEnum, ActivityEnum, InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum, TriggerActivityEnum } from '../../../../../common/src/enums/DesignStructEnum';
+import { ActivityCategoryEnum, ActivityEnum, InputFieldTypeEnum, TabEnum, TriggerActivityEnum } from '../../../../../common/src/enums/DesignStructEnum';
 
 const activitiesRouter = express.Router();
 const activities: ActivityDetailsStruct[] = [
@@ -24,7 +24,7 @@ const activities: ActivityDetailsStruct[] = [
                         },
                         {
                             'name': 'Input field 2',
-                            'type': SelectFieldTypeEnum.DROPDOWN,
+                            'type': InputFieldTypeEnum.DROPDOWN,
                             'options': [
                                 'option1',
                                 'option2'

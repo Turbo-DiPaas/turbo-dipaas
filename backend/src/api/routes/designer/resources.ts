@@ -1,5 +1,5 @@
 import express from 'express'
-import { InputFieldTypeEnum, SelectFieldTypeEnum, TabEnum } from 'turbo-dipaas-common/src/enums/DesignStructEnum';
+import { InputFieldTypeEnum, TabEnum } from 'turbo-dipaas-common/src/enums/DesignStructEnum';
 import {ResourceDetailsStruct} from 'turbo-dipaas-common/src/types/api/design/ResourceStruct'
 
 const resourcesRouter = express.Router();
@@ -23,7 +23,7 @@ const resources: ResourceDetailsStruct[] = [
                         },
                         {
                             'name': 'Input field 2',
-                            'type': SelectFieldTypeEnum.DROPDOWN,
+                            'type': InputFieldTypeEnum.DROPDOWN,
                             'options': [
                                 'option1',
                                 'option2'
@@ -88,7 +88,7 @@ resourcesRouter.get('/', (request, response) => {
         'updated': '2022-09-01T00:00:00Z',
         'resources': 
             resources.map(resource => {
-                return {resource};
+                return resource
             })
     })
 })
