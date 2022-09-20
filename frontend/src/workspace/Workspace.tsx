@@ -1,17 +1,27 @@
-import { useCallback, useRef, useState } from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Node, Position, useEdgesState, useNodesState, useReactFlow } from 'react-flow-renderer';
 import { useSelector, useDispatch } from 'react-redux'
-import { incrementByAmount, setBlockData } from '../redux/reducers/workspaceNode'
+import {setActivityCatalog, setBlockData} from '../redux/reducers/workspaceNode'
+
+import TextUpdaterNode from './TextUpdaterNode';
+import {getActivities} from "../service/designer/Activity";
+import {AppStateReducer} from "../types/interface/AppState";
+import PropertiesTab from "../component/properties-panel/PropertiesTab";
 
 const rfStyle = {
   backgroundColor: '#EFEFEF',
 };
 
+const onPaneClick = (event) => console.log('onPaneClick', event);
+
 const initialNodes = [
   {
     id: '0',
     type: 'input',
-    data: { label: 'Node' },
+    data: {
+      label: 'Node',
+      id: 'xyz'
+    },
     position: { x: 0, y: -4001 },
   },
 ];
@@ -19,6 +29,32 @@ const initialNodes = [
 let id = 1;
 const getId = () => `${id++}`;
 
+// const initialNodes: Node[] = [
+//   { id: 'node-1', type: 'textUpdater', position: { x: 0, y: -400 }, data: { value: 123 } },
+//   {
+//     id: 'node-2',
+//     type: 'output',
+//     targetPosition: Position.Top,
+//     position: { x: 0, y: -300 },
+//     data: { label: 'node 2' },
+//   },
+//   {
+//     id: 'node-3',
+//     type: 'output',
+//     targetPosition: Position.Top,
+//     position: { x: 200, y: -300 },
+//     data: { label: 'node 3' },
+//   },
+// ];
+
+// const initialEdges = [
+//   { id: 'edge-1', source: 'node-1', target: 'node-2', sourceHandle: 'a' },
+//   { id: 'edge-2', source: 'node-1', target: 'node-3', sourceHandle: 'b' },
+// ];
+
+// we define the nodeTypes outside of the component to prevent re-renderings
+// you could also use useMemo inside the component
+const nodeTypes = { textUpdater: TextUpdaterNode };
 
 const fitViewOptions = {
   padding: 10,
@@ -26,14 +62,32 @@ const fitViewOptions = {
 
 function Workspace() {
   const [captureElementClick, setCaptureElementClick] = useState(true);
-  const count = useSelector((state: any) => state.counter.value);
-  const blockData = useSelector((state: any) => state.counter.blockData);
-  const dispatch = useDispatch()
-  const onNodeClick = (event, node) => {
-    dispatch(incrementByAmount(2));
-    dispatch(setBlockData(node.data.label));
+  const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
+  const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
+
+  const onEdgeClick = (event, edge) => {
+    console.log(edge)
   }
 
+  const dispatch = useDispatch()
+  const onNodeClick = (event, node) => {
+    dispatch(setBlockData(node.data));
+  }
+
+  // initialize app on first render
+  useEffect(() => {
+    getActivities()
+       .then((v) => {
+         dispatch(setActivityCatalog(v.data?.activities ?? []))
+       })
+  }, [])
+
+  // const onNodesChange = useCallback(
+  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+  //   [setNodes]
+  // );
+
+  ////////////////////
   const reactFlowWrapper = useRef<any>(null);
   const connectingNodeId = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -57,7 +111,10 @@ function Workspace() {
           id,
           // we are removing the half of the node width (75) to center the new node
           position: project({ x: event.clientX - left - 75, y: event.clientY - top }),
-          data: { label: `Node ${id}` },
+          data: {
+            label: `Node ${id}`,
+            id: Math.random() + '' //TODO: change to alpha random string
+          },
         };
 
         setNodes((nds) => nds.concat(newNode));
@@ -73,21 +130,22 @@ function Workspace() {
   return (
     <div className="wrapper"  style={{height: '500px',width: '1300px'}}  ref={reactFlowWrapper}>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onConnectStart={onConnectStart}
-        onConnectStop={onConnectStop}
-        fitView
-        fitViewOptions={fitViewOptions}
-        onNodeClick={captureElementClick ? onNodeClick : undefined}
-        style={rfStyle}
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onConnectStart={onConnectStart}
+              onConnectStop={onConnectStop}
+              fitView
+              fitViewOptions={fitViewOptions}
+              onEdgeClick={captureElementClick ? onEdgeClick : undefined}
+              onNodeClick={captureElementClick ? onNodeClick : undefined}
+              // nodeTypes={nodeTypes}
+              style={rfStyle}
       />
-      <span>{count}</span>
-      <br/>
-      <span>{blockData?.label}</span>
+      <span>{selectedActivityNode?.label}</span>
+      <PropertiesTab />
     </div>
   );
 }

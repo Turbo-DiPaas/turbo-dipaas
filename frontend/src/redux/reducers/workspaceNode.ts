@@ -1,41 +1,52 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import {ActivityDetailsStruct} from "turbo-dipaas-common/src/types/api/design/ActivityStruct";
+import {ResourceDetailsStruct} from "turbo-dipaas-common/src/types/api/design/ResourceStruct";
+import {Workflow} from "turbo-dipaas-common/src/types/api/workflow/Workflow";
+import {AppState, NodeData} from "../../types/interface/AppState";
 
-export interface CounterState {
-  value: number;
-  blockData: {label: String};
+const initialState: AppState = {
+  selectedActivityNode: {label: 'example', id: 'xyz'},
+  resourcesCatalog: [],
+  activityCatalog: [],
+  workflow: {
+    id: "xyz",
+    name: "New workflow",
+    updated: new Date().toDateString(),
+    description: "New workflow",
+    structure: {}
+  }
 }
 
-const initialState: CounterState = {
-  value: 0,
-  blockData: {label: 'example'}
-}
-
-export const counterSlice = createSlice({
-  name: 'counter',
+export const appSlice = createSlice({
+  name: 'app',
   initialState,
   reducers: {
-    increment: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.value += 1
+    setBlockData: (state, action: PayloadAction<NodeData>) => {
+      state.selectedActivityNode = action.payload
     },
-    decrement: (state) => {
-      state.value -= 1
+
+    setActivityCatalog: (state, action: PayloadAction<ActivityDetailsStruct[]>) => {
+      state.activityCatalog = action.payload
     },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload
+
+    setResourceCatalog: (state, action: PayloadAction<ResourceDetailsStruct[]>) => {
+      state.resourcesCatalog = action.payload
     },
-    setBlockData: (state, action: PayloadAction<string>) => {
-      state.blockData.label = action.payload
+
+    setWorkflow: (state, action: PayloadAction<Workflow>) => {
+      state.workflow = action.payload
     },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount, setBlockData } = counterSlice.actions
+export const {
+  setBlockData,
+  setResourceCatalog,
+  setActivityCatalog,
+   setWorkflow
+} = appSlice.actions
 
-export default counterSlice.reducer
+export default appSlice.reducer
   
