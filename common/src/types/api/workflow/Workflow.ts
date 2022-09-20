@@ -4,9 +4,9 @@ import { Resource } from "./Resource"
 import { Transition } from "./Transition"
 
 export type Structure = {
-    activities?: Activity[],
-    transitions?: Transition[],
-    resources?: Resource[]
+    activities: Activity[],
+    transitions: Transition[],
+    resources: Resource[]
 }
 
 export type Workflow = {

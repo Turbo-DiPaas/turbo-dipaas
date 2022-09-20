@@ -1,12 +1,14 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Node, Position, useEdgesState, useNodesState, useReactFlow } from 'react-flow-renderer';
-import { useSelector, useDispatch } from 'react-redux'
-import {setActivityCatalog, setBlockData} from '../redux/reducers/workspaceNode'
+import ReactFlow, {addEdge, useEdgesState, useNodesState, useReactFlow} from 'react-flow-renderer';
+import {useDispatch, useSelector} from 'react-redux'
+import {setActivityCatalog, setBlockData, setWorkflow} from '../redux/reducers/workspaceNode'
 
 import TextUpdaterNode from './TextUpdaterNode';
 import {getActivities} from "../service/designer/Activity";
 import {AppStateReducer} from "../types/interface/AppState";
 import PropertiesTab from "../component/properties-panel/PropertiesTab";
+import {Activity} from "turbo-dipaas-common/src/types/api/workflow/Activity";
+import {ResourceEnum} from "../types/enums/DesignStructEnum";
 
 const rfStyle = {
   backgroundColor: '#EFEFEF',
@@ -107,13 +109,14 @@ function Workspace() {
         // we need to remove the wrapper bounds, in order to get the correct position
         const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
         const id = getId();
+        const newNodePosition = project({ x: event.clientX - left - 75, y: event.clientY - top })
         const newNode = {
           id,
           // we are removing the half of the node width (75) to center the new node
-          position: project({ x: event.clientX - left - 75, y: event.clientY - top }),
+          position: newNodePosition,
           data: {
             label: `Node ${id}`,
-            id: Math.random() + '' //TODO: change to alpha random string
+            id: id
           },
         };
 
@@ -121,11 +124,54 @@ function Workspace() {
         setEdges((eds) =>
           eds.concat({ id, source: connectingNodeId.current as any, target: id })
         );
+
+        //TODO: add possibility to select the activity
+        const updatedWorkflow = JSON.parse(JSON.stringify(workflow))
+        updatedWorkflow.structure.activities!.push({
+            id: id,
+            name: "name",
+            type: "LogActivity",
+            position: {
+              x: newNodePosition.x,
+              y: newNodePosition.y
+            },
+            params: [
+              {
+                name: 'message',
+                value: `"Logging ${id}"`
+              }
+            ]
+          } as Activity)
+
+        updatedWorkflow.structure.transitions!.push({
+          id: `${edges.length + 1}`,
+          from: `${connectingNodeId.current}`,
+          to: id
+        })
+
+        //TODO: delete after testing
+        if (updatedWorkflow.structure.resources?.length === 0) {
+          updatedWorkflow.structure.resources!.push({
+               id: 'resttest',
+               type: ResourceEnum.EVM_CONNECTION,
+               name: 'test res',
+               params: []
+             },
+             {
+               id: 'resttest 2',
+               type: ResourceEnum.EVM_CONNECTION,
+               name: 'test res 2',
+               params: []
+             }
+             )
+        }
+
+         console.log(updatedWorkflow.structure)
+        dispatch(setWorkflow(updatedWorkflow))
       }
     },
     [project]
   );
-  
 
   return (
     <div className="wrapper"  style={{height: '500px',width: '1300px'}}  ref={reactFlowWrapper}>
@@ -144,7 +190,6 @@ function Workspace() {
               // nodeTypes={nodeTypes}
               style={rfStyle}
       />
-      <span>{selectedActivityNode?.label}</span>
       <PropertiesTab />
     </div>
   );
