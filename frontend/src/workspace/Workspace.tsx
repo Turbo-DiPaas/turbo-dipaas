@@ -1,6 +1,13 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Node, Background,Position, useEdgesState, useNodesState, useReactFlow, BackgroundVariant } from 'react-flow-renderer';
-import { useSelector, useDispatch } from 'react-redux'
+import ReactFlow, {
+   addEdge,
+   Background,
+   BackgroundVariant,
+   useEdgesState,
+   useNodesState,
+   useReactFlow
+} from 'react-flow-renderer';
+import {useDispatch, useSelector} from 'react-redux'
 import {setActivityCatalog, setBlockData, setResourceCatalog, setWorkflow} from '../redux/reducers/workspaceNode'
 import TextUpdaterNode from './TextUpdaterNode';
 import {getActivities} from "../service/designer/Activity";
@@ -10,6 +17,7 @@ import ConnectionLine from './ConnectionLine';
 import {Activity} from "turbo-dipaas-common/src/types/api/workflow/Activity";
 import {ResourceEnum} from "../types/enums/DesignStructEnum";
 import {getResources} from "../service/designer/Resource";
+import {ActivityEnum} from "../types/enums/DesignStructEnum";
 
 const rfStyle = {
   // backgroundColor: '#EFEFEF',
@@ -125,15 +133,15 @@ function Workspace() {
             ]
           } as Activity)
 
-        updatedWorkflow.structure.transitions!.push({
+        updatedWorkflow.structure.transitions.push({
           id: `${edges.length + 1}`,
           from: `${connectingNodeId.current}`,
           to: id
         })
 
         //TODO: delete after testing
-        if (updatedWorkflow.structure.resources?.length === 0) {
-          updatedWorkflow.structure.resources!.push({
+        if (updatedWorkflow.structure.resources.length === 0) {
+          updatedWorkflow.structure.resources.push({
                id: 'resttest',
                type: ResourceEnum.EVM_CONNECTION,
                name: 'test res',
@@ -148,11 +156,10 @@ function Workspace() {
              )
         }
 
-         console.log(updatedWorkflow.structure)
-        dispatch(setWorkflow(updatedWorkflow))
+         dispatch(setWorkflow(updatedWorkflow))
       }
     },
-    [project]
+    [project, workflow]
   );
 
   return (
@@ -175,7 +182,7 @@ function Workspace() {
               >
               <Background variant={BackgroundVariant.Lines} />
       </ReactFlow>
-      <span>{selectedActivityNode?.label}</span>
+      <span>{workflow.structure.activities.length}</span>
       <PropertiesTab />
     </div>
   );

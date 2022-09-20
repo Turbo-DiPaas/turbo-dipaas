@@ -6,6 +6,18 @@ import {useEffect, useState} from "react";
 import {ActivityDetailsStruct} from "turbo-dipaas-common/src/types/api/design/ActivityStruct";
 import {TabStruct} from "turbo-dipaas-common/src/types/api/design/TabStruct";
 import {
+   Tabs,
+   TabList,
+   TabPanels,
+   Tab,
+   TabPanel,
+   FormControl,
+   Input,
+   Checkbox,
+   Select,
+   FormLabel, Divider
+} from '@chakra-ui/react'
+import {
    FieldStruct,
    ResourceSelectFieldStruct,
    SelectFieldStruct
@@ -39,38 +51,38 @@ function createField(field: FieldStruct, id: string) {
       case InputFieldTypeEnum.FREE_INPUT:
          mappedFieldInput = (
             <div>
-               <input type={"text"} id={id} value={matchingParam?.value ? matchingParam!.value + '' : ''}></input>
+               <Input id={id} onChange={(e) => {console.log({e})}} value={matchingParam?.value ? matchingParam!.value + '' : ''}></Input>
             </div>)
          break
 
       case InputFieldTypeEnum.BOOLEAN:
          mappedFieldInput = (
             <div>
-               <input type={"checkbox"} id={id} checked={matchingParam?.value === true}></input>
+               <Checkbox id={id} checked={matchingParam?.value === true}></Checkbox>
             </div>)
          break
 
       case InputFieldTypeEnum.DROPDOWN:
          mappedFieldInput = (
             <div>
-               <select id={id}>
+               <Select id={id}>
                   {(field as unknown as SelectFieldStruct).options.map((v) => {
                      return <option selected={v === matchingParam?.value}>{v}</option>
                   })}
-               </select>
+               </Select>
             </div>)
          break
 
       case InputFieldTypeEnum.RESOURCE_REF:
          mappedFieldInput = (
             <div>
-               <select id={id}>
+               <Select id={id}>
                   {workflow.structure.resources.filter((v) => {
                      return v.type === (field as unknown as ResourceSelectFieldStruct).resourceType
                   }).map((v) => {
                         return <option id={v.id}>{v.name}</option>
                      })}
-               </select>
+               </Select>
             </div>)
          break
 
@@ -80,10 +92,10 @@ function createField(field: FieldStruct, id: string) {
    }
 
    return (
-      <>
-         <label htmlFor={`${id}`}>{field.name}</label>
+      <FormControl>
+         <FormLabel>{field.name}</FormLabel>
          {mappedFieldInput}
-      </>
+      </FormControl>
    )
 }
 
@@ -95,9 +107,9 @@ function createField(field: FieldStruct, id: string) {
             <>
                <h2>{tab.type} {tab.name}</h2>
                <p>{tab.description}</p>
+               <Divider />
                {tab.fields.map((v, i) => {
                   return createField(v, `${v.name}-${i}`)
-
                })}
             </>
          </div>
@@ -105,18 +117,29 @@ function createField(field: FieldStruct, id: string) {
    }
 
    return (
-      <div style={{display: "flex"}}>
-         <ul>
-            {
-               selectedActivityStruct?.structure.tabs.map((v, i) => {
-                  return <li onClick={() => setSelectedPane(i)}><a href={"#"}>{v.name}</a></li>
-               })
-            }
-         </ul>
-         {
-            createPropertiesTab(selectedActivityStruct?.structure.tabs[selectedPane])
-         }
-      </div>
+      <>
+         <br/>{selectedActivityNode?.id}
+         <Tabs>
+            <TabList>
+               {
+                  selectedActivityStruct?.structure.tabs.map((v, i) => {
+                     return <Tab>{v.name}</Tab>
+                  })
+               }
+            </TabList>
+
+            <TabPanels>
+               {
+                  selectedActivityStruct?.structure.tabs.map((v, i) => {
+                     return (
+                        <TabPanel>
+                           {createPropertiesTab(selectedActivityStruct?.structure.tabs[selectedPane])}
+                        </TabPanel>)
+                  })
+               }
+            </TabPanels>
+         </Tabs>
+      </>
    )
 
 }
