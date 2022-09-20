@@ -171,7 +171,6 @@ function Workspace() {
               <Background variant={BackgroundVariant.Lines} />
       </ReactFlow>
       <span>{selectedActivityNode?.label}</span>
-      />
       <PropertiesTab />
     </div>
   );
