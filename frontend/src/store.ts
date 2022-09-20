@@ -11,7 +11,11 @@ const initialState: AppState = {
     name: "New workflow",
     updated: new Date().toDateString(),
     description: "New workflow",
-    structure: {}
+    structure: {
+      activities: [],
+      resources: [],
+      transitions: []
+    }
   }
 }
 

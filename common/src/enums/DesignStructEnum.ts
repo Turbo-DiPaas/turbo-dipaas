@@ -10,16 +10,14 @@ export enum ActivityEnum {
 
 export enum InputFieldTypeEnum {
     FREE_INPUT,
-    BOOLEAN
+    BOOLEAN,
+    DROPDOWN,
+    RESOURCE_REF
 }
 
 export enum ResourceEnum {
     EVM_CONNECTION = 'EVM connection',
     IPFS_CONNECTON = 'IPFS(File) connection'
-}
-
-export enum SelectFieldTypeEnum {
-    DROPDOWN
 }
 
 export enum TabEnum {
