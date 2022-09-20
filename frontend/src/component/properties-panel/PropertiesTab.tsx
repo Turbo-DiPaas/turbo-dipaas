@@ -32,7 +32,6 @@ function PropertiesTab () {
    const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
    const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>()
    const [selectedActivityStruct, setSelectedActivityStruct] = useState<ActivityDetailsStruct | undefined>()
-   const [selectedPane, setSelectedPane] = useState<number>(0)
 
    useEffect(() => {
       const matchingActivity = workflow.structure.activities?.find((v) => {return selectedActivityNode?.id === v.id})
@@ -122,7 +121,7 @@ function createField(field: FieldStruct, id: string) {
          <Tabs>
             <TabList>
                {
-                  selectedActivityStruct?.structure.tabs.map((v, i) => {
+                  selectedActivityStruct?.structure.tabs.map((v) => {
                      return <Tab>{v.name}</Tab>
                   })
                }
@@ -130,10 +129,10 @@ function createField(field: FieldStruct, id: string) {
 
             <TabPanels>
                {
-                  selectedActivityStruct?.structure.tabs.map((v, i) => {
+                  selectedActivityStruct?.structure.tabs.map((v) => {
                      return (
                         <TabPanel>
-                           {createPropertiesTab(selectedActivityStruct?.structure.tabs[selectedPane])}
+                           {createPropertiesTab(v)}
                         </TabPanel>)
                   })
                }

@@ -8,7 +8,7 @@ import ReactFlow, {
    useReactFlow
 } from 'react-flow-renderer';
 import {useDispatch, useSelector} from 'react-redux'
-import {setActivityCatalog, setBlockData, setResourceCatalog, setWorkflow} from '../redux/reducers/workspaceNode'
+import {setActivityCatalog, setSelectedNodeData, setResourceCatalog, setWorkflow} from '../redux/reducers/workspaceNode'
 import TextUpdaterNode from './TextUpdaterNode';
 import {getActivities} from "../service/designer/Activity";
 import {AppStateReducer} from "../types/interface/AppState";
@@ -59,7 +59,7 @@ function Workspace() {
 
   const dispatch = useDispatch()
   const onNodeClick = (event, node) => {
-    dispatch(setBlockData(node.data));
+    dispatch(setSelectedNodeData(node.data));
   }
 
   // initialize app on first render
@@ -182,7 +182,6 @@ function Workspace() {
               >
               <Background variant={BackgroundVariant.Lines} />
       </ReactFlow>
-      <span>{workflow.structure.activities.length}</span>
       <PropertiesTab />
     </div>
   );

@@ -10,10 +10,15 @@ export interface AppStateReducer {
 export type NodeData = {
    id: string,
    label: string,
+   position?: {
+      x: number,
+      y: number,
+   }
 }
 
-export type EdgeType = NodeData & {
-
+export type EdgeData = NodeData & {
+   fromId: string,
+   toId: string,
 }
 
 export interface AppState {
