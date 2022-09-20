@@ -4,7 +4,7 @@
 .react-flow .react-flow__handle {
   width: 30px;
   height: 14px;
-  border-radius: 3px;
+  border-radius: 10px;
   background-color: #784be8;
 }
 
@@ -29,6 +29,11 @@
 .react-flow .react-flow__edge path,
 .react-flow__connectionline path {
   stroke-width: 2;
+}
+
+.react-flow__node-input.selectable.selected, .react-flow__node-default.selectable.selected {
+  border-color: #784be8;
+  box-shadow: 0 0 0 0.5px #784be8;
 }
 
 .wrapper {

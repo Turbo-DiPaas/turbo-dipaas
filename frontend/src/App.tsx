@@ -6,7 +6,7 @@ import Workspace from './workspace/Workspace';
 function App() {
   return (
     <>
-      <div className="App">
+      <div style={{height: '500px',width: '1000px', float:'left', minHeight: '160px',maxHeight: '2000px'}}  className="App">
         <ReactFlowProvider>
           <Workspace></Workspace>
         </ReactFlowProvider>

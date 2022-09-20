@@ -1,17 +1,17 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import ReactFlow, {addEdge, useEdgesState, useNodesState, useReactFlow} from 'react-flow-renderer';
-import {useDispatch, useSelector} from 'react-redux'
+import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Node, Background,Position, useEdgesState, useNodesState, useReactFlow, BackgroundVariant } from 'react-flow-renderer';
+import { useSelector, useDispatch } from 'react-redux'
 import {setActivityCatalog, setBlockData, setWorkflow} from '../redux/reducers/workspaceNode'
-
 import TextUpdaterNode from './TextUpdaterNode';
 import {getActivities} from "../service/designer/Activity";
 import {AppStateReducer} from "../types/interface/AppState";
 import PropertiesTab from "../component/properties-panel/PropertiesTab";
+import ConnectionLine from './ConnectionLine';
 import {Activity} from "turbo-dipaas-common/src/types/api/workflow/Activity";
 import {ResourceEnum} from "../types/enums/DesignStructEnum";
 
 const rfStyle = {
-  backgroundColor: '#EFEFEF',
+  // backgroundColor: '#EFEFEF',
 };
 
 const onPaneClick = (event) => console.log('onPaneClick', event);
@@ -24,35 +24,12 @@ const initialNodes = [
       label: 'Node',
       id: 'xyz'
     },
-    position: { x: 0, y: -4001 },
+    position: { x: -2020, y: -5 },
   },
 ];
 
 let id = 1;
 const getId = () => `${id++}`;
-
-// const initialNodes: Node[] = [
-//   { id: 'node-1', type: 'textUpdater', position: { x: 0, y: -400 }, data: { value: 123 } },
-//   {
-//     id: 'node-2',
-//     type: 'output',
-//     targetPosition: Position.Top,
-//     position: { x: 0, y: -300 },
-//     data: { label: 'node 2' },
-//   },
-//   {
-//     id: 'node-3',
-//     type: 'output',
-//     targetPosition: Position.Top,
-//     position: { x: 200, y: -300 },
-//     data: { label: 'node 3' },
-//   },
-// ];
-
-// const initialEdges = [
-//   { id: 'edge-1', source: 'node-1', target: 'node-2', sourceHandle: 'a' },
-//   { id: 'edge-2', source: 'node-1', target: 'node-3', sourceHandle: 'b' },
-// ];
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
@@ -122,7 +99,7 @@ function Workspace() {
 
         setNodes((nds) => nds.concat(newNode));
         setEdges((eds) =>
-          eds.concat({ id, source: connectingNodeId.current as any, target: id })
+          eds.concat({ id,type: 'smoothstep', source: connectingNodeId.current as any, target: id })
         );
 
         //TODO: add possibility to select the activity
@@ -174,7 +151,7 @@ function Workspace() {
   );
 
   return (
-    <div className="wrapper"  style={{height: '500px',width: '1300px'}}  ref={reactFlowWrapper}>
+    <div className="wrapper"  style={{height: '100%',width: '100%', float:'left'}}  ref={reactFlowWrapper}>
       <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -187,8 +164,13 @@ function Workspace() {
               fitViewOptions={fitViewOptions}
               onEdgeClick={captureElementClick ? onEdgeClick : undefined}
               onNodeClick={captureElementClick ? onNodeClick : undefined}
+              connectionLineComponent={ConnectionLine as any}
               // nodeTypes={nodeTypes}
               style={rfStyle}
+              >
+              <Background variant={BackgroundVariant.Lines} />
+      </ReactFlow>
+      <span>{selectedActivityNode?.label}</span>
       />
       <PropertiesTab />
     </div>
