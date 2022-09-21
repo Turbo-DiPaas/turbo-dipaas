@@ -70,11 +70,11 @@ function PropertiesTab () {
 
    function upsertAsset(id: string | undefined, newType: string) {
       const notMatchingActivities: Activity[] = []
-      let matchingActivity: Activity | undefined = undefined
+      // let matchingActivity: Activity | undefined = undefined
 
       workflow.structure.activities.forEach((v) => {
          if(v.id === id) {
-            matchingActivity = v
+            // matchingActivity = v
          } else {
             notMatchingActivities.push(v)
          }
