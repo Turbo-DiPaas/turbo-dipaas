@@ -8,6 +8,12 @@ export enum ActivityEnum {
     SEND_TRANSACTION = 'SendTransaction'
 }
 
+export enum AssetType {
+    ACTIVITY,
+    RESOURCE,
+    TRANSITION
+}
+
 export enum InputFieldTypeEnum {
     FREE_INPUT,
     BOOLEAN,

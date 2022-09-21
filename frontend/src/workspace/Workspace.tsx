@@ -31,7 +31,7 @@ const initialNodes = [
     type: 'input',
     data: {
       label: 'Node',
-      id: 'xyz'
+      id: '0'
     },
     position: { x: -2020, y: -5 },
   },
@@ -182,7 +182,6 @@ function Workspace() {
               >
               <Background variant={BackgroundVariant.Lines} />
       </ReactFlow>
-      <PropertiesTab />
     </div>
   );
 }

@@ -3,7 +3,6 @@ import appReducer from './redux/reducers/workspaceNode';
 import {AppState} from "./types/interface/AppState";
 
 const initialState: AppState = {
-  selectedActivityNode: {label: 'example', id: 'xyz'},
   resourcesCatalog: [],
   activityCatalog: [],
   workflow: {
