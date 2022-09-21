@@ -5,10 +5,11 @@ import {useEffect, useState} from "react";
 import {ActivityDetailsStruct} from "turbo-dipaas-common/src/types/api/design/ActivityStruct";
 import {TabStruct} from "turbo-dipaas-common/src/types/api/design/TabStruct";
 import {
+   Button,
    Checkbox,
    Divider,
    FormControl,
-   FormLabel,
+   FormLabel, Grid, GridItem,
    Input,
    Select,
    Tab,
@@ -25,8 +26,8 @@ import {
 //TODO: resolve issues with enums from common package
 import {AssetType, InputFieldTypeEnum} from "../../types/enums/DesignStructEnum";
 import {AvailableAssetOptions} from "../../types/struct/AvailableAssetOptions";
-import {TriggerActivityEnum} from "../../types/enums/DesignStructEnum";
 import {setWorkflow} from "../../redux/reducers/workspaceNode";
+import {TriggerActivityEnum} from "../../types/enums/DesignStructEnum";
 
 function PropertiesTab () {
    const activityCatalog = useSelector((state: AppStateReducer) => state.app.activityCatalog);
@@ -52,8 +53,11 @@ function PropertiesTab () {
       const isStarterActivity = selectedActivityNode?.id === '0'
 
       const activitySubtype = isStarterActivity ? 'starter' : 'workflow'
+
       const matchingAssets = activityCatalog.filter((v) => {
-         return isStarterActivity === (v.type === TriggerActivityEnum.SCHEDULER)
+         const isStarterActivityType = v.type.toString() === TriggerActivityEnum.SCHEDULER.toString() || v.type.toString() === TriggerActivityEnum.EVM_EVENT_SCHEDULER.toString()
+
+         return isStarterActivity === isStarterActivityType
       })
 
       setAvailableAssetOptions({
@@ -77,7 +81,14 @@ function PropertiesTab () {
       })
 
       // @ts-ignore
-      const newAssetType = availableAssetOptions?.matchingAssetCatalog?.find((v) => {return v.name === newType}) as ActivityDetailsStruct | undefined
+      const newActivityStruct = availableAssetOptions?.matchingAssetCatalog?.find((v) => {return v.name === newType}) as ActivityDetailsStruct | undefined
+      const newActivity: Activity = {
+         type: newActivityStruct!.type,
+         name: newType,
+         id: selectedActivityNode!.id,
+         params: [],
+         position: selectedActivityNode!.position!
+      }
 
       dispatch(setWorkflow({
          id: workflow.id,
@@ -87,15 +98,12 @@ function PropertiesTab () {
          structure: {
             resources: workflow.structure.resources,
             transitions: workflow.structure.transitions,
-            activities: [... notMatchingActivities, {
-               type: newAssetType!.type,
-               name: newType,
-               id: selectedActivityNode!.id,
-               params: [],
-               position: selectedActivityNode!.position!
-            }]
+            activities: [... notMatchingActivities, newActivity ]
          }
       }))
+
+      setSelectedActivityStruct(newActivityStruct)
+      setSelectedActivity(newActivity)
    }
 
    function createField(field: FieldStruct, id: string) {
@@ -114,6 +122,23 @@ function PropertiesTab () {
             mappedFieldInput = (
                <div>
                   <Checkbox id={id} checked={matchingParam?.value === true}></Checkbox>
+               </div>)
+            break
+
+         case InputFieldTypeEnum.FREE_INPUT_LIST:
+            mappedFieldInput = (
+               <div>
+                  <Grid templateColumns='repeat(7, 1fr)' gap={6}>
+                     <GridItem colSpan={3}>
+                        Name: <Input id={id} onChange={(e) => {console.log({e})}}></Input>
+                     </GridItem>
+                     <GridItem colSpan={3}>
+                        Value: <Input id={id} onChange={(e) => {console.log({e})}}></Input>
+                     </GridItem>
+                     <GridItem>
+                        <Button>++</Button>
+                     </GridItem>
+                  </Grid>
                </div>)
             break
 
@@ -148,7 +173,7 @@ function PropertiesTab () {
 
       return (
          <FormControl>
-            <FormLabel>{field.name}</FormLabel>
+            <FormLabel>{field.displayName}</FormLabel>
             {mappedFieldInput}
          </FormControl>
       )
@@ -175,7 +200,7 @@ function PropertiesTab () {
       <div>
          <FormControl>
             <FormLabel>Asset type</FormLabel>
-            <Select onChange={(e) => upsertAsset(selectedActivityStruct?.id, e.target.value)} value={selectedActivityStruct?.name}>
+            <Select onChange={(e) => upsertAsset(selectedActivity?.id, e.target.value)} value={selectedActivityStruct?.name}>
                <option></option>
                {
                   availableAssetOptions?.matchingAssetCatalog?.map((v) => {
