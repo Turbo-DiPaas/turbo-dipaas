@@ -1,7 +1,18 @@
 import LogActivity from "./workflow/impl/general/LogActivity"
+import InvokeEVMActivity from "./workflow/impl/evm/InvokeEVMActivity";
+import NoOpActivity from "./workflow/impl/general/NoOpActivity";
+import HTTPRequestReplyActivity from "./workflow/impl/http/HTTPRequestReplyActivity";
+import MapperActivity from "./workflow/impl/general/MapperActivity";
+
 import Scheduler from "./trigger/impl/general/Scheduler"
+import EVMEventTrigger from "./trigger/impl/evm/EVMEventTrigger";
 
 export const ActivityList: any = {
     LogActivity,
-    Scheduler
+    InvokeEVMActivity,
+    NoOpActivity,
+    HTTPRequestReplyActivity,
+    MapperActivity,
+    Scheduler,
+    EVMEventTrigger
 }

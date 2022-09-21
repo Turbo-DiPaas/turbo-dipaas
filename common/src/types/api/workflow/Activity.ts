@@ -8,5 +8,6 @@ export type Activity = {
     type: ActivityEnum | TriggerActivityEnum,
     name: Name,
     params?: Param[],
+    resources?: string[],
     position: Position
 }

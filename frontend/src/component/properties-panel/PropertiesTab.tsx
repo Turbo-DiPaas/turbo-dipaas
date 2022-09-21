@@ -94,7 +94,7 @@ function PropertiesTab () {
          id: workflow.id,
          name: workflow.name,
          description: workflow.description,
-         updated: Date.toString(),
+         updated: new Date().toDateString(),
          structure: {
             resources: workflow.structure.resources,
             transitions: workflow.structure.transitions,

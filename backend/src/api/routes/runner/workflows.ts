@@ -135,21 +135,22 @@ workflowsRouter.get("/", (request, response) => {
  */
 workflowsRouter.post("/", (request, response) => {
     let activityGraph: ActivityGraph = new ActivityGraph()
-    request.body.structure.activities.forEach((activity: Activity) => {
+    const workflow: Workflow = request.body
+    workflow.structure.activities.forEach((activity: Activity) => {
         const props: Map<string, any> = new Map()
         activity.params?.forEach(param => {
             props.set(param.name, param.value)
         })
-        let activityObject = new ActivityList[activity.type](activity.id, activity.name, props);
+        let activityObject = new ActivityList[activity.type](activity.id, activity.name, props, activity.resources);
         activityGraph.addActivity(activityObject)
     });
 
-    request.body.structure.transitions?.forEach((transition: Transition) => {
+    workflow.structure.transitions?.forEach((transition: Transition) => {
         let transitionObject = new SuccessTransition(transition.from, transition.to)
         activityGraph.addTransition(transitionObject)
     })
 
-    let workflowId = randomUUID();
+    let workflowId = workflow.id?.length > 0 ? workflow.id : randomUUID()
     workflows.set(workflowId, (new WorkflowProcess(activityGraph)))
     
     response.send({
