@@ -1,6 +1,4 @@
-.App {
-  text-align: center;
-}
+
 .react-flow .react-flow__handle {
   width: 30px;
   height: 14px;
@@ -40,6 +38,8 @@
   flex-grow: 1;
   height: 100%;
 }
+
+
 
 
 @keyframes App-logo-spin {
