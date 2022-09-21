@@ -5,6 +5,7 @@ import Workspace from './workspace/Workspace';
 import ResourcesPanel from './component/resources-panel/ResourcesPanel';
 import ControlsPanel from './component/controls-panel/ControlsPanel';
 import { ChakraProvider } from '@chakra-ui/react'
+import PropertiesTab from "./component/properties-panel/PropertiesTab";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
               </ReactFlowProvider>
            </div>
            <ControlsPanel/>
+           <PropertiesTab />
         </ChakraProvider>
      </>
   );

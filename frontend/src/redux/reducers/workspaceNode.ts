@@ -6,7 +6,6 @@ import {Workflow} from "turbo-dipaas-common/src/types/api/workflow/Workflow";
 import {AppState, NodeData} from "../../types/interface/AppState";
 
 const initialState: AppState = {
-  selectedActivityNode: {label: 'example', id: 'xyz'},
   resourcesCatalog: [],
   activityCatalog: [],
   workflow: {
@@ -26,7 +25,11 @@ export const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setBlockData: (state, action: PayloadAction<NodeData>) => {
+    setSelectedNodeData: (state, action: PayloadAction<NodeData>) => {
+      state.selectedActivityNode = action.payload
+    },
+
+    setEdgeData: (state, action: PayloadAction<NodeData>) => {
       state.selectedActivityNode = action.payload
     },
 
@@ -46,7 +49,7 @@ export const appSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  setBlockData,
+  setSelectedNodeData,
   setResourceCatalog,
   setActivityCatalog,
    setWorkflow
