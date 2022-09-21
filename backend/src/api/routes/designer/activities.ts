@@ -42,13 +42,13 @@ const activities: ActivityDetailsStruct[] = [
                         },
                         {
                             'name': 'abi',
-                            'displayName': 'ABI resource',
+                            'displayName': 'ABI Resource',
                             'type': InputFieldTypeEnum.RESOURCE_REF,
                             'resourceType': ResourceEnum.EVM_ABI
                         },
                         {
                             'name': 'EVMConnection',
-                            'displayName': 'EVM Connection',
+                            'displayName': 'EVM Connection Resource',
                             'type': InputFieldTypeEnum.RESOURCE_REF,
                             'resourceType': ResourceEnum.EVM_CONNECTION
                         },
@@ -62,8 +62,8 @@ const activities: ActivityDetailsStruct[] = [
         'name': 'HTTP Request Reply',
         'description': 'Call any HTTP endpoint for data',
         'updated': '2022-09-21T00:00:00Z',
-        'category': ActivityCategoryEnum.EVM,
-        'type': ActivityEnum.INVOKE_EVM,
+        'category': ActivityCategoryEnum.HTTP,
+        'type': ActivityEnum.HTTP_REQUEST_REPLY,
         'structure': {
             tabs: [
                 {
@@ -73,7 +73,7 @@ const activities: ActivityDetailsStruct[] = [
                     'fields': [
                         {
                             'name': 'HTTPConnection',
-                            'displayName': 'HTTP Connection',
+                            'displayName': 'HTTP Connection Resource',
                             'type': InputFieldTypeEnum.RESOURCE_REF,
                             'resourceType': ResourceEnum.HTTP_CONNECTION
                         },
@@ -97,8 +97,8 @@ const activities: ActivityDetailsStruct[] = [
                     'description': 'General tab',
                     'fields': [
                         {
-                            'name': 'HTTPConnection',
-                            'displayName': 'HTTP Connection',
+                            'name': 'data',
+                            'displayName': 'Data',
                             'type': InputFieldTypeEnum.FREE_INPUT_LIST,
                         },
                     ]
@@ -183,7 +183,7 @@ const activities: ActivityDetailsStruct[] = [
         'description': 'runs every time that specific EVM event is generated',
         'updated': '2022-09-21T00:00:00Z',
         'category': ActivityCategoryEnum.GENERAL,
-        'type': TriggerActivityEnum.EVM,
+        'type': TriggerActivityEnum.EVM_EVENT_SCHEDULER,
         'structure': {
             tabs: [
                 {
@@ -203,13 +203,13 @@ const activities: ActivityDetailsStruct[] = [
                         },
                         {
                             'name': 'abi',
-                            'displayName': 'ABI resource',
+                            'displayName': 'ABI Resource',
                             'type': InputFieldTypeEnum.RESOURCE_REF,
                             'resourceType': ResourceEnum.EVM_ABI
                         },
                         {
                             'name': 'EVMConnection',
-                            'displayName': 'EVM Connection',
+                            'displayName': 'EVM Connection Resource',
                             'type': InputFieldTypeEnum.RESOURCE_REF,
                             'resourceType': ResourceEnum.EVM_CONNECTION
                         },
