@@ -77,7 +77,14 @@ function PropertiesTab () {
       })
 
       // @ts-ignore
-      const newAssetType = availableAssetOptions?.matchingAssetCatalog?.find((v) => {return v.name === newType}) as ActivityDetailsStruct | undefined
+      const newActivityStruct = availableAssetOptions?.matchingAssetCatalog?.find((v) => {return v.name === newType}) as ActivityDetailsStruct | undefined
+      const newActivity: Activity = {
+         type: newActivityStruct!.type,
+         name: newType,
+         id: selectedActivityNode!.id,
+         params: [],
+         position: selectedActivityNode!.position!
+      }
 
       dispatch(setWorkflow({
          id: workflow.id,
@@ -87,15 +94,12 @@ function PropertiesTab () {
          structure: {
             resources: workflow.structure.resources,
             transitions: workflow.structure.transitions,
-            activities: [... notMatchingActivities, {
-               type: newAssetType!.type,
-               name: newType,
-               id: selectedActivityNode!.id,
-               params: [],
-               position: selectedActivityNode!.position!
-            }]
+            activities: [... notMatchingActivities, newActivity ]
          }
       }))
+
+      setSelectedActivityStruct(newActivityStruct)
+      setSelectedActivity(newActivity)
    }
 
    function createField(field: FieldStruct, id: string) {
@@ -175,7 +179,7 @@ function PropertiesTab () {
       <div>
          <FormControl>
             <FormLabel>Asset type</FormLabel>
-            <Select onChange={(e) => upsertAsset(selectedActivityStruct?.id, e.target.value)} value={selectedActivityStruct?.name}>
+            <Select onChange={(e) => upsertAsset(selectedActivity?.id, e.target.value)} value={selectedActivityStruct?.name}>
                <option></option>
                {
                   availableAssetOptions?.matchingAssetCatalog?.map((v) => {
