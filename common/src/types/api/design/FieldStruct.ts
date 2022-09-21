@@ -2,7 +2,8 @@ import { InputFieldTypeEnum, ResourceEnum } from "../../../enums/DesignStructEnu
 import { Name, OptionList } from "../../GlobalBasicTypes"
 
 export type FieldBaseStruct = {
-    name: Name
+    name: Name,
+    displayName: Name
 }
 
 export type InputFieldStruct = FieldBaseStruct & {
