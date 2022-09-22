@@ -7,11 +7,12 @@ import ControlsPanel from './component/controls-panel/ControlsPanel';
 import { ChakraProvider } from '@chakra-ui/react'
 import PropertiesTab from "./component/properties-panel/PropertiesTab";
 import {createUseStyles} from 'react-jss'
+import Tree from './component/properties-tree/PropertiesTab';
 const useStyles = createUseStyles({
    gridContainer: {
       display: 'grid',
       gridTemplateColumns: '305px 1100px 305px',
-      gap: '24px',
+      columnGap: '24px',
       padding: '24px 72px 24px 72px',
       '& > div': {
       backgroundColor: 'white',
@@ -19,19 +20,39 @@ const useStyles = createUseStyles({
       }
    },
    propertiesTab: {
+      display: 'grid',
+      gridTemplateColumns: '305px auto',
+      gap: '16px',
       borderRadius: '8px',
       background: 'white',
       float: 'left',
       width: '100%',
       marginTop: '16px',
+      marginBottom: '24px',
       padding: '16px',
    },
+   treeContainer: {
+      width: '300px',
+      padding: '16px',
+      borderRight: '1px solid #eee'
+   }
  })
 
  const padding16 = {padding: '16px'}
 
+const treeState = {
+   tree: {
+     name: "root",
+     data: [
+       {name: "one", data: [{name: "two", data: [{name: "three", data: [{name: "four", data: null}]}]}]},
+       {name: "one", data: [{name: "two", data: [{name: "three", data: [{name: "four", data: null}]}]}]},
+       {name: "one", data: [{name: "two", data: [{name: "three", data: [{name: "four", data: null}]}]}]}
+     ]
+   }
+ }
+
 function App() {
-   const classes = useStyles()
+   const classes = useStyles();
   return (
      <div>
         <ChakraProvider>
@@ -43,13 +64,19 @@ function App() {
                   <ReactFlowProvider>
                      <Workspace></Workspace>
                   </ReactFlowProvider>
-                  <div className={classes.propertiesTab}>
-                     <PropertiesTab />
-                  </div>
+
                </div>
                <div style={padding16}>
                   <ControlsPanel/>
                </div>
+               <div style={{visibility: 'hidden'}}></div>
+               <div className={classes.propertiesTab}>
+                     <div className={classes.treeContainer}>
+                        <Tree name={treeState.tree.name} data={treeState.tree.data} level={0} />
+                     </div>
+                     <PropertiesTab />
+               </div>
+               <div style={{visibility: 'hidden'}}></div>
             </div>
         </ChakraProvider>
      </div>

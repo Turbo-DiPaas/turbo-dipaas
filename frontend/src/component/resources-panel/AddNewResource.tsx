@@ -170,8 +170,8 @@ const useStyles = createUseStyles({
     return (
        <div>
           <>
-             <h2>{tab.type} {tab.name}</h2>
-             <p>{tab.description}</p>
+             {/* <h2>{tab.type} {tab.name}</h2>
+             <p>{tab.description}</p> */}
              <Divider />
              {tab.fields.map((v, i) => {
                 return createField(v, `${v.name}-${i}`)
