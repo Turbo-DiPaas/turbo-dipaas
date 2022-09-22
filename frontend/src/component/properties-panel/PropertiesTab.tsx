@@ -235,8 +235,8 @@ function PropertiesTab () {
       return (
          <div>
             <>
-               <h2>{tab.type} {tab.name}</h2>
-               <p>{tab.description}</p>
+               {/* <h2>{tab.type} {tab.name}</h2>
+               <p>{tab.description}</p> */}
                <Divider />
                {tab.fields.map((v, i) => {
                   return createField(v, `${v.name}-${i}`)
@@ -247,7 +247,7 @@ function PropertiesTab () {
    }
 
    return (
-      <div>
+      <div style={{padding: '16px'}}>
          <FormControl>
             <FormLabel>Asset type</FormLabel>
             <Select onChange={(e) => changeActivityType(selectedActivity?.id, e.target.value)} value={selectedActivityStruct?.name}>
