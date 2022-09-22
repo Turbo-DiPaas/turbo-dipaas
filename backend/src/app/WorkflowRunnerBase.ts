@@ -10,6 +10,7 @@ export default abstract class WorkflowRunnerBase {
    readonly activityGraph: ActivityGraph
    protected runningProcesses: WorkflowProcess[] = []
    protected currentState: WorkflowProcessState
+   private starterActivity?: WorkflowTriggerBase
 
    constructor(workflow: Workflow) {
       this.workflow = workflow
@@ -30,8 +31,8 @@ export default abstract class WorkflowRunnerBase {
          throw new Error("Unable to deduce starting activity. Will stop now.")
       }
 
-      const starterActivity = this.activityGraph.activityIdMapping.get(starterActivityId) as WorkflowTriggerBase
-      starterActivity.start((activityResult: ActivityResult) => {
+      this.starterActivity = this.activityGraph.activityIdMapping.get(starterActivityId) as WorkflowTriggerBase
+      this.starterActivity.start((activityResult: ActivityResult) => {
          this.currentState = WorkflowProcessState.Running
          const newProcess = new WorkflowProcess(this.activityGraph)
          this.runningProcesses.push(newProcess)
@@ -43,8 +44,11 @@ export default abstract class WorkflowRunnerBase {
    stop(): void {
       this.currentState = WorkflowProcessState.Stopping
       this.runningProcesses.forEach((v) => {
+         // Stop running processes
          v.stop()
       })
+      // Stop trigger
+      this.starterActivity?.stop()
       this.cleanup()
       this.currentState = WorkflowProcessState.Stopped
    }
