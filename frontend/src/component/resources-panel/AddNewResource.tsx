@@ -25,9 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppStateReducer } from '../../types/interface/AppState';
 import {setWorkflow} from "../../redux/reducers/workspaceNode";
 import { ResourceDetailsStruct } from 'turbo-dipaas-common/src/types/api/design/ResourceStruct';
-import { AvailableAssetOptions } from '../../types/struct/AvailableAssetOptions';
 import { Resource } from 'turbo-dipaas-common/src/types/api/workflow/Resource';
-import { Activity } from 'turbo-dipaas-common/src/types/api/workflow/Activity';
 
 const useStyles = createUseStyles({
     addButton: {
@@ -40,44 +38,15 @@ const useStyles = createUseStyles({
    const { isOpen, onOpen, onClose } = useDisclosure();
 
    const resourceCatalog = useSelector((state: AppStateReducer) => state.app.resourcesCatalog);
-   // const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
    const [selectedResource, setSelectedResource] = useState<Resource | undefined>();
    const [selectedResourceStruct, setSelectedResourceStruct] = useState<ResourceDetailsStruct | undefined>();
-   // const [availableAssetOptions, setAvailableAssetOptions] = useState<AvailableAssetOptions | undefined>();
-   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>()
    const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
    const dispatch = useDispatch();
 
-   useEffect(() => {
-      // setSelectedResourceStruct(matchingActivityStruct)
-
-//    //  const matchingActivity =
-//    //     selectedActivityNode ?
-//    //        workflow.structure.activities.find((v) => {return selectedActivityNode?.id === v.id})
-//    //        : undefined
-//    //  const matchingActivityStruct = activityCatalog.find((v) => {return matchingActivity?.type === v.type})
-
-//    //  setSelectedResource(matchingActivity)
-
-//    //  const isStarterActivity = selectedActivityNode?.id === '0'
-
-//    //  const activitySubtype = isStarterActivity ? 'starter' : 'workflow'
-//    //  const matchingAssets = activityCatalog.filter((v) => {
-//    //     return isStarterActivity === (v.type === TriggerActivityEnum.SCHEDULER)
-//    //  })
-
-//    //  setAvailableAssetOptions({
-//    //     type: AssetType.RESOURCE,
-//    //     subtype: activitySubtype,
-//    //     matchingAssetCatalog: matchingAssets,
-//    //  })
-
- }, [])
+   useEffect(() => {}, [])
 
    function upsertAsset(id: string | undefined, newType: string) {
         const notMatchingResources: Resource[] = []
-      //   let matchingResources: Resource | undefined = undefined
-
         workflow.structure.resources.forEach((v) => {
           if(v.id === id) {
             // matchingResources = v
