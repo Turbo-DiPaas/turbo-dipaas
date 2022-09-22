@@ -7,7 +7,7 @@ import {
     ResourceEnum,
     TabEnum,
     TriggerActivityEnum
-} from '../../../../../common/src/enums/DesignStructEnum';
+} from 'turbo-dipaas-common/src/enums/DesignStructEnum';
 
 const activitiesRouter = express.Router();
 const activities: ActivityDetailsStruct[] = [
@@ -38,7 +38,7 @@ const activities: ActivityDetailsStruct[] = [
                         {
                             'name': 'transactionRecipient',
                             'displayName': 'Recipient address',
-                            'type': InputFieldTypeEnum.FREE_INPUT
+                            'type': InputFieldTypeEnum.ADDRESS
                         },
                         {
                             'name': 'abi',

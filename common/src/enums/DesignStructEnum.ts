@@ -21,6 +21,7 @@ export enum AssetType {
 export enum InputFieldTypeEnum {
     FREE_INPUT,
     FREE_INPUT_LIST, // type in which you define arbitrary input list
+    ADDRESS,
     BOOLEAN,
     DROPDOWN,
     RESOURCE_REF
