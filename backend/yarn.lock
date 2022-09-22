@@ -536,6 +536,11 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@js-joda/core@^5.3.1":
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/@js-joda/core/-/core-5.3.1.tgz#998557969f357b4494649d4a63164d02645295af"
+  integrity sha512-iHHyIRLEfXLqBN+BkyH8u8imMYr4ihRbFDEk8toqTwUECETVQFCTh2U59Sw2oMoRVaS3XRIb7pyCulltq2jFVA==
+
 "@jsdevtools/ono@^7.1.3":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@jsdevtools/ono/-/ono-7.1.3.tgz#9df03bbd7c696a5c58885c34aa06da41c8543796"

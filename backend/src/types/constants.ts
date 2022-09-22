@@ -3,4 +3,5 @@ export type Constants = {
 }
 
 type Ids = {
+   logger: string
 }
