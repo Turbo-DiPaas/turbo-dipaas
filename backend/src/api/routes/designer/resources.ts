@@ -66,8 +66,8 @@ const resources: ResourceDetailsStruct[] = [
     },
     {
         'id': 'ac666271-badd-4e46-87d9-a87c71e59091',
-        'name': 'Polygon EVM connection',
-        'description': 'Polygon EVM connection',
+        'name': 'HTTP Connection',
+        'description': 'HTTP Connection',
         'updated': '2022-09-01T00:00:00Z',
         'icon': '/assets/resource-small.png',
         'type': ResourceEnum.HTTP_CONNECTION,

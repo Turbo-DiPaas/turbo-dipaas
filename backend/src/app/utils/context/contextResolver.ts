@@ -18,12 +18,17 @@ const evaluateProps = async (props: Map<string, any>, context: WorkflowContext):
 
    props.forEach((v, k) => {
       //TODO: check if json stringify always returns proper values
-      const evalValue = typeof v !== 'string' ? JSON.stringify(v) : v
-      evaluationPromises.push(
-         mozjexl.eval(evalValue, workflowContextObject).then((res: any) => {
-            resultMap.set(k, res)
-         })
-      )
+      //TODO: inform user about the error
+      try {
+         const evalValue = typeof v !== 'string' ? JSON.stringify(v) : v
+         evaluationPromises.push(
+            mozjexl.eval(evalValue, workflowContextObject).then((res: any) => {
+               resultMap.set(k, res)
+            })
+         )
+      } catch(e) {
+         console.log(e)
+      }
    })
 
    await Promise.all(evaluationPromises)
