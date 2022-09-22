@@ -43,12 +43,12 @@ export default abstract class WorkflowRunnerBase {
 
    stop(): void {
       this.currentState = WorkflowProcessState.Stopping
+      // Stop trigger
+      this.starterActivity?.stop()
       this.runningProcesses.forEach((v) => {
          // Stop running processes
          v.stop()
       })
-      // Stop trigger
-      this.starterActivity?.stop()
       this.cleanup()
       this.currentState = WorkflowProcessState.Stopped
    }
