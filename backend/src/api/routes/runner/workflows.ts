@@ -120,7 +120,7 @@ workflowsRouter.post("/:id/stop", (request, response) => {
  *                  id:
  *                    type: string
  */
-workflowsRouter.post("/:id/logs", (request, response) => {
+workflowsRouter.get("/:id/logs", (request, response) => {
     const workflow = workflows.get(request.params.id)
     const resp = fs.readFileSync('log.txt')
 
