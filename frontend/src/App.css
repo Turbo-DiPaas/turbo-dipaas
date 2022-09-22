@@ -1,10 +1,8 @@
-.App {
-  text-align: center;
-}
+
 .react-flow .react-flow__handle {
   width: 30px;
   height: 14px;
-  border-radius: 3px;
+  border-radius: 10px;
   background-color: #784be8;
 }
 
@@ -31,10 +29,17 @@
   stroke-width: 2;
 }
 
+.react-flow__node-input.selectable.selected, .react-flow__node-default.selectable.selected {
+  border-color: #784be8;
+  box-shadow: 0 0 0 0.5px #784be8;
+}
+
 .wrapper {
   flex-grow: 1;
   height: 100%;
 }
+
+
 
 
 @keyframes App-logo-spin {

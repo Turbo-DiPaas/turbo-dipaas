@@ -13,7 +13,7 @@ export type ActivityDetailsStruct = ActivityStruct & {
 }
 
 export type ActivitiesResponseType = DesignResponse & {
-    activities: ActivityStruct[];
+    activities: ActivityDetailsStruct[];
 }
 
 export type ActivityResponseType = DesignResponse & ActivityDetailsStruct

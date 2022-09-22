@@ -1,104 +1,13 @@
 import express from 'express'
-import WorkflowProcess from '../../../app/WorkflowProcess';
 import ActivityGraph from '../../../lib/activity/utils/ActivityGraph';
-import { Activity } from 'turbo-dipaas-common/dist/types/api/workflow/Activity'
-import { Transition } from 'turbo-dipaas-common/dist/types/api/workflow/Transition';
-import { Workflow } from 'turbo-dipaas-common/dist/types/api/workflow/Workflow';
-import SuccessTransition from '../../../lib/transition/SuccessTransition';
-import WorkflowTriggerBase from '../../../lib/activity/trigger/WorkflowTriggerBase';
-import { ActivityList } from '../../../lib/activity/ActivityList';
 import { randomUUID } from 'crypto';
-import { ActivityEnum, TriggerActivityEnum } from '../../../../../common/src/enums/DesignStructEnum';
+import WorkflowRunner from "../../../app/WorkflowRunner";
+import {workflowFromJson} from "../../../app/utils/workflow";
+import Workflow from "../../../app/Workflow";
+import * as fs from "fs";
 
 const workflowsRouter = express.Router();
-const workflows: Map<string, WorkflowProcess> = new Map();
-const exampleWorkflow: Workflow = {
-    id: 'c4cc6e3a-3650-11ed-a261-0242ac120002',
-    name: 'Example workflow',
-    description: 'An example workflow',
-    updated: '2022-09-01T00:00:00Z',
-    structure: {
-        activities: [
-            {
-                "id": "act-1",
-                "type": ActivityEnum.LOG_ACTIVITY,
-                "name": "Test Log activity",
-                "params": [
-                    {
-                        "name": "message",
-                        "value": "test log message"
-                    }
-                ],
-                "position": {
-                    x: 1,
-                    y: 1
-                }
-            },
-            {
-                "id": "act-2",
-                "type": ActivityEnum.LOG_ACTIVITY,
-                "name": "Test Log activity 2 ",
-                "params": [
-                    {
-                        "name": "message",
-                        "value": "second test log message"
-                    }
-                ],
-                "position": {
-                    x: 2,
-                    y: 2
-                }
-            },
-            {
-                "id": "act-3",
-                "type": ActivityEnum.LOG_ACTIVITY,
-                "name": "Test Log activity 3 ",
-                "params": [
-                    {
-                        "name": "message",
-                        "value": "third test log message"
-                    }
-                ],
-                "position": {
-                    x: 3,
-                    y: 3
-                }
-            },
-            {
-                "id": "trigger",
-                "type": TriggerActivityEnum.SCHEDULER,
-                "name": "Scheduler activity",
-                "params": [
-                    {
-                        "name": "runOnce",
-                        "value": true
-                    }
-                ],
-                "position": {
-                    x: 4,
-                    y: 4
-                }
-            }
-        ],
-        transitions: [
-            {
-                "id": "trans-1",
-                "from": "trigger",
-                "to": "act-1"
-            },
-            {
-                "id": "trans-2",
-                "from": "act-1",
-                "to": "act-2"
-            },
-            {
-                "id": "trans-3",
-                "from": "act-1",
-                "to": "act-3"
-            }
-        ]
-    }
-}
+const workflows: Map<string, WorkflowRunner> = new Map();
 
 /**
  * @openapi
@@ -115,7 +24,7 @@ const exampleWorkflow: Workflow = {
  *                    type: string
  */
 workflowsRouter.get("/", (request, response) => {
-    response.send(exampleWorkflow)
+    response.send({})
 })
 
 /**
@@ -134,22 +43,10 @@ workflowsRouter.get("/", (request, response) => {
  */
 workflowsRouter.post("/", (request, response) => {
     let activityGraph: ActivityGraph = new ActivityGraph()
-    request.body.structure.activities.forEach((activity: Activity) => {
-        const props: Map<string, any> = new Map()
-        activity.params?.forEach(param => {
-            props.set(param.name, param.value)
-        })
-        let activityObject = new ActivityList[activity.type](activity.id, activity.name, props);
-        activityGraph.addActivity(activityObject)
-    });
+    const workflow: Workflow = workflowFromJson(request.body)
 
-    request.body.structure.transitions?.forEach((transition: Transition) => {
-        let transitionObject = new SuccessTransition(transition.from, transition.to)
-        activityGraph.addTransition(transitionObject)
-    })
-
-    let workflowId = randomUUID();
-    workflows.set(workflowId, (new WorkflowProcess(activityGraph)))
+    let workflowId = workflow.id?.length > 0 ? workflow.id : randomUUID()
+    workflows.set(workflowId, new WorkflowRunner(workflow))
     
     response.send({
         id: workflowId
@@ -158,7 +55,7 @@ workflowsRouter.post("/", (request, response) => {
 
 /**
  * @openapi
- * /runner/workflows/{id}:
+ * /runner/workflows/{id}/start:
  *  post:
  *    description: Start workflow by id
  *    parameters:
@@ -173,13 +70,61 @@ workflowsRouter.post("/", (request, response) => {
  *        description: Successfully started specified workflow
  */
 workflowsRouter.post("/:id/start", (request, response) => {
-    const workflow = workflows.get(request.params.id)
-    const activityGraph = workflow!.activityGraph
-    const startActivity = activityGraph.activityIdMapping.get(activityGraph.getRootId())as WorkflowTriggerBase
-    startActivity.start(res => {
-        workflow?.start(res)
-    })
+    const workflowRunner = workflows.get(request.params.id)
+    workflowRunner?.start()
+
     response.send()
+})
+
+/**
+ * @openapi
+ * /runner/workflows/{id}/stop:
+ *  post:
+ *    description: Stop workflow by id
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        requrired: true
+ *        schema:
+ *          type: string
+ *        description: The workflow ID
+ *    responses:
+ *      200:
+ *        description: Successfully stopped specified workflow
+ */
+workflowsRouter.post("/:id/stop", (request, response) => {
+    const workflow = workflows.get(request.params.id)
+    workflow?.stop()
+
+    response.send()
+})
+
+/**
+ * @openapi
+ * /runner/workflows/{id}/logs:
+ *  get:
+ *    description: Get logs for workflow
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        requrired: true
+ *        schema:
+ *          type: string
+ *        description: The workflow ID
+ *    responses:
+ *      200:
+ *        description: Successfully stopped specified workflow
+ *        content:
+ *          text/plain:
+ *              schema:
+ *                  id:
+ *                    type: string
+ */
+workflowsRouter.post("/:id/logs", (request, response) => {
+    const workflow = workflows.get(request.params.id)
+    const resp = fs.readFileSync('log.txt')
+
+    response.send(resp.toString())
 })
 
 

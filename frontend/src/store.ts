@@ -1,11 +1,29 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './redux/reducers/workspaceNode';
+import appReducer from './redux/reducers/workspaceNode';
+import {AppState} from "./types/interface/AppState";
 
-const initialState = { counter: {value: 0, blockData: {label: 'example'} }};
+const initialState: AppState = {
+  resourcesCatalog: [],
+  activityCatalog: [],
+  workflow: {
+    id: "xyz",
+    name: "New workflow",
+    updated: new Date().toDateString(),
+    description: "New workflow",
+    structure: {
+      activities: [],
+      resources: [],
+      transitions: []
+    }
+  }
+}
+
+// @ts-ignore
+window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 
 export default configureStore({
   preloadedState: initialState as any,
   reducer: {
-    counter: counterReducer,
+    app: appReducer,
   },
 })

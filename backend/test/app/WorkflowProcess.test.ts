@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai'
 import ActivityGraph from '../../src/lib/activity/utils/ActivityGraph'
 import SuccessTransition from '../../src/lib/transition/SuccessTransition'
-import Scheduler from "../../src/lib/activity/trigger/impl/Scheduler";
+import Scheduler from "../../src/lib/activity/trigger/impl/general/Scheduler";
 import WorkflowProcess from "../../src/app/WorkflowProcess";
 import WorkflowTriggerBase from "../../src/lib/activity/trigger/WorkflowTriggerBase";
 import LogActivity from "../../src/lib/activity/workflow/impl/general/LogActivity";
@@ -23,7 +23,7 @@ describe('WorkflowProcess', () => {
             const increment = () => {
                 i += 1
                 const logProps: Map<string, any> = new Map()
-                logProps.set('message', `logging number ${i}`)
+                logProps.set('message', '"' + `logging number ${i}` + '"')
                 return logProps
             }
 
@@ -54,7 +54,7 @@ describe('WorkflowProcess', () => {
 
         it('should run basic workflow without issues', async () => {
             const startActivity = activityGraph.activityIdMapping.get(activityGraph.getRootId()) as WorkflowTriggerBase
-            startActivity.start(res => {
+            await startActivity.start(res => {
                 workflowProcess.start(res)
             })
 

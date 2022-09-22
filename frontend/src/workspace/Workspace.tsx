@@ -1,12 +1,26 @@
-import { useCallback, useRef, useState } from 'react';
-import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Node, Position, useEdgesState, useNodesState, useReactFlow } from 'react-flow-renderer';
-import { useSelector, useDispatch } from 'react-redux'
-import { incrementByAmount, setBlockData } from '../redux/reducers/workspaceNode'
-
+import {useCallback, useEffect, useRef, useState} from 'react';
+import ReactFlow, {
+   addEdge,
+   Background,
+   BackgroundVariant,
+   useEdgesState,
+   useNodesState,
+   useReactFlow
+} from 'react-flow-renderer';
+import {useDispatch, useSelector} from 'react-redux'
+import {setActivityCatalog, setSelectedNodeData, setResourceCatalog, setWorkflow} from '../redux/reducers/workspaceNode'
 import TextUpdaterNode from './TextUpdaterNode';
+import {getActivities} from "../service/designer/Activity";
+import {AppStateReducer} from "../types/interface/AppState";
+import PropertiesTab from "../component/properties-panel/PropertiesTab";
+import ConnectionLine from './ConnectionLine';
+import {Activity} from "turbo-dipaas-common/src/types/api/workflow/Activity";
+import {ResourceEnum} from "../types/enums/DesignStructEnum";
+import {getResources} from "../service/designer/Resource";
+import {ActivityEnum} from "../types/enums/DesignStructEnum";
 
 const rfStyle = {
-  backgroundColor: '#EFEFEF',
+  // backgroundColor: '#EFEFEF',
 };
 
 const onPaneClick = (event) => console.log('onPaneClick', event);
@@ -15,36 +29,16 @@ const initialNodes = [
   {
     id: '0',
     type: 'input',
-    data: { label: 'Node' },
-    position: { x: 0, y: -4001 },
+    data: {
+      label: 'Node',
+      id: '0'
+    },
+    position: { x: -2020, y: -5 },
   },
 ];
 
 let id = 1;
 const getId = () => `${id++}`;
-
-// const initialNodes: Node[] = [
-//   { id: 'node-1', type: 'textUpdater', position: { x: 0, y: -400 }, data: { value: 123 } },
-//   {
-//     id: 'node-2',
-//     type: 'output',
-//     targetPosition: Position.Top,
-//     position: { x: 0, y: -300 },
-//     data: { label: 'node 2' },
-//   },
-//   {
-//     id: 'node-3',
-//     type: 'output',
-//     targetPosition: Position.Top,
-//     position: { x: 200, y: -300 },
-//     data: { label: 'node 3' },
-//   },
-// ];
-
-// const initialEdges = [
-//   { id: 'edge-1', source: 'node-1', target: 'node-2', sourceHandle: 'a' },
-//   { id: 'edge-2', source: 'node-1', target: 'node-3', sourceHandle: 'b' },
-// ];
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
@@ -55,16 +49,30 @@ const fitViewOptions = {
 };
 
 function Workspace() {
-  // const [nodes, setNodes] = useState(initialNodes);
-  // const [edges, setEdges] = useState(initialEdges);
   const [captureElementClick, setCaptureElementClick] = useState(true);
-  const count = useSelector((state: any) => state.counter.value);
-  const blockData = useSelector((state: any) => state.counter.blockData);
+  const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
+  const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
+
+  const onEdgeClick = (event, edge) => {
+    console.log(edge)
+  }
+
   const dispatch = useDispatch()
   const onNodeClick = (event, node) => {
-    dispatch(incrementByAmount(2));
-    dispatch(setBlockData(node.data.label));
-  } 
+    dispatch(setSelectedNodeData(node.data));
+  }
+
+  // initialize app on first render
+  useEffect(() => {
+    getActivities()
+       .then((v) => {
+         dispatch(setActivityCatalog(v.data?.activities ?? []))
+       })
+     getResources()
+        .then((v) => {
+           dispatch(setResourceCatalog(v.data?.resources ?? []))
+        })
+  }, [])
 
   // const onNodesChange = useCallback(
   //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -91,25 +99,38 @@ function Workspace() {
         // we need to remove the wrapper bounds, in order to get the correct position
         const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
         const id = getId();
+        const newNodePosition = project({ x: event.clientX - left - 75, y: event.clientY - top })
         const newNode = {
           id,
           // we are removing the half of the node width (75) to center the new node
-          position: project({ x: event.clientX - left - 75, y: event.clientY - top }),
-          data: { label: `Node ${id}` },
+          position: newNodePosition,
+          data: {
+            label: `Node ${id}`,
+            id: id
+          },
         };
 
         setNodes((nds) => nds.concat(newNode));
         setEdges((eds) =>
-          eds.concat({ id, source: connectingNodeId.current as any, target: id })
+          eds.concat({ id,type: 'smoothstep', source: connectingNodeId.current as any, target: id })
         );
+
+        const updatedWorkflow = JSON.parse(JSON.stringify(workflow))
+
+        updatedWorkflow.structure.transitions.push({
+          id: `${edges.length + 1}`,
+          from: `${connectingNodeId.current}`,
+          to: id
+        })
+
+        dispatch(setWorkflow(updatedWorkflow))
       }
     },
-    [project]
+    [project, workflow]
   );
-  
 
   return (
-    <div className="wrapper"  style={{height: '500px',width: '1300px'}}  ref={reactFlowWrapper}>
+    <div className="wrapper"  style={{height: '100%',width: '100%', float:'left'}}  ref={reactFlowWrapper}>
       <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -120,16 +141,14 @@ function Workspace() {
               onConnectStop={onConnectStop}
               fitView
               fitViewOptions={fitViewOptions}
-        // nodes={nodes}
-        // edges={edges}
-        // onNodesChange={onNodesChange}
-        onNodeClick={captureElementClick ? onNodeClick : undefined}
-        // nodeTypes={nodeTypes}
-        style={rfStyle}
-      />
-      <span>{count}</span>
-      <br/>
-      <span>{blockData?.label}</span>
+              onEdgeClick={captureElementClick ? onEdgeClick : undefined}
+              onNodeClick={captureElementClick ? onNodeClick : undefined}
+              connectionLineComponent={ConnectionLine as any}
+              // nodeTypes={nodeTypes}
+              style={rfStyle}
+              >
+              <Background variant={BackgroundVariant.Lines} />
+      </ReactFlow>
     </div>
   );
 }

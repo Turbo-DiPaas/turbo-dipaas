@@ -6,7 +6,12 @@
     "Rafal Kalinowski <deliriusz.eth>"
   ],
   "dependencies": {
+    "@chakra-ui/react": "^2.3.4",
+    "@craco/craco": "^6.4.5",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
     "@reduxjs/toolkit": "^1.8.5",
+    "framer-motion": "^6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-flow-renderer": "^10.3.16",
@@ -24,13 +29,15 @@
     "@types/node": "^16.11.58",
     "@types/react": "^18.0.18",
     "@types/react-dom": "^18.0.6",
+    "dotenv": "^16.0.1",
+    "env-cmd": "^10.1.0",
     "turbo-dipaas-common": "link:../common"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "env-cmd -f ./config/.env.example craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "craco eject"
   },
   "eslintConfig": {
     "extends": [

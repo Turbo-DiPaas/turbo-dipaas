@@ -1,21 +1,21 @@
-import { InputFieldTypeEnum, ResourceEnum, SelectFieldTypeEnum } from "../../../enums/DesignStructEnum"
+import { InputFieldTypeEnum, ResourceEnum } from "../../../enums/DesignStructEnum"
 import { Name, OptionList } from "../../GlobalBasicTypes"
 
 export type FieldBaseStruct = {
-    name: Name
+    name: Name,
+    displayName: Name
 }
 
 export type InputFieldStruct = FieldBaseStruct & {
     type: InputFieldTypeEnum
 }
-export type SelectFieldStruct = FieldBaseStruct & {
-    type: SelectFieldTypeEnum
+
+export type SelectFieldStruct = InputFieldStruct & {
     options: OptionList
 }
 
-export type ResourceSelectFieldStruct = FieldBaseStruct & {
-    type: SelectFieldTypeEnum
+export type ResourceSelectFieldStruct = InputFieldStruct & {
     resourceType: ResourceEnum
 }
 
-export type FieldStruct = InputFieldStruct | SelectFieldStruct
+export type FieldStruct = InputFieldStruct | SelectFieldStruct | ResourceSelectFieldStruct

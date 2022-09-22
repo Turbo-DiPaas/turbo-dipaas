@@ -3,11 +3,16 @@ import ActivityBase from '../ActivityBase'
 import {WorkflowProcessState} from 'turbo-dipaas-common/src/enums/WorkflowProcessState';
 import WorkflowContext from "../../../app/WorkflowContext";
 import {evaluateProps} from "../../../app/utils/context/contextResolver";
+import {getLogger} from "../../../app/logger";
+import {Logger} from "../../../types/Logger";
 
 export default abstract class WorkflowActivity extends ActivityBase {
+   logger: Logger
 
    constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
       super(id, name, params, resourceIds)
+
+      this.logger = getLogger()
    }
 
    /**
@@ -18,17 +23,23 @@ export default abstract class WorkflowActivity extends ActivityBase {
    /**
     * Process wrapper, adding common logic for every activity
     */
-   invoke(context: WorkflowContext): Promise<ActivityResult> {
+   async invoke(context: WorkflowContext): Promise<ActivityResult> {
       this.currentState = WorkflowProcessState.Running
 
-      return this.run(evaluateProps(this.params, context))
+      this.logger.debug(`Starting activity ${this.name}`)
+
+
+      return this.run(await evaluateProps(this.params, context))
          .then(res => {
             // we just set proper state when finished, returning original resource
             this.currentState = res.error ? WorkflowProcessState.Failed : WorkflowProcessState.Finished
+            this.logger.debug(`Activity ${this.name} finished with status ` + (this.currentState === WorkflowProcessState.Failed ? 'Failed' : 'Success'))
             return res
          }).catch(err => {
             // in case that activity won't catch an error
             this.currentState = WorkflowProcessState.Failed
+            this.logger.error(`Activity ${this.name} raised unhandled exception: ${err}`)
+
             return {
                status: 500,
                returnData: new Map(),

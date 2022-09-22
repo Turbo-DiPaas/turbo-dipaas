@@ -29,7 +29,7 @@ export default class InvokeEVMActivity extends WorkflowActivity {
          const encodedData = abiInterface.encodeFunctionData(functionToExecute, transactionParams)
          const signer = connectionResource!.getSigner()
 
-         if (functionToExecute.type !== 'view' && functionToExecute.type !== 'pure') {
+         if (functionToExecute.stateMutability !== 'view' && functionToExecute.stateMutability !== 'pure') {
             promiseToResolve = signer.sendTransaction({
                data: encodedData,
                to: transactionRecipient
@@ -62,9 +62,14 @@ export default class InvokeEVMActivity extends WorkflowActivity {
                to: transactionRecipient
             }).then(v => {
                const decodedResult = abiInterface.decodeFunctionResult(functionToExecute, v)
-               decodedResult.forEach((v) => {
-                  returnData.set(v, v)
-               })
+               const decodedResultArr = Array.from(decodedResult)
+               for (let i = 0; i < decodedResult.length; i++) {
+                  const currElem = decodedResult[i]
+                  if (currElem._isBigNumber) {
+                     decodedResultArr[i] = currElem.toString()
+                  }
+               }
+               returnData.set('callResult', decodedResultArr)
 
                return Promise.resolve({
                   status: 200,
