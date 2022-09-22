@@ -29,6 +29,8 @@ import {AvailableAssetOptions} from "../../types/struct/AvailableAssetOptions";
 import {setWorkflow} from "../../redux/reducers/workspaceNode";
 import {TriggerActivityEnum} from "../../types/enums/DesignStructEnum";
 import {Param} from "../../../../common/src/types/api/workflow/Param";
+import MultiAddressResolver from "../../service/address-resolver/AddressResolver";
+import {Address} from "../../types/struct/Address";
 
 function PropertiesTab () {
    const activityCatalog = useSelector((state: AppStateReducer) => state.app.activityCatalog);
@@ -38,6 +40,15 @@ function PropertiesTab () {
    const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>()
    const [selectedActivityStruct, setSelectedActivityStruct] = useState<ActivityDetailsStruct | undefined>()
    const [availableAssetOptions, setAvailableAssetOptions] = useState<AvailableAssetOptions | undefined>()
+   const [resolvedAddresses, setResolvedAddresses] = useState<Map<string, Address[]>>(new Map())
+
+   const addressResolver = new MultiAddressResolver()
+   function resolveAddress(id: string, forField: string) {
+      addressResolver.resolve(id).then((v) => {
+         resolvedAddresses.set(forField, v)
+         setResolvedAddresses(resolvedAddresses)
+      })
+   }
 
    const dispatch = useDispatch()
 
@@ -138,7 +149,6 @@ function PropertiesTab () {
                   <Checkbox id={id}
                             onChange={(e) => {setActivityParam(e.target.checked, field.name)}}
                             isChecked={matchingParam?.value === true}></Checkbox>
-                            {/*checked={true}></Checkbox>*/}
                </div>)
             break
 
@@ -157,6 +167,27 @@ function PropertiesTab () {
                      </GridItem>
                   </Grid>
                </div>)
+            break
+
+         case InputFieldTypeEnum.ADDRESS:
+            mappedFieldInput = (
+                   <Grid templateColumns='repeat(2, 1fr)' gap={6}>
+                      <GridItem>
+                         Address: <Input id={id}
+                                      value={matchingParam?.value ? matchingParam!.value + '' : ''}
+                                      onChange={(e) => {resolveAddress(e.target.value, field.name)}}></Input>
+                      </GridItem>
+                      <GridItem>
+                         Resolved Address:
+                         <Select
+                             onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
+                            <option/>
+                            {resolvedAddresses.get(field.name)?.map((v) => {
+                               return <option selected={v.address === matchingParam?.value}>{v.address}</option>
+                            })}
+                         </Select>
+                      </GridItem>
+                   </Grid>)
             break
 
          case InputFieldTypeEnum.DROPDOWN:
