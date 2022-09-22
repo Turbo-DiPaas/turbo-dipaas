@@ -11,7 +11,7 @@ const useStyles = createUseStyles({
     textAlign: 'center'
    },
    addButton: {
-    margin: '24px 0px'
+    margin: '32px 0px 24px 0px'
    }
  });
 

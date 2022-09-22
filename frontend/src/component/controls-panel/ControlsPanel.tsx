@@ -8,11 +8,14 @@ const useStyles = createUseStyles({
     textAlign: 'center'
    },
    startButton: {
-    margin: '24px 0px',
+    margin: '12px 0px',
     background: '#6f45d8',
     '&:hover': {
       background: '#5836af'
     }
+   },
+   content: {
+    marginTop: '24px'
    }
  })
 
@@ -30,7 +33,7 @@ const useStyles = createUseStyles({
    return (
       <div className={classes.container}>
          <Heading as='h4' size='md'>Controls</Heading>
-         <SimpleGrid columns={1}>
+         <SimpleGrid className={classes.content} columns={1}>
             <Button className={classes.startButton} onClick={() => createWorkflow(workflow)} colorScheme='blue'>SAVE FLOW</Button>
             <Button className={classes.startButton} onClick={() => runWorkflow(workflow.id)} colorScheme='blue'>START FLOW</Button>
              <Button className={classes.startButton} onClick={() => stopWorkflow(workflow.id)} colorScheme='blue'>STOP FLOW</Button>

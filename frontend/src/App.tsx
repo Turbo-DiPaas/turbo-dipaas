@@ -10,9 +10,9 @@ import {createUseStyles} from 'react-jss'
 const useStyles = createUseStyles({
    gridContainer: {
       display: 'grid',
-      gridTemplateColumns: '305px 1200px 305px',
+      gridTemplateColumns: '305px 1100px 305px',
       gap: '24px',
-      padding: '8px 24px 24px 24px',
+      padding: '24px 72px 24px 72px',
       '& > div': {
       backgroundColor: 'white',
       borderRadius: '8px',

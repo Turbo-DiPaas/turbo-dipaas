@@ -66,7 +66,7 @@ const useStyles = createUseStyles({
       const newResource: Resource = {
          type: newResourceStruct!.type,
          name: newType,
-         id: editedResource.id || '',
+         id: editedResource?.id || '',
          params: [],
       }
 
