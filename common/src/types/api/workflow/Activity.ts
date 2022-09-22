@@ -9,5 +9,5 @@ export type Activity = {
     name: Name,
     params?: Param[],
     resources?: string[],
-    position: Position
+    position?: Position
 }

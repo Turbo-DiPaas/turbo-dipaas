@@ -115,23 +115,7 @@ function Workspace() {
           eds.concat({ id,type: 'smoothstep', source: connectingNodeId.current as any, target: id })
         );
 
-        //TODO: add possibility to select the activity
         const updatedWorkflow = JSON.parse(JSON.stringify(workflow))
-        updatedWorkflow.structure.activities!.push({
-            id: id,
-            name: "name",
-            type: "LogActivity",
-            position: {
-              x: newNodePosition.x,
-              y: newNodePosition.y
-            },
-            params: [
-              {
-                name: 'message',
-                value: `"Logging ${id}"`
-              }
-            ]
-          } as Activity)
 
         updatedWorkflow.structure.transitions.push({
           id: `${edges.length + 1}`,
@@ -139,24 +123,7 @@ function Workspace() {
           to: id
         })
 
-        //TODO: delete after testing
-        if (updatedWorkflow.structure.resources.length === 0) {
-          updatedWorkflow.structure.resources.push({
-               id: 'resttest',
-               type: ResourceEnum.EVM_CONNECTION,
-               name: 'test res',
-               params: []
-             },
-             {
-               id: 'resttest 2',
-               type: ResourceEnum.EVM_CONNECTION,
-               name: 'test res 2',
-               params: []
-             }
-             )
-        }
-
-         dispatch(setWorkflow(updatedWorkflow))
+        dispatch(setWorkflow(updatedWorkflow))
       }
     },
     [project, workflow]

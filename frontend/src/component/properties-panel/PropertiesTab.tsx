@@ -28,6 +28,7 @@ import {AssetType, InputFieldTypeEnum} from "../../types/enums/DesignStructEnum"
 import {AvailableAssetOptions} from "../../types/struct/AvailableAssetOptions";
 import {setWorkflow} from "../../redux/reducers/workspaceNode";
 import {TriggerActivityEnum} from "../../types/enums/DesignStructEnum";
+import {Param} from "../../../../common/src/types/api/workflow/Param";
 
 function PropertiesTab () {
    const activityCatalog = useSelector((state: AppStateReducer) => state.app.activityCatalog);
@@ -68,27 +69,25 @@ function PropertiesTab () {
 
    }, [selectedActivityNode])
 
-   function upsertAsset(id: string | undefined, newType: string) {
-      const notMatchingActivities: Activity[] = []
-      // let matchingActivity: Activity | undefined = undefined
-
-      workflow.structure.activities.forEach((v) => {
-         if(v.id === id) {
-            // matchingActivity = v
-         } else {
-            notMatchingActivities.push(v)
-         }
-      })
-
+   function changeActivityType (id: string | undefined, newType: string) {
       // @ts-ignore
       const newActivityStruct = availableAssetOptions?.matchingAssetCatalog?.find((v) => {return v.name === newType}) as ActivityDetailsStruct | undefined
       const newActivity: Activity = {
          type: newActivityStruct!.type,
          name: newType,
-         id: selectedActivityNode!.id,
+         id: selectedActivityNode?.id ?? id ?? '',
          params: [],
-         position: selectedActivityNode!.position!
+         position: selectedActivityNode?.position!
       }
+
+      upsertAsset(newActivity)
+
+      setSelectedActivityStruct(newActivityStruct)
+      setSelectedActivity(newActivity)
+   }
+
+   function upsertAsset(newAsset: Activity) {
+      const notMatchingActivities = workflow.structure.activities.filter((v) => v.id !== newAsset.id)
 
       dispatch(setWorkflow({
          id: workflow.id,
@@ -98,12 +97,24 @@ function PropertiesTab () {
          structure: {
             resources: workflow.structure.resources,
             transitions: workflow.structure.transitions,
-            activities: [... notMatchingActivities, newActivity ]
+            activities: [... notMatchingActivities, newAsset ]
          }
       }))
+   }
 
-      setSelectedActivityStruct(newActivityStruct)
-      setSelectedActivity(newActivity)
+   function setActivityParam(newValue: any, fieldName: string) {
+      if (selectedActivity) {
+         const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
+         const updatedParam: Param = { name: fieldName, value: newValue }
+         const notMatchingParams = selectedActivityCopy.params?.filter((v) => v.name !== fieldName)
+         if (selectedActivityCopy.params?.length !== notMatchingParams?.length) {
+            selectedActivityCopy.params! = [...notMatchingParams ?? [], updatedParam]
+         } else {
+            selectedActivityCopy.params?.push(updatedParam)
+         }
+         setSelectedActivity(selectedActivityCopy)
+         upsertAsset(selectedActivityCopy)
+      }
    }
 
    function createField(field: FieldStruct, id: string) {
@@ -114,14 +125,20 @@ function PropertiesTab () {
          case InputFieldTypeEnum.FREE_INPUT:
             mappedFieldInput = (
                <div>
-                  <Input id={id} onChange={(e) => {console.log({e})}} value={matchingParam?.value ? matchingParam!.value + '' : ''}></Input>
+                  <Input id={id}
+                         onChange={(e) => {setActivityParam(e.target.value, field.name)}}
+                         value={matchingParam?.value ? matchingParam!.value + '' : ''}>
+                  </Input>
                </div>)
             break
 
          case InputFieldTypeEnum.BOOLEAN:
             mappedFieldInput = (
                <div>
-                  <Checkbox id={id} checked={matchingParam?.value === true}></Checkbox>
+                  <Checkbox id={id}
+                            onChange={(e) => {setActivityParam(e.target.checked, field.name)}}
+                            isChecked={matchingParam?.value === true}></Checkbox>
+                            {/*checked={true}></Checkbox>*/}
                </div>)
             break
 
@@ -145,7 +162,8 @@ function PropertiesTab () {
          case InputFieldTypeEnum.DROPDOWN:
             mappedFieldInput = (
                <div>
-                  <Select id={id}>
+                  <Select id={id}
+                          onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
                      {(field as unknown as SelectFieldStruct).options.map((v) => {
                         return <option selected={v === matchingParam?.value}>{v}</option>
                      })}
@@ -156,11 +174,12 @@ function PropertiesTab () {
          case InputFieldTypeEnum.RESOURCE_REF:
             mappedFieldInput = (
                <div>
-                  <Select id={id}>
+                  <Select id={id}
+                          onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
                      {workflow.structure.resources.filter((v) => {
                         return v.type === (field as unknown as ResourceSelectFieldStruct).resourceType
                      }).map((v) => {
-                        return <option id={v.id}>{v.name}</option>
+                        return <option value={v.id} id={v.id}>{v.name}</option>
                      })}
                   </Select>
                </div>)
@@ -200,7 +219,7 @@ function PropertiesTab () {
       <div>
          <FormControl>
             <FormLabel>Asset type</FormLabel>
-            <Select onChange={(e) => upsertAsset(selectedActivity?.id, e.target.value)} value={selectedActivityStruct?.name}>
+            <Select onChange={(e) => changeActivityType(selectedActivity?.id, e.target.value)} value={selectedActivityStruct?.name}>
                <option></option>
                {
                   availableAssetOptions?.matchingAssetCatalog?.map((v) => {
