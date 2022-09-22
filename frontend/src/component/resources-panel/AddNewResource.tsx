@@ -26,6 +26,7 @@ import { AppStateReducer } from '../../types/interface/AppState';
 import {setWorkflow} from "../../redux/reducers/workspaceNode";
 import { ResourceDetailsStruct } from 'turbo-dipaas-common/src/types/api/design/ResourceStruct';
 import { Resource } from 'turbo-dipaas-common/src/types/api/workflow/Resource';
+import { Param } from 'turbo-dipaas-common/src/types/api/workflow/Param';
 
 const useStyles = createUseStyles({
     addButton: {
@@ -33,9 +34,9 @@ const useStyles = createUseStyles({
        }
  });
 
- function AddNewResource({ data }:any) {
+ function AddNewResource( data :any) {
    const classes = useStyles();
-   const { isOpen, onOpen, onClose } = useDisclosure();
+   const { isOpen, onOpen, onClose, editedResource } = data;
 
    const resourceCatalog = useSelector((state: AppStateReducer) => state.app.resourcesCatalog);
    const [selectedResource, setSelectedResource] = useState<Resource | undefined>();
@@ -43,39 +44,78 @@ const useStyles = createUseStyles({
    const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
    const dispatch = useDispatch();
 
-   useEffect(() => {}, [])
+   useEffect(() => {
+      const newResourceStruct = resourceCatalog.find((catalogEl) => catalogEl.type === editedResource?.type)
+      const newResource: Resource = {
+         type: newResourceStruct!?.type,
+         name: editedResource?.name,
+         id: editedResource?.id,
+         params: editedResource?.params,
+      }
 
-   function upsertAsset(id: string | undefined, newType: string) {
-        const notMatchingResources: Resource[] = []
-        workflow.structure.resources.forEach((v) => {
-          if(v.id === id) {
-            // matchingResources = v
-          } else {
-            notMatchingResources.push(v)
-          }
-        })
+      setSelectedResourceStruct(newResourceStruct)
+      setSelectedResource(newResource)
 
-        // @ts-ignore
-        const newResourceStruct = resourceCatalog?.find((v) => {return v.name === newType}) as ActivityDetailsStruct | undefined
-        const newResource: Resource = {
-           type: newResourceStruct!.type,
-           name: newType,
-           id: (Math.random() * 1000).toString(),
-           params: [],
-        }
+   }, [isOpen])
 
-        dispatch(setWorkflow({
-          id: workflow.id,
-          name: workflow.name,
-          description: workflow.description,
-          updated: Date.toString(),
-          structure: {
-              resources: [...notMatchingResources, newResource],
-              transitions: workflow.structure.transitions,
-              activities: workflow.structure.activities,
-          }
-        }))
-    }
+   function changeResourceType (newType: string) {
+      // @ts-ignore
+      // setSelectedResourceStruct(resourceCatalog.find((catalogEl) => catalogEl.name === e.target.value))
+      // const newResourceStruct = availableAssetOptions?.matchingAssetCatalog?.find((v) => {return v.name === newType}) as ActivityDetailsStruct | undefined
+      const newResourceStruct = resourceCatalog.find((catalogEl) => catalogEl.name === newType)
+      const newResource: Resource = {
+         type: newResourceStruct!.type,
+         name: newType,
+         id: editedResource.id || '',
+         params: [],
+      }
+
+      setSelectedResourceStruct(newResourceStruct)
+      setSelectedResource(newResource)
+   }
+
+   function saveForm() {
+      dispatch(setWorkflow({
+         id: workflow.id,
+         name: workflow.name,
+         description: workflow.description,
+         updated: Date.toString(),
+         structure: {
+            transitions: workflow.structure.transitions,
+            activities: workflow.structure.activities,
+            resources: editedResource ? workflow.structure.resources.map(el => {
+               if(el.id === editedResource.id) {
+                  return {
+                     type: selectedResource!.type,
+                     name: selectedResource!.name,
+                     id: el.id,
+                     params: selectedResource?.params,
+                  } as Resource;
+               } else {
+                  return el;
+               }}) : workflow.structure.resources.concat([{
+                  type: selectedResource!.type,
+                  name: selectedResourceStruct!.name,
+                  id: (Math.random() * 1000).toString(),
+                  params: selectedResource?.params,
+               } as Resource]),
+         }
+      }))
+   }
+
+   function setActivityParam(newValue: any, fieldName: string) {
+      if (selectedResource) {
+         const selectedResourceCopy: Resource = JSON.parse(JSON.stringify(selectedResource))
+         const updatedParam: Param = { name: fieldName, value: newValue }
+         const notMatchingParams = selectedResourceCopy.params?.filter((v) => v.name !== fieldName)
+         if (selectedResourceCopy.params?.length !== notMatchingParams?.length) {
+            selectedResourceCopy.params! = [...notMatchingParams ?? [], updatedParam]
+         } else {
+            selectedResourceCopy.params?.push(updatedParam)
+         }
+         setSelectedResource(selectedResourceCopy)
+      }
+   }
 
    
    function createField(field: FieldStruct, id: string) {
@@ -86,25 +126,27 @@ const useStyles = createUseStyles({
        case InputFieldTypeEnum.FREE_INPUT:
           mappedFieldInput = (
              <div>
-                <Input id={id} onChange={(e) => {console.log({e})}} value={matchingParam?.value ? matchingParam!.value + '' : ''}></Input>
+               <Input id={id}
+                         onChange={(e) => {setActivityParam(e.target.value, field.name)}}
+                         value={matchingParam?.value ? matchingParam!.value + '' : ''}>
+               </Input>
              </div>)
           break
 
        case InputFieldTypeEnum.BOOLEAN:
           mappedFieldInput = (
              <div>
-                <Checkbox id={id} checked={matchingParam?.value === true}></Checkbox>
+               <Checkbox id={id}
+                        onChange={(e) => {setActivityParam(e.target.checked, field.name)}}
+                        isChecked={matchingParam?.value === true}></Checkbox>
              </div>)
           break
 
        case InputFieldTypeEnum.DROPDOWN:
           mappedFieldInput = (
              <div>
-                <Select id={id}>
-                   {(field as unknown as SelectFieldStruct).options.map((v) => {
-                      return <option selected={v === matchingParam?.value}>{v}</option>
-                   })}
-                </Select>
+               <Select id={id}
+                          onChange={(e) => {setActivityParam(e.target.value, field.name)}}></Select>
              </div>)
           break
 
@@ -141,19 +183,16 @@ const useStyles = createUseStyles({
 
  
    return (
-    <>
-    <Button onClick={onOpen} className={classes.addButton} colorScheme='blue'>+ add resource</Button>
+    
         <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>{editedResource ? 'Edit Resource' : 'Add New Resource'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
                 <FormLabel>Asset type</FormLabel>
-                {/* <Select onChange={(e) => upsertAsset(selectedResourceStruct?.id, e.target.value)} value={selectedResourceStruct?.name}></Select> */}
-                {/* todo catalogEl search by id not name */}
-                <Select onChange={(e) => setSelectedResourceStruct(resourceCatalog.find((catalogEl) => catalogEl.name === e.target.value))} value={selectedResourceStruct?.name}>
+                <Select onChange={(e) => changeResourceType(e.target.value)} value={selectedResourceStruct?.name}>
                   <option></option>
                   {
                       resourceCatalog?.map((v) => {
@@ -185,14 +224,14 @@ const useStyles = createUseStyles({
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={() => {upsertAsset(selectedResourceStruct?.id, selectedResourceStruct!.name); onClose(); }}>
-              Save
+            <Button colorScheme='blue' mr={3} onClick={() => {saveForm(); onClose(); }}>
+               {editedResource ? 'Edit' : 'Add'}
             </Button>
-            {/* <Button variant='ghost'>Secondary Action</Button> */}
+
           </ModalFooter>
         </ModalContent>
       </Modal>
-      </>
+      
    );
  }
  export default AddNewResource
