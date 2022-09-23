@@ -28,10 +28,10 @@ export enum InputFieldTypeEnum {
 }
 
 export enum ResourceEnum {
-    EVM_CONNECTION = 'EVM connection',
-    EVM_ABI = 'EVM ABI',
-    HTTP_CONNECTION = 'HTTP connection',
-    IPFS_CONNECTON = 'IPFS(File) connection'
+    EVM_CONNECTION = 'GenericEVMConnectionResource',
+    EVM_ABI = 'EVMABIResource',
+    HTTP_CONNECTION = 'HTTPConnectionResource',
+    IPFS_CONNECTON = 'IPFSConnectionResource'
 }
 
 export enum ResourceCategoryEnum {

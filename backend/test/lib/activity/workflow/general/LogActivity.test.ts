@@ -3,8 +3,10 @@ import sinon, {SinonSpy} from 'sinon';
 import LogActivity from "../../../../../src/lib/activity/workflow/impl/general/LogActivity";
 import WorkflowContext from "../../../../../src/app/WorkflowContext";
 import ActivityResultPropsMock from "../../mock/ActivityResultPropsMock";
+import {testSetup} from "../../../../testSetup";
 
 describe('LogActivity', () => {
+    testSetup()
     let logActivity: LogActivity
     let spy: SinonSpy
     const message = '1234dfgjh'

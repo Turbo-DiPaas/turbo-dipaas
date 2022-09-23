@@ -8,7 +8,6 @@ export default class MapperActivity extends WorkflowActivity {
    }
 
    protected run(params: Map<string, any> = this.params): Promise<ActivityResult> {
-      console.log(params)
       // base activity already evaluated all expressions
       return Promise.resolve({
          status: 200,
