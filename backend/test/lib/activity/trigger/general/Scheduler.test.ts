@@ -6,6 +6,7 @@ import Scheduler from "../../../../src/lib/activity/trigger/impl/general/Schedul
 import LogActivity from "../../../../src/lib/activity/workflow/impl/general/LogActivity";
 import WorkflowProcess from "../../../../src/app/WorkflowProcess";
 import WorkflowTriggerBase from "../../../../src/lib/activity/trigger/WorkflowTriggerBase";
+import {testSetup} from "../../../../testSetup";
 
 describe('Scheduler trigger', () => {
    let activityGraph: ActivityGraph
@@ -15,6 +16,7 @@ describe('Scheduler trigger', () => {
    const message = 'test message'
 
    beforeEach(() => {
+      testSetup()
       //            a
       //            |
       //            b

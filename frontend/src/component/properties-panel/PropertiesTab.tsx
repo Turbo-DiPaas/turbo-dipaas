@@ -34,6 +34,7 @@ import {Address} from "../../types/struct/Address";
 
 function PropertiesTab () {
    const activityCatalog = useSelector((state: AppStateReducer) => state.app.activityCatalog);
+   const resourceCatalog = useSelector((state: AppStateReducer) => state.app.resourcesCatalog);
    const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
    const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
    const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>()
@@ -153,6 +154,44 @@ function PropertiesTab () {
       }
    }
 
+   function setActivityResource(newValue: any) {
+      if (selectedActivity) {
+         const resourcesMap = new Map()
+         workflow.structure.resources.forEach((v) => {
+            const matchingResCatalog = resourceCatalog.find((resCat) => resCat.type === v.type)
+            const resWithCatalog = {resource: v, catalog: matchingResCatalog}
+            resourcesMap.set(v.id, resWithCatalog)
+         })
+
+         const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
+
+         const newResource = resourcesMap.get(newValue)
+         let oldResourceArrayId = -1
+
+         if (!selectedActivityCopy.resources || selectedActivityCopy.resources.length === 0) {
+            selectedActivityCopy.resources = [newValue]
+         } else {
+            selectedActivity!.resources?.forEach((v, i) => {
+               const currentActivityResource = resourcesMap.get(v)
+               if (currentActivityResource?.type === newResource?.type) {
+                  oldResourceArrayId = i
+               }
+            })
+
+            if (oldResourceArrayId >= 0) {
+               if (selectedActivityCopy.resources) {
+                  selectedActivityCopy.resources![oldResourceArrayId] = newValue
+               } else {
+                  selectedActivityCopy.resources = [newValue]
+               }
+            }
+         }
+
+         setSelectedActivity(selectedActivityCopy)
+         upsertAsset(selectedActivityCopy)
+      }
+   }
+
    function setActivityParam(newValue: any, fieldName: string) {
       if (selectedActivity) {
          const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
@@ -260,14 +299,16 @@ function PropertiesTab () {
             break
 
          case InputFieldTypeEnum.RESOURCE_REF:
+            const resourceType = (field as unknown as ResourceSelectFieldStruct).resourceType
             mappedFieldInput = (
                 <div>
                    <Select id={id}
-                           onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
+                           onChange={(e) => {setActivityResource(e.target.value)}}>
+                      <option/>
                       {workflow.structure.resources.filter((v) => {
-                         return v.type === (field as unknown as ResourceSelectFieldStruct).resourceType
-                      }).map((v) => {
-                         return <option value={v.id} id={v.id}>{v.name}</option>
+                         return v.type === resourceType
+                      }).map((v, i) => {
+                         return <option value={v.id} id={`${v.id}-${i}`}>{v.name}</option>
                       })}
                    </Select>
                 </div>)

@@ -7,11 +7,23 @@ import {Transition} from "turbo-dipaas-common/src/types/api/workflow/Transition"
 import SuccessTransition from "../../../lib/transition/SuccessTransition";
 import ActivityBase from "../../../lib/activity/ActivityBase";
 import TransitionBase from "../../../lib/transition/TransitionBase";
+import {Resource} from "../../../../../common/src/types/api/workflow/Resource";
+import Container from "typedi";
+import {ResourceList} from "../../../lib/resource/ResourceList";
 
 const workflowFromJson = (workflow: WorkflowStruct): Workflow => {
     const activities: ActivityBase[] = []
     const transitions: TransitionBase[] = []
     const groups: ActivityGroup[] = []
+
+    workflow.structure.resources?.forEach((resource: Resource) => {
+        const props: Map<string, any> = new Map()
+        resource.params?.forEach(param => {
+            props.set(param.name, param.value)
+        })
+        let resourceObject = new ResourceList[resource.type](resource.id, resource.name, resource.type, props);
+        Container.set(resource.id, resourceObject)
+    })
 
     workflow.structure.activities.forEach((activity: Activity) => {
         const props: Map<string, any> = new Map()

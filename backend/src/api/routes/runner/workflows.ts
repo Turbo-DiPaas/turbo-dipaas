@@ -1,5 +1,4 @@
 import express from 'express'
-import ActivityGraph from '../../../lib/activity/utils/ActivityGraph';
 import { randomUUID } from 'crypto';
 import WorkflowRunner from "../../../app/WorkflowRunner";
 import {workflowFromJson} from "../../../app/utils/workflow";
