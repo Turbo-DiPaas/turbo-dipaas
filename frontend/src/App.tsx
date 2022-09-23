@@ -8,6 +8,10 @@ import { ChakraProvider } from '@chakra-ui/react'
 import PropertiesTab from "./component/properties-panel/PropertiesTab";
 import {createUseStyles} from 'react-jss'
 import Tree from './component/properties-tree/PropertiesTab';
+import {RecursiveTree} from "./types/struct/RecursiveTree";
+import {useSelector} from "react-redux";
+import {AppStateReducer} from "./types/interface/AppState";
+import {mapActivitiesResponse} from "./lib/activity/activityResponse";
 const useStyles = createUseStyles({
    gridContainer: {
       display: 'grid',
@@ -40,9 +44,9 @@ const useStyles = createUseStyles({
 
  const padding16 = {padding: '16px'}
 
-const treeState = {
+const treeState: {tree: RecursiveTree} = {
    tree: {
-     name: "root",
+     name: "Activities outputs",
      data: [
        {name: "one", data: [{name: "two", data: [{name: "three", data: [{name: "four", data: null}]}]}]},
        {name: "one", data: [{name: "two", data: [{name: "three", data: [{name: "four", data: null}]}]}]},
@@ -50,7 +54,6 @@ const treeState = {
      ]
    }
  }
-
 
 const initialNodes = [
    {
@@ -64,10 +67,14 @@ const initialNodes = [
    },
  ];
 
- 
- function App() {
+
+function App() {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const classes = useStyles();
+    const activities = useSelector((state: AppStateReducer) => state.app.workflow.structure.activities);
+    const resources = useSelector((state: AppStateReducer) => state.app.workflow.structure.resources);
+
+
   return (
      <div>
         <ChakraProvider>
@@ -86,7 +93,7 @@ const initialNodes = [
                <div style={{visibility: 'hidden'}}></div>
                <div className={classes.propertiesTab}>
                      <div className={classes.treeContainer}>
-                        <Tree name={treeState.tree.name} data={treeState.tree.data} level={0} />
+                        <Tree name={treeState.tree.name} data={mapActivitiesResponse(activities, resources)} level={0} />
                      </div>
                      <PropertiesTab setNodes={setNodes} />
                </div>
