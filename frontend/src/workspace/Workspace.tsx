@@ -48,10 +48,12 @@ const fitViewOptions = {
   padding: 10,
 };
 
-function Workspace() {
+function Workspace( data :any) {
   const [captureElementClick, setCaptureElementClick] = useState(true);
   const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
   const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
+  const { nodes, setNodes, onNodesChange } = data;
+
 
   const onEdgeClick = (event, edge) => {
     console.log(edge)
@@ -82,7 +84,7 @@ function Workspace() {
   ////////////////////
   const reactFlowWrapper = useRef<any>(null);
   const connectingNodeId = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { project } = useReactFlow();
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);

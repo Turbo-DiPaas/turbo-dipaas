@@ -32,7 +32,7 @@ import {Param} from "../../../../common/src/types/api/workflow/Param";
 import MultiAddressResolver from "../../service/address-resolver/AddressResolver";
 import {Address} from "../../types/struct/Address";
 
-function PropertiesTab () {
+function PropertiesTab (data) {
    const activityCatalog = useSelector((state: AppStateReducer) => state.app.activityCatalog);
    const resourceCatalog = useSelector((state: AppStateReducer) => state.app.resourcesCatalog);
    const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
@@ -42,6 +42,7 @@ function PropertiesTab () {
    const [availableAssetOptions, setAvailableAssetOptions] = useState<AvailableAssetOptions | undefined>()
    const [resolvedAddresses, setResolvedAddresses] = useState<Map<string, Address[]>>(new Map())
    const [mapperParams, setMapperParams] = useState<Map<string, Map<string, Map<number, Param>>>>(new Map(new Map(new Map())))
+   const {setNodes} = data;
 
    const addressResolver = new MultiAddressResolver()
    function resolveAddress(id: string, forField: string) {
@@ -98,6 +99,13 @@ function PropertiesTab () {
 
       setSelectedActivityStruct(newActivityStruct)
       setSelectedActivity(newActivity)
+
+      setNodes((nds) => {return nds.map(el => {
+         if(el.id === selectedActivityNode?.id || el.id===id) {
+            return {...el, data: {...el.data, label: newType}}
+         }
+         return el;
+      })});
    }
 
    function upsertAsset(newAsset: Activity) {
