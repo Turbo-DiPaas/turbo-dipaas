@@ -7,7 +7,7 @@ export enum ActivityCategoryEnum {
 export enum ActivityEnum {
     LOG_ACTIVITY = 'LogActivity',
     INVOKE_EVM = 'InvokeEVMActivity',
-    ON_OP = 'NoOpActivity',
+    NO_OP = 'NoOpActivity',
     MAPPER = 'MapperActivity',
     HTTP_REQUEST_REPLY = 'HTTPRequestReplyActivity'
 }
