@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactFlowProvider } from 'react-flow-renderer';
+import { ReactFlowProvider, useNodesState } from 'react-flow-renderer';
 import './App.css';
 import Workspace from './workspace/Workspace';
 import ResourcesPanel from './component/resources-panel/ResourcesPanel';
@@ -55,10 +55,25 @@ const treeState: {tree: RecursiveTree} = {
    }
  }
 
+const initialNodes = [
+   {
+     id: '0',
+     type: 'input',
+     data: {
+       label: 'Node',
+       id: '0'
+     },
+     position: { x: -2020, y: -5 },
+   },
+ ];
+
+
 function App() {
+    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const classes = useStyles();
     const activities = useSelector((state: AppStateReducer) => state.app.workflow.structure.activities);
     const resources = useSelector((state: AppStateReducer) => state.app.workflow.structure.resources);
+
 
   return (
      <div>
@@ -69,19 +84,18 @@ function App() {
                </div>
                <div style={{height: '500px',width: '100%', float:'left'}}>
                   <ReactFlowProvider>
-                     <Workspace></Workspace>
+                     <Workspace nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange}></Workspace>
                   </ReactFlowProvider>
-
                </div>
                <div style={padding16}>
-                  <ControlsPanel/>
+                  <ControlsPanel setNodes={setNodes}/>
                </div>
                <div style={{visibility: 'hidden'}}></div>
                <div className={classes.propertiesTab}>
                      <div className={classes.treeContainer}>
                         <Tree name={treeState.tree.name} data={mapActivitiesResponse(activities, resources)} level={0} />
                      </div>
-                     <PropertiesTab />
+                     <PropertiesTab setNodes={setNodes} />
                </div>
                <div style={{visibility: 'hidden'}}></div>
             </div>
