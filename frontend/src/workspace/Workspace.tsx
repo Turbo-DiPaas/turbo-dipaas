@@ -33,7 +33,7 @@ const initialNodes = [
       label: 'Node',
       id: '0'
     },
-    position: { x: -2020, y: -5 },
+    position: { x: 20, y: -5 },
   },
 ];
 
@@ -45,7 +45,7 @@ const getId = () => `${id++}`;
 const nodeTypes = { textUpdater: TextUpdaterNode };
 
 const fitViewOptions = {
-  padding: 10,
+  padding: 7,
 };
 
 function Workspace( data :any) {
@@ -145,6 +145,7 @@ function Workspace( data :any) {
               fitViewOptions={fitViewOptions}
               onEdgeClick={captureElementClick ? onEdgeClick : undefined}
               onNodeClick={captureElementClick ? onNodeClick : undefined}
+              onNodeDrag={onNodeClick}
               connectionLineComponent={ConnectionLine as any}
               // nodeTypes={nodeTypes}
               style={rfStyle}

@@ -88,7 +88,7 @@ function App() {
                   </ReactFlowProvider>
                </div>
                <div style={padding16}>
-                  <ControlsPanel setNodes={setNodes}/>
+                  <ControlsPanel/>
                </div>
                <div style={{visibility: 'hidden'}}></div>
                <div className={classes.propertiesTab}>
