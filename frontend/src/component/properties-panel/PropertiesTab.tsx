@@ -34,20 +34,22 @@ import {Address} from "../../types/struct/Address";
 
 function PropertiesTab () {
    const activityCatalog = useSelector((state: AppStateReducer) => state.app.activityCatalog);
-   const resourceCatalog = useSelector((state: AppStateReducer) => state.app.resourcesCatalog);
    const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
    const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
    const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>()
    const [selectedActivityStruct, setSelectedActivityStruct] = useState<ActivityDetailsStruct | undefined>()
    const [availableAssetOptions, setAvailableAssetOptions] = useState<AvailableAssetOptions | undefined>()
    const [resolvedAddresses, setResolvedAddresses] = useState<Map<string, Address[]>>(new Map())
+   const [mapperParams, setMapperParams] = useState<Map<string, Map<string, Map<number, Param>>>>(new Map(new Map(new Map())))
 
    const addressResolver = new MultiAddressResolver()
    function resolveAddress(id: string, forField: string) {
-      addressResolver.resolve(id).then((v) => {
-         resolvedAddresses.set(forField, v)
-         setResolvedAddresses(resolvedAddresses)
-      })
+      if (!id.startsWith('0x')) {
+         addressResolver.resolve(id).then((v) => {
+            resolvedAddresses.set(forField, v)
+            setResolvedAddresses(resolvedAddresses)
+         })
+      }
    }
 
    const dispatch = useDispatch()
@@ -113,6 +115,44 @@ function PropertiesTab () {
       }))
    }
 
+   function addMultiInputParam(fieldName: string) {
+      if (selectedActivity) {
+         const paramMap = (mapperParams.get(selectedActivity.id) ?? new Map())
+             .get(fieldName) ?? new Map()
+         setMultiInputParam('', fieldName, paramMap.size, true)
+      }
+   }
+
+   function setMultiInputParam(newValue: any, fieldName: string, paramId: number, isKey: boolean) {
+      if (selectedActivity) {
+         const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
+         // mapping: activityId => fieldName => param
+         const fieldMap = mapperParams.get(selectedActivity.id) ?? new Map()
+         const paramMap = fieldMap.get(fieldName) ?? new Map()
+         const param = paramMap.get(paramId) ?? {name: '', value: ''} as Param
+         const newParam: Param = {...param}
+         if (isKey) {
+            newParam.name = newValue
+         } else {
+            newParam.value = newValue
+         }
+
+         paramMap.set(paramId, newParam)
+         fieldMap.set(fieldName, paramMap)
+         mapperParams.set(selectedActivity.id, fieldMap)
+
+         selectedActivityCopy.params = []
+         paramMap.forEach((v) => {
+            selectedActivityCopy.params?.push(v)
+         })
+
+         setMapperParams(mapperParams)
+
+         setSelectedActivity(selectedActivityCopy)
+         upsertAsset(selectedActivityCopy)
+      }
+   }
+
    function setActivityParam(newValue: any, fieldName: string) {
       if (selectedActivity) {
          const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
@@ -135,85 +175,102 @@ function PropertiesTab () {
       switch (field.type) {
          case InputFieldTypeEnum.FREE_INPUT:
             mappedFieldInput = (
-               <div>
-                  <Input id={id}
-                         onChange={(e) => {setActivityParam(e.target.value, field.name)}}
-                         value={matchingParam?.value ? matchingParam!.value + '' : ''}>
-                  </Input>
-               </div>)
+                <div>
+                   <Input id={id}
+                          onChange={(e) => {setActivityParam(e.target.value, field.name)}}
+                          value={matchingParam?.value ? matchingParam!.value + '' : ''}>
+                   </Input>
+                </div>)
             break
 
          case InputFieldTypeEnum.BOOLEAN:
             mappedFieldInput = (
-               <div>
-                  <Checkbox id={id}
-                            onChange={(e) => {setActivityParam(e.target.checked, field.name)}}
-                            isChecked={matchingParam?.value === true}></Checkbox>
-               </div>)
+                <div>
+                   <Checkbox id={id}
+                             onChange={(e) => {setActivityParam(e.target.checked, field.name)}}
+                             isChecked={matchingParam?.value === true}></Checkbox>
+                </div>)
             break
 
          case InputFieldTypeEnum.FREE_INPUT_LIST:
+            const fieldsMap = mapperParams.get(selectedActivity!.id) ?? new Map()
+            const paramMap = fieldsMap.get(field.name) ?? new Map()
+            const params: Param[] = []
+
+            paramMap.forEach((v) => params.push(v))
+            console.log(params)
+
             mappedFieldInput = (
-               <div>
-                  <Grid templateColumns='repeat(7, 1fr)' gap={6}>
-                     <GridItem colSpan={3}>
-                        Name: <Input id={id} onChange={(e) => {console.log({e})}}></Input>
-                     </GridItem>
-                     <GridItem colSpan={3}>
-                        Value: <Input id={id} onChange={(e) => {console.log({e})}}></Input>
-                     </GridItem>
-                     <GridItem>
-                        <Button>++</Button>
-                     </GridItem>
-                  </Grid>
-               </div>)
+                <div>
+                   <Button colorScheme='blue' variant='ghost'
+                           onClick={() => {addMultiInputParam(field.name)}}>
+                      add
+                   </Button>
+                   <Grid templateColumns='repeat(6, 1fr)' gap={6}>
+                      {
+                         params.map((v, i) => {
+                            return (
+                                <>
+                                   <GridItem colSpan={3}>
+                                      Name: <Input value={v.name} id={id}
+                                                   onChange={(e) => {console.log(e.target.value); setMultiInputParam(e.target.value, field.name, i, true)}}></Input>
+                                   </GridItem>
+                                   <GridItem colSpan={3}>
+                                      Value: <Input value={v.value + '' ?? ''} id={id}
+                                                    onChange={(e) => {setMultiInputParam(e.target.value, field.name, i, false )}}></Input>
+                                   </GridItem>
+                                </>
+                            )})
+                      }
+                   </Grid>
+                </div>)
             break
 
          case InputFieldTypeEnum.ADDRESS:
             mappedFieldInput = (
-                   <Grid templateColumns='repeat(2, 1fr)' gap={6}>
-                      <GridItem>
-                         Address: <Input id={id}
+                <Grid templateColumns='repeat(2, 1fr)' gap={6}>
+                   <GridItem>
+                      Address: <Input id={id}
                                       value={matchingParam?.value ? matchingParam!.value + '' : ''}
-                                      onChange={(e) => {resolveAddress(e.target.value, field.name)}}></Input>
-                      </GridItem>
-                      <GridItem>
-                         Resolved Address:
-                         <Select
-                             onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
-                            <option/>
-                            {resolvedAddresses.get(field.name)?.map((v) => {
-                               return <option selected={v.address === matchingParam?.value}>{v.address}</option>
-                            })}
-                         </Select>
-                      </GridItem>
-                   </Grid>)
+                                      onChange={(e) => {resolveAddress(e.target.value, field.name); setActivityParam(e.target.value, field.name)}}></Input>
+                   </GridItem>
+                   <GridItem>
+                      Resolved Address:
+                      <Select
+                          onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
+                         <option/>
+                         {resolvedAddresses.get(field.name)?.map((v) => {
+                            return <option value={v.address} selected={v.address === matchingParam?.value}>{v.type}: {v.address}</option>
+                         })}
+                      </Select>
+                   </GridItem>
+                </Grid>)
             break
 
          case InputFieldTypeEnum.DROPDOWN:
             mappedFieldInput = (
-               <div>
-                  <Select id={id}
-                          onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
-                     {(field as unknown as SelectFieldStruct).options.map((v) => {
-                        return <option selected={v === matchingParam?.value}>{v}</option>
-                     })}
-                  </Select>
-               </div>)
+                <div>
+                   <Select id={id}
+                           onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
+                      {(field as unknown as SelectFieldStruct).options.map((v) => {
+                         return <option selected={v === matchingParam?.value}>{v}</option>
+                      })}
+                   </Select>
+                </div>)
             break
 
          case InputFieldTypeEnum.RESOURCE_REF:
             mappedFieldInput = (
-               <div>
-                  <Select id={id}
-                          onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
-                     {workflow.structure.resources.filter((v) => {
-                        return v.type === (field as unknown as ResourceSelectFieldStruct).resourceType
-                     }).map((v) => {
-                        return <option value={v.id} id={v.id}>{v.name}</option>
-                     })}
-                  </Select>
-               </div>)
+                <div>
+                   <Select id={id}
+                           onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
+                      {workflow.structure.resources.filter((v) => {
+                         return v.type === (field as unknown as ResourceSelectFieldStruct).resourceType
+                      }).map((v) => {
+                         return <option value={v.id} id={v.id}>{v.name}</option>
+                      })}
+                   </Select>
+                </div>)
             break
 
          default:
@@ -222,10 +279,10 @@ function PropertiesTab () {
       }
 
       return (
-         <FormControl>
-            <FormLabel>{field.displayName}</FormLabel>
-            {mappedFieldInput}
-         </FormControl>
+          <FormControl>
+             <FormLabel>{field.displayName}</FormLabel>
+             {mappedFieldInput}
+          </FormControl>
       )
    }
 
@@ -235,8 +292,6 @@ function PropertiesTab () {
       return (
          <div>
             <>
-               {/* <h2>{tab.type} {tab.name}</h2>
-               <p>{tab.description}</p> */}
                <Divider />
                {tab.fields.map((v, i) => {
                   return createField(v, `${v.name}-${i}`)
