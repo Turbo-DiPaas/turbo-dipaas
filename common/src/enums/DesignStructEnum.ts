@@ -6,10 +6,10 @@ export enum ActivityCategoryEnum {
 
 export enum ActivityEnum {
     LOG_ACTIVITY = 'LogActivity',
-    INVOKE_EVM = 'InvokeEVM',
-    ON_OP = 'NoOp',
-    MAPPER = 'Mapper',
-    HTTP_REQUEST_REPLY = 'HTTPRequestReply'
+    INVOKE_EVM = 'InvokeEVMActivity',
+    ON_OP = 'NoOpActivity',
+    MAPPER = 'MapperActivity',
+    HTTP_REQUEST_REPLY = 'HTTPRequestReplyActivity'
 }
 
 export enum AssetType {

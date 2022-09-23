@@ -42,7 +42,6 @@ workflowsRouter.get("/", (request, response) => {
  *                    type: string
  */
 workflowsRouter.post("/", (request, response) => {
-    let activityGraph: ActivityGraph = new ActivityGraph()
     const workflow: Workflow = workflowFromJson(request.body)
 
     let workflowId = workflow.id?.length > 0 ? workflow.id : randomUUID()
