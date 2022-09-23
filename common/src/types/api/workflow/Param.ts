@@ -1,4 +1,4 @@
 export type Param = {
     name: string,
-    value?: string | boolean
+    value?: string | boolean | any[]
 }

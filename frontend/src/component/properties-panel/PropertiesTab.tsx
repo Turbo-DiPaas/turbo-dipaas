@@ -31,6 +31,7 @@ import {TriggerActivityEnum} from "../../types/enums/DesignStructEnum";
 import {Param} from "../../../../common/src/types/api/workflow/Param";
 import MultiAddressResolver from "../../service/address-resolver/AddressResolver";
 import {Address} from "../../types/struct/Address";
+import {activityToContractAbi, getAvailableContractFunctions} from "../../lib/evm/abiUtils";
 
 function PropertiesTab (data) {
    const activityCatalog = useSelector((state: AppStateReducer) => state.app.activityCatalog);
@@ -215,6 +216,61 @@ function PropertiesTab (data) {
       }
    }
 
+   function setEVMFunction(newValue: any, fieldName: string) {
+      if (selectedActivity && newValue) {
+         const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
+         // mapping: activityId => fieldName => param
+         const fieldMap = mapperParams.get(selectedActivity.id) ?? new Map()
+         const paramMap = fieldMap.get(fieldName) ?? new Map()
+         paramMap.clear()
+
+         const abi = activityToContractAbi(selectedActivityCopy, workflow.structure.resources)
+         const params = []
+         const functionToExecute = abi?.getFunction(newValue)
+         const functionInputs = functionToExecute?.inputs ?? []
+         functionInputs.forEach((v, i) => {
+            const name = v.name ? v.name : `[${i}] (${v.type})`
+            // @ts-ignore
+            params.push(name)
+            setMultiInputParam(name, fieldName, i, true)
+         })
+
+         setMultiInputParam(fieldName, fieldName, functionInputs.length + 1, true)
+         setMultiInputParam(newValue, fieldName, functionInputs.length + 1, false)
+
+         const notMatchingParams = selectedActivityCopy?.params?.filter((v) => v.name !== fieldName) ?? []
+         selectedActivityCopy.params = [...notMatchingParams, {name: fieldName, value: newValue}]
+
+         fieldMap.set(fieldName, paramMap)
+         mapperParams.set(selectedActivity.id, fieldMap)
+
+         selectedActivityCopy.params = []
+         paramMap.forEach((v) => {
+            selectedActivityCopy.params?.push(v)
+         })
+
+         setMapperParams(mapperParams)
+
+         setSelectedActivity(selectedActivityCopy)
+         upsertAsset(selectedActivityCopy)
+      }
+   }
+
+   function setEVMParam(newValue: any, fieldName: string) {
+      if (selectedActivity) {
+         const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
+         const updatedParam: Param = { name: fieldName, value: newValue }
+         const notMatchingParams = selectedActivityCopy.params?.filter((v) => v.name !== fieldName)
+         if (selectedActivityCopy.params?.length !== notMatchingParams?.length) {
+            selectedActivityCopy.params! = [...notMatchingParams ?? [], updatedParam]
+         } else {
+            selectedActivityCopy.params?.push(updatedParam)
+         }
+         setSelectedActivity(selectedActivityCopy)
+         upsertAsset(selectedActivityCopy)
+      }
+   }
+
    function createField(field: FieldStruct, id: string) {
       let mappedFieldInput;
       const matchingParam = selectedActivity?.params?.find((v) => v.name === field.name)
@@ -239,13 +295,54 @@ function PropertiesTab (data) {
                 </div>)
             break
 
+         case InputFieldTypeEnum.EVM_ABI_FUNCTION:
+            const paramsToSkip = new Map()
+            const abiFieldsMap = mapperParams.get(selectedActivity!.id) ?? new Map()
+            const abiParamMap = abiFieldsMap.get(field.name) ?? new Map()
+            const abiParams: Param[] = []
+
+             paramsToSkip.set('selectedFunction', '')
+
+            abiParamMap.forEach((v) => {
+               if (!paramsToSkip.has(v.name))
+                  abiParams.push(v)
+            })
+
+            mappedFieldInput = (
+                <div>
+                   <Select id={id}
+                           onChange={(e) => {setEVMFunction(e.target.value, field.name)}}>
+                         <option/>
+                      {getAvailableContractFunctions(selectedActivity!, workflow.structure.resources).map((v) => {
+                         return <option value={v} selected={v === matchingParam?.value}>{v}</option>
+                      })}
+                   </Select>
+                   <Grid display={''} templateColumns='repeat(6, 1fr)' gap={6}>
+                      {
+                         abiParams.map((v, i) => {
+                            return (
+                                <>
+                                   <GridItem colSpan={2}>
+                                      Name: <Input value={v.name} id={id}
+                                                   onChange={(e) => {console.log(e.target.value); setMultiInputParam(e.target.value, field.name, i, true)}}></Input>
+                                   </GridItem>
+                                   <GridItem colSpan={4}>
+                                      Value: <Input value={v.value + '' ?? ''} id={id}
+                                                    onChange={(e) => {setMultiInputParam(e.target.value, field.name, i, false )}}></Input>
+                                   </GridItem>
+                                </>
+                            )})
+                      }
+                   </Grid>
+                </div>)
+            break
+
          case InputFieldTypeEnum.FREE_INPUT_LIST:
             const fieldsMap = mapperParams.get(selectedActivity!.id) ?? new Map()
             const paramMap = fieldsMap.get(field.name) ?? new Map()
             const params: Param[] = []
 
             paramMap.forEach((v) => params.push(v))
-            console.log(params)
 
             mappedFieldInput = (
                 <div>

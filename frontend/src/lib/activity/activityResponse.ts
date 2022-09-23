@@ -1,9 +1,8 @@
 import {RecursiveTree} from "../../types/struct/RecursiveTree";
 import {ActivityEnum, TriggerActivityEnum} from "../../types/enums/DesignStructEnum";
-import {ethers} from "ethers";
+import {activityToContractAbi} from "../evm/abiUtils";
 // import {Activity} from "../../../../common/src/types/api/workflow/Activity";
 // import {Resource} from "../../../../common/src/types/api/workflow/Resource";
-import {ResourceEnum} from "../../types/enums/DesignStructEnum";
 
 const dataMappers = new Map<string, (any, Resource) => RecursiveTree>()
 dataMappers.set(ActivityEnum.MAPPER, mapMapperActivity)
@@ -35,7 +34,7 @@ function mapMapperActivity(activity: any, resource: any[]): RecursiveTree {
     activity.params?.forEach((v) => {
         resp.data?.push({name: v.name, data: null})
     })
-    
+
     return resp
 }
 
@@ -49,34 +48,25 @@ function mapEVMEventSchedulerActivity(activity: any, resource: any[]): Recursive
 
 function mapEVMInvokeActivity(activity: any, resource: any[]): RecursiveTree {
     const resp: RecursiveTree = {name: '', data: []}
-    const activityResourcesMap = new Map()
-    activity.resources?.forEach((v) => activityResourcesMap.set(v, v))
-
-    const abiResource = resource
-        .filter((v) => v.type === 'EVMABIResource')
-        // const abiResource = x
-        .find((v) => activityResourcesMap.has(v.id))
-
-    const abi = abiResource?.params?.find((v) => v.name === 'abi')
-
     const selectedFunction = activity.params?.find((v) => v.name === 'selectedFunction')?.value
 
-    if (abi && selectedFunction && (selectedFunction as string).length > 0) {
-        try {
-            const abiInterface = new ethers.utils.Interface(abi.value + '')
+    try {
+        const abiInterface = activityToContractAbi(activity, resource)
+        if (abiInterface && selectedFunction && selectedFunction.length > 0) {
             const functionToExecute = abiInterface.getFunction(selectedFunction + '')
 
             functionToExecute.outputs?.forEach((v, i) => {
                 const name = v.name ? v.name : `[${i}] (${v.type})`
                 resp.data?.push({name: name, data: null})
             })
-        } catch (e) {
-            console.error(e)
         }
+    } catch (e) {
+        console.error(e)
     }
 
     return resp
 }
+
 
 function mapSchedulerActivity(activity: any, resource: any[]): RecursiveTree {
     return {name: '', data: [{name: 'date', data: null},]}
@@ -84,8 +74,8 @@ function mapSchedulerActivity(activity: any, resource: any[]): RecursiveTree {
 
 function mapHTTPRequestReplyActivity(activity: any, resource: any[]): RecursiveTree {
     return {name: '', data: [
-                {name: 'headers{}', data: null},
-                {name: 'dataJson{}', data: null},
-                {name: 'dataRaw', data: null},
+            {name: 'headers{}', data: null},
+            {name: 'dataJson{}', data: null},
+            {name: 'dataRaw', data: null},
         ]}
 }
