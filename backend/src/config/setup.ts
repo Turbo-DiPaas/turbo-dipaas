@@ -2,10 +2,11 @@ import 'reflect-metadata'
 import Container from 'typedi'
 import constants from "./constants";
 import LoggerImpl from "../app/utils/LoggerImpl";
+import * as fs from "fs";
 
 /**
-*  Setup script
-*/
+ *  Setup script
+ */
 const setup = () => {
    // === set injection engine
    // We don't use constructor injection, as we depend on interfaces, not implementation (SOLID :-) ).
@@ -14,6 +15,14 @@ const setup = () => {
    Container.set([
       { id: constants.ids.logger, value: new LoggerImpl()},
    ])
+
+   try {
+      if (!fs.existsSync('log.txt')) {
+         fs.writeFile('log.txt', '', () => {})
+      }
+   } catch(err) {
+      console.error(err)
+   }
 
    // we set container many times to set injection deps properly
 

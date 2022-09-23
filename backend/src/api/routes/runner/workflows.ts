@@ -1,5 +1,4 @@
 import express from 'express'
-import ActivityGraph from '../../../lib/activity/utils/ActivityGraph';
 import { randomUUID } from 'crypto';
 import WorkflowRunner from "../../../app/WorkflowRunner";
 import {workflowFromJson} from "../../../app/utils/workflow";
@@ -42,7 +41,6 @@ workflowsRouter.get("/", (request, response) => {
  *                    type: string
  */
 workflowsRouter.post("/", (request, response) => {
-    let activityGraph: ActivityGraph = new ActivityGraph()
     const workflow: Workflow = workflowFromJson(request.body)
 
     let workflowId = workflow.id?.length > 0 ? workflow.id : randomUUID()

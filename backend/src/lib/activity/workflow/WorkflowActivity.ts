@@ -31,9 +31,16 @@ export default abstract class WorkflowActivity extends ActivityBase {
 
       return this.run(await evaluateProps(this.params, context))
          .then(res => {
+            const obj: any = {}
+            for (let [k,v] of res.returnData) {
+               obj[k] = v
+            }
+
             // we just set proper state when finished, returning original resource
             this.currentState = res.error ? WorkflowProcessState.Failed : WorkflowProcessState.Finished
-            this.logger.debug(`Activity ${this.name} finished with status ` + (this.currentState === WorkflowProcessState.Failed ? 'Failed' : 'Success'))
+            this.logger.debug(`Activity ${this.name} finished with status ` + (this.currentState === WorkflowProcessState.Failed ? 'Failed' : 'Success')
+               + '\n Return values:\n' + JSON.stringify(obj))
+
             return res
          }).catch(err => {
             // in case that activity won't catch an error

@@ -33,7 +33,7 @@ const initialNodes = [
       label: 'Node',
       id: '0'
     },
-    position: { x: -2020, y: -5 },
+    position: { x: 20, y: -5 },
   },
 ];
 
@@ -45,13 +45,15 @@ const getId = () => `${id++}`;
 const nodeTypes = { textUpdater: TextUpdaterNode };
 
 const fitViewOptions = {
-  padding: 10,
+  padding: 7,
 };
 
-function Workspace() {
+function Workspace( data :any) {
   const [captureElementClick, setCaptureElementClick] = useState(true);
   const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
   const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
+  const { nodes, setNodes, onNodesChange } = data;
+
 
   const onEdgeClick = (event, edge) => {
     console.log(edge)
@@ -82,7 +84,7 @@ function Workspace() {
   ////////////////////
   const reactFlowWrapper = useRef<any>(null);
   const connectingNodeId = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { project } = useReactFlow();
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
@@ -143,6 +145,7 @@ function Workspace() {
               fitViewOptions={fitViewOptions}
               onEdgeClick={captureElementClick ? onEdgeClick : undefined}
               onNodeClick={captureElementClick ? onNodeClick : undefined}
+              onNodeDrag={onNodeClick}
               connectionLineComponent={ConnectionLine as any}
               // nodeTypes={nodeTypes}
               style={rfStyle}

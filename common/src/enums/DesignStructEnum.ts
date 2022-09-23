@@ -6,10 +6,10 @@ export enum ActivityCategoryEnum {
 
 export enum ActivityEnum {
     LOG_ACTIVITY = 'LogActivity',
-    INVOKE_EVM = 'InvokeEVM',
-    ON_OP = 'NoOp',
-    MAPPER = 'Mapper',
-    HTTP_REQUEST_REPLY = 'HTTPRequestReply'
+    INVOKE_EVM = 'InvokeEVMActivity',
+    NO_OP = 'NoOpActivity',
+    MAPPER = 'MapperActivity',
+    HTTP_REQUEST_REPLY = 'HTTPRequestReplyActivity'
 }
 
 export enum AssetType {
@@ -18,19 +18,22 @@ export enum AssetType {
     TRANSITION
 }
 
+
 export enum InputFieldTypeEnum {
     FREE_INPUT,
-    FREE_INPUT_LIST, // type in which you define arbitrary input list
+    FREE_INPUT_LIST,
+    ADDRESS,
     BOOLEAN,
     DROPDOWN,
-    RESOURCE_REF
+    RESOURCE_REF,
+    EVM_ABI_FUNCTION,
 }
 
 export enum ResourceEnum {
-    EVM_CONNECTION = 'EVM connection',
-    EVM_ABI = 'EVM ABI',
-    HTTP_CONNECTION = 'HTTP connection',
-    IPFS_CONNECTON = 'IPFS(File) connection'
+    EVM_CONNECTION = 'GenericEVMConnectionResource',
+    EVM_ABI = 'EVMABIResource',
+    HTTP_CONNECTION = 'HTTPConnectionResource',
+    IPFS_CONNECTON = 'IPFSConnectionResource'
 }
 
 export enum ResourceCategoryEnum {

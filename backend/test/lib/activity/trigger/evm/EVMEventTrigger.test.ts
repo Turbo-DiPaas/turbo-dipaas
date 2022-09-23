@@ -13,8 +13,10 @@ import Container from "typedi";
 import StorageArtifact from '../../../../../mock/artifacts/test/mock/evm/Storage.sol/Storage.json'
 import {Storage} from '../../../../../mock/types'
 import {Provider} from "@ethersproject/providers";
+import {testSetup} from "../../../../testSetup";
 
 describe('EVM event trigger', () => {
+   testSetup()
    let activityGraph: ActivityGraph
    let schedulerProps: Map<string, any>
    let spy: SinonSpy

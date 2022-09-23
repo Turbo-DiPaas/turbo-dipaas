@@ -11,10 +11,12 @@ import EVMABIResource from "../../../../../src/lib/resource/evm/EVMABIResource";
 import {ResourceTypeEnum} from "../../../../../../common/src/enums/ResourceTypeEnum";
 import GenericEVMConnectionResource from "../../../../../src/lib/resource/evm/GenericEVMConnectionResource";
 import GenericEVMConnectionResourceMock from "../../../../mock/evm/GenericEVMConnectionResourceMock";
+import {testSetup} from "../../../../testSetup";
 
 chai.use(solidity) // solidiity matchers, e.g. expect().to.be.revertedWith("message")
 
 describe('InvokeEVMActivity', () => {
+    testSetup()
     let invokeEVMActivity: InvokeEVMActivity
     let storageContract: Storage
     const context = new WorkflowContext()

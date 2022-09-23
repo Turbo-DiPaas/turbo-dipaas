@@ -2,8 +2,10 @@ import chai, { expect } from 'chai'
 import WorkflowContext from "../../../../../src/app/WorkflowContext";
 import MapperActivity from "../../../../../src/lib/activity/workflow/impl/general/MapperActivity";
 import {ActivityResult} from "../../../../../../common/src/types/activity/ActivityResult";
+import {testSetup} from "../../../../testSetup";
 
 describe('Mapper Activity', () => {
+    testSetup()
     let mapperActivity: MapperActivity
     const context = new WorkflowContext()
     const returnData: Map<string, any> = new Map()

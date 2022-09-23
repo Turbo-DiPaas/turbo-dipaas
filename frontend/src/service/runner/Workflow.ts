@@ -33,12 +33,12 @@ const stopWorkflow = async (id: string): Promise<ResponseContent<any>> => {
 
    return callService<any>(`runner/workflows/${id}/stop`, requestOptions)
 }
-const getWorkflowLogs = async (id: string): Promise<ResponseContent<any>> => {
+const getWorkflowLogs = async (id: string): Promise<ResponseContent<string>> => {
    const requestOptions: RequestInit = {
       method: "GET",
    }
 
-   return callService<any>(`runner/workflows/${id}/logs`, requestOptions)
+   return callService<string>(`runner/workflows/${id}/logs`, requestOptions)
 }
 
 export { createWorkflow, runWorkflow, stopWorkflow, getWorkflowLogs }
