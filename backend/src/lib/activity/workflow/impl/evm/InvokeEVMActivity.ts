@@ -14,7 +14,7 @@ export default class InvokeEVMActivity extends WorkflowActivity {
       const abiResource = this.getResource(EVMABIResource)
       const connectionResource = this.getResource(GenericEVMConnectionResource)
       const selectedFunction = params.get('selectedFunction')
-      const transactionParams: any[] = params.get('transactionParams')
+      let transactionParams: any[] = params.get('transactionParams')
       const transactionRecipient = params.get('transactionRecipient')
       const abiInterface = new ethers.utils.Interface(JSON.stringify(abiResource?.getABI()))
       const returnData: Map<string, any> = new Map()
@@ -26,6 +26,21 @@ export default class InvokeEVMActivity extends WorkflowActivity {
 
       try {
          const functionToExecute = abiInterface.getFunction(selectedFunction)
+         transactionParams = []
+         const paramsMap = new Map()
+
+         if (!transactionParams || transactionParams.length === 0) {
+            functionToExecute?.inputs?.forEach((v, i) => {
+               const name = v.name ? v.name : `[${i}] (${v.type})`
+               paramsMap.set(name, name)
+            })
+
+            for (let [k,v] of params) {
+               if (paramsMap.has(k))
+               transactionParams.push(v)
+            }
+         }
+
          const encodedData = abiInterface.encodeFunctionData(functionToExecute, transactionParams)
          const signer = connectionResource!.getSigner()
 

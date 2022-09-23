@@ -18,13 +18,15 @@ export enum AssetType {
     TRANSITION
 }
 
+
 export enum InputFieldTypeEnum {
     FREE_INPUT,
-    FREE_INPUT_LIST, // type in which you define arbitrary input list
+    FREE_INPUT_LIST,
     ADDRESS,
     BOOLEAN,
     DROPDOWN,
-    RESOURCE_REF
+    RESOURCE_REF,
+    EVM_ABI_FUNCTION,
 }
 
 export enum ResourceEnum {

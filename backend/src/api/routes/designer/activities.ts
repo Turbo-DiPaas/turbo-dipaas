@@ -27,14 +27,19 @@ const activities: ActivityDetailsStruct[] = [
                     'fields': [
                         {
                             'name': 'selectedFunction',
-                            'displayName': 'Function name',
-                            'type': InputFieldTypeEnum.FREE_INPUT
+                            'displayName': 'Function to invoke',
+                            'type': InputFieldTypeEnum.EVM_ABI_FUNCTION
                         },
-                        {
-                            'name': 'transactionParams',
-                            'displayName': 'Transaction params',
-                            'type': InputFieldTypeEnum.FREE_INPUT
-                        },
+                        // {
+                        //     'name': 'selectedFunction',
+                        //     'displayName': 'Function name',
+                        //     'type': InputFieldTypeEnum.FREE_INPUT
+                        // },
+                        // {
+                        //     'name': 'transactionParams',
+                        //     'displayName': 'Transaction params',
+                        //     'type': InputFieldTypeEnum.FREE_INPUT
+                        // },
                         {
                             'name': 'transactionRecipient',
                             'displayName': 'Recipient address',
@@ -112,7 +117,7 @@ const activities: ActivityDetailsStruct[] = [
         'description': 'No operation, used only to move to next ectivity',
         'updated': '2022-09-21T00:00:00Z',
         'category': ActivityCategoryEnum.GENERAL,
-        'type': ActivityEnum.ON_OP,
+        'type': ActivityEnum.NO_OP,
         'structure': {
             tabs: [
                 {
