@@ -63,7 +63,7 @@ export default class InvokeEVMActivity extends WorkflowActivity {
                data: encodedData,
                to: transactionRecipient
             }).then(v => {
-               returnData.set('value', v.value)
+               returnData.set('value', v.value.toString())
                returnData.set('from', v.from)
                returnData.set('data', v.data)
                returnData.set('type', v.type)
@@ -73,10 +73,12 @@ export default class InvokeEVMActivity extends WorkflowActivity {
                returnData.set('confirmations', v.confirmations)
                returnData.set('timestamp', v.timestamp)
                returnData.set('chainId', v.chainId)
-               returnData.set('gasLimit', v.gasLimit)
+               returnData.set('gasLimit', v.gasLimit.toString())
                returnData.set('gasPrice', v.gasPrice)
-               returnData.set('maxFeePerGas', v.maxFeePerGas)
-               returnData.set('maxPriorityFeePerGas', v.maxPriorityFeePerGas)
+               // @ts-ignore
+               returnData.set('maxFeePerGas', v.maxFeePerGas.toString())
+               // @ts-ignore
+               returnData.set('maxPriorityFeePerGas', v.maxPriorityFeePerGas.toString())
                returnData.set('nonce', v.nonce)
                returnData.set('to', v.to)
 

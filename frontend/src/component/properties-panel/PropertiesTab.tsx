@@ -103,7 +103,7 @@ function PropertiesTab (data) {
 
       setNodes((nds) => {return nds.map(el => {
          if(el.id === selectedActivityNode?.id || el.id===id) {
-            return {...el, data: {...el.data, label: newType}}
+            return {...el, data: {...el.data, label: `${newType} (id: ${el.id})`}}
          }
          return el;
       })});

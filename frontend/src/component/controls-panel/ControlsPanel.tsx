@@ -82,7 +82,7 @@ function ControlsPanel(data) {
                         // we are removing the half of the node width (75) to center the new node
                         position: { x: activity.position!.x, y: activity.position!.y },
                         data: {
-                            label: activity.name,
+                            label: `activity.name (id: ${activity.id})`,
                             id: activity.id
                         }
                     }

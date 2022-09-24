@@ -79,15 +79,9 @@ function Workspace( data :any) {
         })
   }, [])
 
-  // const onNodesChange = useCallback(
-  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-  //   [setNodes]
-  // );
-
   ////////////////////
   const reactFlowWrapper = useRef<any>(null);
   const connectingNodeId = useRef(null);
-  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const { project } = useReactFlow();
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -103,28 +97,32 @@ function Workspace( data :any) {
         // we need to remove the wrapper bounds, in order to get the correct position
         const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
         const id = getId();
+        const uid = `a${id}`;
+
         const newNodePosition = project({ x: event.clientX - left - 75, y: event.clientY - top })
         const newNode = {
-          id,
+          id: uid,
           // we are removing the half of the node width (75) to center the new node
           position: newNodePosition,
           data: {
             label: `Node ${id}`,
-            id: id
+            id: uid
           },
         };
 
+        const transactionUid = `t${id}`;
+
         setNodes((nds) => nds.concat(newNode));
         setEdges((eds) =>
-          eds.concat({ id,type: 'smoothstep', source: connectingNodeId.current as any, target: id })
+          eds.concat({ id: transactionUid,type: 'smoothstep', source: connectingNodeId.current as any, target: uid })
         );
 
         const updatedWorkflow = JSON.parse(JSON.stringify(workflow))
 
         updatedWorkflow.structure.transitions.push({
-          id: `${edges.length + 1}`,
+          id: transactionUid,
           from: `${connectingNodeId.current}`,
-          to: id
+          to: uid
         })
 
         dispatch(setWorkflow(updatedWorkflow))
