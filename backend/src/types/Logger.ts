@@ -7,10 +7,10 @@ export enum LogLevel {
 }
 
 export interface Logger {
-    trace(message: string): void
-    debug(message: string): void
-    info(message: string): void
-    warning(message: string): void
-    error(message: string): void
-    log(message: string, logLevel: LogLevel): void
+    trace(message: any): void
+    debug(message: any): void
+    info(message: any): void
+    warning(message: any): void
+    error(message: any): void
+    log(message: any, logLevel: LogLevel): void
 }

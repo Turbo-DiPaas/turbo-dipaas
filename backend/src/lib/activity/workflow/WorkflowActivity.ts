@@ -28,7 +28,6 @@ export default abstract class WorkflowActivity extends ActivityBase {
 
       this.logger.debug(`Starting activity ${this.name}`)
 
-
       return this.run(await evaluateProps(this.params, context))
          .then(res => {
             const obj: any = {}
@@ -40,6 +39,10 @@ export default abstract class WorkflowActivity extends ActivityBase {
             this.currentState = res.error ? WorkflowProcessState.Failed : WorkflowProcessState.Finished
             this.logger.debug(`Activity ${this.name} finished with status ` + (this.currentState === WorkflowProcessState.Failed ? 'Failed' : 'Success')
                + '\n Return values:\n' + JSON.stringify(obj))
+
+             if (this.currentState === WorkflowProcessState.Failed) {
+                 this.logger.error(res.error)
+             }
 
             return res
          }).catch(err => {

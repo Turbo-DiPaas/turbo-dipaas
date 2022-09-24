@@ -133,7 +133,7 @@ function PropertiesTab (data) {
       }
    }
 
-   function setMultiInputParam(newValue: any, fieldName: string, paramId: number, isKey: boolean) {
+   function setMultiInputParam(newValue: any, fieldName: string, paramId: number | string, isKey: boolean) {
       if (selectedActivity) {
          const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
          // mapping: activityId => fieldName => param
@@ -214,6 +214,61 @@ function PropertiesTab (data) {
       }
    }
 
+   function setEVMMultiInputParam(newValue: any, fieldName: string, id: string) {
+      if (selectedActivity && newValue) {
+         const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
+
+         // setMultiInputParam(id, fieldName, id, true)
+         // setMultiInputParam(newValue, fieldName, id, false)
+
+
+         //NOTE
+         //this is terrible copy-paste, but created quickly to finish before deadline
+         // and get this thing to work (problems with useState being IMPLICITLY asynchronous
+         // vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+         const fieldMap = mapperParams.get(selectedActivity.id) ?? new Map()
+         const paramMap = fieldMap.get(fieldName) ?? new Map()
+         const param = paramMap.get(id) ?? {name: '', value: ''} as Param
+         const newParam: Param = {...param}
+         newParam.value = newValue
+
+         paramMap.set(id, newParam)
+         fieldMap.set(fieldName, paramMap)
+         mapperParams.set(selectedActivity.id, fieldMap)
+
+         setMapperParams(mapperParams)
+
+
+         // ^^^^^^^^^^^^^^^^^^
+         // end of terrible code
+
+
+
+
+
+         const mergedParams = new Map()
+
+
+         selectedActivityCopy?.params?.forEach((v) =>{
+            mergedParams.set(v.name, v)
+         })
+
+         paramMap.forEach((v) =>{
+            mergedParams.set(v.name, v)
+         })
+         // selectedActivityCopy.params = [...paramsToSave, {name: id, value: newValue}]
+         selectedActivityCopy.params = []
+         // @ts-ignore
+         for (let [k, v] of mergedParams) {
+            selectedActivityCopy.params.push(v)
+         }
+
+         setSelectedActivity(selectedActivityCopy)
+         upsertAsset(selectedActivityCopy)
+      }
+   }
+
    function setEVMFunction(newValue: any, fieldName: string) {
       if (selectedActivity && newValue) {
          const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
@@ -230,11 +285,11 @@ function PropertiesTab (data) {
             const name = v.name ? v.name : `[${i}] (${v.type})`
             // @ts-ignore
             params.push(name)
-            setMultiInputParam(name, fieldName, i, true)
+            setMultiInputParam(name, fieldName, name, true)
          })
 
-         setMultiInputParam(fieldName, fieldName, functionInputs.length + 1, true)
-         setMultiInputParam(newValue, fieldName, functionInputs.length + 1, false)
+         setMultiInputParam(fieldName, fieldName, fieldName, true)
+         setMultiInputParam(newValue, fieldName, fieldName, false)
 
          const paramsToSave = selectedActivityCopy?.params?.filter((v) => v.name === 'transactionRecipient') ?? []
          selectedActivityCopy.params = [...paramsToSave, {name: fieldName, value: newValue}]
@@ -295,7 +350,7 @@ function PropertiesTab (data) {
                          return <option value={v} selected={v === matchingParam?.value}>{v}</option>
                       })}
                    </Select>
-                   <Grid display={''} templateColumns='repeat(6, 1fr)' gap={6}>
+                   <Grid templateColumns='repeat(6, 1fr)' gap={6}>
                       {
                          abiParams.map((v, i) => {
                             return (
@@ -305,7 +360,7 @@ function PropertiesTab (data) {
                                    </GridItem>
                                    <GridItem colSpan={4}>
                                       Value: <Input value={v.value + '' ?? ''} id={id}
-                                                    onChange={(e) => {setMultiInputParam(e.target.value, field.name, i, false )}}></Input>
+                                               onChange={(e) => {setEVMMultiInputParam(e.target.value, field.name, v.name)}}></Input>
                                    </GridItem>
                                 </>
                             )})
@@ -332,11 +387,11 @@ function PropertiesTab (data) {
                          params.map((v, i) => {
                             return (
                                 <>
-                                   <GridItem colSpan={3}>
+                                   <GridItem colSpan={2}>
                                       Name: <Input value={v.name} id={id}
-                                                   onChange={(e) => {console.log(e.target.value); setMultiInputParam(e.target.value, field.name, i, true)}}></Input>
+                                                   onChange={(e) => {setMultiInputParam(e.target.value, field.name, i, true)}}></Input>
                                    </GridItem>
-                                   <GridItem colSpan={3}>
+                                   <GridItem colSpan={4}>
                                       Value: <Input value={v.value + '' ?? ''} id={id}
                                                     onChange={(e) => {setMultiInputParam(e.target.value, field.name, i, false )}}></Input>
                                    </GridItem>

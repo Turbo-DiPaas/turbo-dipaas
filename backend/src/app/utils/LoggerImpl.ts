@@ -18,21 +18,21 @@ const getLogLevelString = (ll: LogLevel) => {
 }
 
 export default class LoggerImpl implements Logger {
-    debug(message: string): void {
+    debug(message: any): void {
         this.log(message, LogLevel.DEBUG)
     }
 
-    error(message: string): void {
+    error(message: any): void {
         this.log(message, LogLevel.ERROR)
     }
 
-    info(message: string): void {
+    info(message: any): void {
         this.log(message, LogLevel.INFO)
     }
 
-    log(message: string, logLevel: LogLevel): void {
+    log(message: any, logLevel: LogLevel): void {
         let dt = LocalDateTime.now()
-        const logMessage = dt.toString() + ' [' + getLogLevelString(logLevel) + ']: ' + message
+        const logMessage = dt.toString() + ' [' + getLogLevelString(logLevel) + ']: ' + JSON.stringify(message)
 
         let stats = fs.statSync("log.txt")
         let fileSizeInBytes = stats.size;
@@ -51,11 +51,11 @@ export default class LoggerImpl implements Logger {
         console.log(logMessage)
     }
 
-    trace(message: string): void {
+    trace(message: any): void {
         this.log(message, LogLevel.TRACE)
     }
 
-    warning(message: string): void {
+    warning(message: any): void {
         this.log(message, LogLevel.WARN)
     }
 }
