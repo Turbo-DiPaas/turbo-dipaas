@@ -7,7 +7,7 @@ export default class EVMABIResource extends ResourceBase {
       super(id, name, type, params)
    }
 
-   getABI(): AbiType {
+   getABI(): string {
       return this.getProperty('abi')
    }
 }

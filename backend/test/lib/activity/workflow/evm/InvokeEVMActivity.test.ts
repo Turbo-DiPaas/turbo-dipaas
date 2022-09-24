@@ -10,7 +10,6 @@ import Container from "typedi";
 import EVMABIResource from "../../../../../src/lib/resource/evm/EVMABIResource";
 import {ResourceTypeEnum} from "../../../../../../common/src/enums/ResourceTypeEnum";
 import GenericEVMConnectionResource from "../../../../../src/lib/resource/evm/GenericEVMConnectionResource";
-import GenericEVMConnectionResourceMock from "../../../../mock/evm/GenericEVMConnectionResourceMock";
 import {testSetup} from "../../../../testSetup";
 
 chai.use(solidity) // solidiity matchers, e.g. expect().to.be.revertedWith("message")
@@ -29,10 +28,16 @@ describe('InvokeEVMActivity', () => {
         storageContract = await Storage.deploy() as Storage
 
         const abiResParams = new Map()
-        abiResParams.set('abi', StorageArtifact.abi)
+        abiResParams.set('abi', JSON.stringify(StorageArtifact.abi))
 
         const abiResource = new EVMABIResource(abiResourceId, 'test abi resource', ResourceTypeEnum.EVMABI, abiResParams)
-        const connResource = new GenericEVMConnectionResourceMock(connResId, 'test connection resource', ResourceTypeEnum.EVMConnection, new Map())
+
+        const connParams = new Map()
+        // connParams.set('url', 'http://localhost:8545') -> this may not work on Linux ;/
+        connParams.set('url', 'http://127.0.0.1:8545')
+        connParams.set('privateKey', '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
+
+        const connResource = new GenericEVMConnectionResource(connResId, 'test connection resource', ResourceTypeEnum.EVMConnection, connParams)
 
         Container.set([
            {id: abiResourceId, value: abiResource},

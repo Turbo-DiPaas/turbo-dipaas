@@ -21,7 +21,7 @@ export function mapActivitiesResponse(activity: any[], resources: any[]): Recurs
 export function mapActivityResponse(activity: any, resource: any[]): RecursiveTree {
     const mapperFunction = dataMappers.get(activity.type)
     const response = mapperFunction!(activity, resource)
-    return {name: `${activity.name} (${activity.id})`, data: response.data}
+    return {name: `${activity.name} (id: ${activity.id})`, data: response.data}
 }
 
 function mapNoOutputActivity(activity: any, resource: any[]): RecursiveTree {
@@ -54,11 +54,36 @@ function mapEVMInvokeActivity(activity: any, resource: any[]): RecursiveTree {
         const abiInterface = activityToContractAbi(activity, resource)
         if (abiInterface && selectedFunction && selectedFunction.length > 0) {
             const functionToExecute = abiInterface.getFunction(selectedFunction + '')
+            const isReadFunction = (functionToExecute.stateMutability === 'view' || functionToExecute.stateMutability === 'pure')
 
-            functionToExecute.outputs?.forEach((v, i) => {
-                const name = v.name ? v.name : `[${i}] (${v.type})`
-                resp.data?.push({name: name, data: null})
-            })
+            if (isReadFunction) {
+                const callResult: RecursiveTree = {name: 'callResult', data: []}
+                functionToExecute.outputs?.forEach((v, i) => {
+                    const name = v.name ? v.name : `[${i}] (${v.type})`
+                    callResult.data?.push({name: name, data: null})
+                })
+
+                resp.data?.push(callResult)
+            }
+
+            if (!isReadFunction) {
+                resp.data?.push({ name: 'value', data: null})
+                resp.data?.push({ name: 'from', data: null})
+                resp.data?.push({ name: 'data', data: null})
+                resp.data?.push({ name: 'type', data: null})
+                resp.data?.push({ name: 'hash', data: null})
+                resp.data?.push({ name: 'blockHash', data: null})
+                resp.data?.push({ name: 'blockNumber', data: null})
+                resp.data?.push({ name: 'confirmations', data: null})
+                resp.data?.push({ name: 'timestamp', data: null})
+                resp.data?.push({ name: 'chainId', data: null})
+                resp.data?.push({ name: 'gasLimit', data: null})
+                resp.data?.push({ name: 'gasPrice', data: null})
+                resp.data?.push({ name: 'maxFeePerGas', data: null})
+                resp.data?.push({ name: 'maxPriorityFeePerGas', data: null})
+                resp.data?.push({ name: 'nonce', data: null})
+                resp.data?.push({ name: 'to', data: null})
+            }
         }
     } catch (e) {
         console.error(e)
