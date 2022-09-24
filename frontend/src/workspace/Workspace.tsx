@@ -131,7 +131,7 @@ function Workspace( data :any) {
               fitViewOptions={fitViewOptions}
               onEdgeClick={captureElementClick ? onEdgeClick : undefined}
               onNodeClick={captureElementClick ? onNodeClick : undefined}
-              onNodeDrag={onNodeClick}
+              onNodeDragStop={onNodeClick}
               connectionLineComponent={ConnectionLine as any}
               // nodeTypes={nodeTypes}
               style={rfStyle}
