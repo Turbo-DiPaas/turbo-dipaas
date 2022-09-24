@@ -57,23 +57,21 @@ const treeState: {tree: RecursiveTree} = {
 
 const initialNodes = [
    {
-     id: '0',
+     id: 'a0',
      type: 'input',
      data: {
-       label: 'Node',
-       id: '0'
+       label: 'Starter node',
+       id: 'a0'
      },
      position: { x: -2020, y: -5 },
    },
  ];
 
- const initailEdges = [
-  
- ]
+ const initailEdges = []
 
 
 function App() {
-    const [nodes, setNodes, onNodesChange ] = useNodesState(initialNodes);
+    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initailEdges)
     const classes = useStyles();
     const activities = useSelector((state: AppStateReducer) => state.app.workflow.structure.activities);

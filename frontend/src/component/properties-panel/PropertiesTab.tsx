@@ -67,7 +67,7 @@ function PropertiesTab (data) {
       setSelectedActivity(matchingActivity)
       setSelectedActivityStruct(matchingActivityStruct)
 
-      const isStarterActivity = selectedActivityNode?.id === '0'
+      const isStarterActivity = selectedActivityNode?.id === 'a0'
 
       const activitySubtype = isStarterActivity ? 'starter' : 'workflow'
 

@@ -23,20 +23,6 @@ const rfStyle = {
   // backgroundColor: '#EFEFEF',
 };
 
-const onPaneClick = (event) => console.log('onPaneClick', event);
-
-const initialNodes = [
-  {
-    id: '0',
-    type: 'input',
-    data: {
-      label: 'Node',
-      id: '0'
-    },
-    position: { x: 20, y: -5 },
-  },
-];
-
 let id = 1;
 const getId = () => `${id++}`;
 

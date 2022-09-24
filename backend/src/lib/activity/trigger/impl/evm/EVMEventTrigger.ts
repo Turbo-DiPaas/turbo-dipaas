@@ -5,32 +5,47 @@ import WorkflowContext from "../../../../../app/WorkflowContext";
 import EVMABIResource from "../../../../resource/evm/EVMABIResource";
 import GenericEVMConnectionResource from "../../../../resource/evm/GenericEVMConnectionResource";
 import {ethers} from "ethers";
+import {getLogger} from "../../../../../app/logger";
 
 export default class EVMEventTrigger extends WorkflowTriggerBase {
    constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
       super(id, name, params, resourceIds)
+
+      this.logger = getLogger()
    }
 
    async start(notifyFunction: (res: ActivityResult) => void): Promise<void> {
-      const params = await evaluateProps(this.params, new WorkflowContext())
-      const abiResource = this.getResource(EVMABIResource)
-      const connectionResource = this.getResource(GenericEVMConnectionResource)
-      const eventName = params.get('eventName')
-      const eventAddress = params.get('eventAddress')
-      const abiInterface = new ethers.utils.Interface(JSON.stringify(abiResource?.getABI()))
-      const returnData: Map<string, any> = new Map()
-      const contract = new ethers.Contract(eventAddress, abiInterface, connectionResource?.getSigner())
-
-      const eventToListenTo = abiInterface.getEvent(eventName)
-      const eventSighash = eventToListenTo.format(ethers.utils.FormatTypes.sighash)
-
       try {
+         const params = await evaluateProps(this.params, new WorkflowContext())
+         const abiResource = this.getResource(EVMABIResource)
+         const connectionResource = this.getResource(GenericEVMConnectionResource)
+         const eventName = params.get('eventName')
+         const eventAddress = params.get('eventAddress')
+         const abiInterface = new ethers.utils.Interface(abiResource?.getABI() ?? '')
+         const returnData: Map<string, any> = new Map()
+         const contract = new ethers.Contract(eventAddress, abiInterface, connectionResource?.getSigner())
+
+         const eventToListenTo = abiInterface.getEvent(eventName)
+
+         const eventSighash = eventToListenTo.format(ethers.utils.FormatTypes.sighash)
+
+         const eventArgsShift = eventToListenTo.anonymous ? 0 : 1
+
          contract.on(eventSighash, async (...values) => {
             const eventData = values[eventToListenTo.inputs.length]
+            const parsedArgs: any[] = []
+            eventData.args?.slice(eventArgsShift, eventData.args?.length ?? eventArgsShift)
+                .forEach((v: any) => {
+               if (v._isBigNumber) {
+                  parsedArgs.push(v.toString())
+               }
+            })
+
+            this.logger.trace(values)
 
             returnData.set('blockNumber', eventData.blockNumber)
             returnData.set('transactionHash', eventData.transactionHash)
-            returnData.set('eventTopics', eventData.args)
+            returnData.set('eventTopics', parsedArgs)
 
             let promiseToResolve = Promise.resolve({
                status: 200,
@@ -40,6 +55,7 @@ export default class EVMEventTrigger extends WorkflowTriggerBase {
             notifyFunction(await this.invoke().then(() => {return promiseToResolve}))
          })
       } catch (e) {
+         console.error(e)
          notifyFunction({
             status: 500,
             returnData: new Map(),

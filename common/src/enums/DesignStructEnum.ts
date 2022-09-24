@@ -50,5 +50,5 @@ export enum TabEnum {
 
 export enum TriggerActivityEnum {
     SCHEDULER = 'Scheduler',
-    EVM_EVENT_SCHEDULER = 'EVMEventScheduler'
+    EVM_EVENT_SCHEDULER = 'EVMEventTrigger'
 }
