@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import WorkflowRunner from "../../../app/WorkflowRunner";
 import {workflowFromJson} from "../../../app/utils/workflow";
 import Workflow from "../../../app/Workflow";
+import { ExampleWorkflows } from '../../examples/workflows';
 import * as fs from "fs";
 
 const workflowsRouter = express.Router();
@@ -10,20 +11,48 @@ const workflows: Map<string, WorkflowRunner> = new Map();
 
 /**
  * @openapi
- * /runner/workflows:
+ * /runner/workflows/examples:
  *  get:
- *    description: Returns an example workflow
+ *    description: Returns list of saved workflows
  *    responses:
  *      200:
- *        description: Successfully returned an example workflow
+ *        description: Successfully returned list of saved workflows
  *        content:
  *          application/json:
  *              schema:
  *                  id: 
  *                    type: string
  */
-workflowsRouter.get("/", (request, response) => {
-    response.send({})
+workflowsRouter.get("/examples", (request, response) => {
+    response.send(
+        ExampleWorkflows.map(worklfow => {
+            return {
+                id: worklfow.id,
+                name: worklfow.name,
+                description: worklfow.description
+            }
+        })
+    )
+})
+
+/**
+ * @openapi
+ * /runner/workflows/examples/{id}:
+ *  get:
+ *    description: Returns selected example workflow
+ *    responses:
+ *      200:
+ *        description: Successfully returned selected example workflow
+ *        content:
+ *          application/json:
+ *              schema:
+ *                  id: 
+ *                    type: string
+ */
+ workflowsRouter.get("/examples/:id", (request, response) => {
+    response.send(ExampleWorkflows.find(workflow => {
+        return workflow.id == request.params.id
+    }))
 })
 
 /**

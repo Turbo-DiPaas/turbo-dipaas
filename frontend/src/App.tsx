@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactFlowProvider, useNodesState } from 'react-flow-renderer';
+import { ReactFlowProvider, useEdgesState, useNodesState } from 'react-flow-renderer';
 import './App.css';
 import Workspace from './workspace/Workspace';
 import ResourcesPanel from './component/resources-panel/ResourcesPanel';
@@ -67,9 +67,14 @@ const initialNodes = [
    },
  ];
 
+ const initailEdges = [
+  
+ ]
+
 
 function App() {
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [nodes, setNodes, onNodesChange ] = useNodesState(initialNodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(initailEdges)
     const classes = useStyles();
     const activities = useSelector((state: AppStateReducer) => state.app.workflow.structure.activities);
     const resources = useSelector((state: AppStateReducer) => state.app.workflow.structure.resources);
@@ -84,11 +89,11 @@ function App() {
                </div>
                <div style={{height: '500px',width: '100%', float:'left'}}>
                   <ReactFlowProvider>
-                     <Workspace nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange}></Workspace>
+                     <Workspace nodes={nodes} setNodes={setNodes} setEdges={setEdges} edges={edges} onEdgesChange={onEdgesChange} onNodesChange={onNodesChange}></Workspace>
                   </ReactFlowProvider>
                </div>
                <div style={padding16}>
-                  <ControlsPanel/>
+                  <ControlsPanel setNodes={setNodes} setEdges={setEdges} />
                </div>
                <div style={{visibility: 'hidden'}}></div>
                <div className={classes.propertiesTab}>

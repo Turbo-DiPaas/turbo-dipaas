@@ -41,4 +41,20 @@ const getWorkflowLogs = async (id: string): Promise<ResponseContent<string>> => 
    return callService<string>(`runner/workflows/${id}/logs`, requestOptions)
 }
 
-export { createWorkflow, runWorkflow, stopWorkflow, getWorkflowLogs }
+const getWorkflowExmples = async (): Promise<ResponseContent<Workflow[]>> => {
+   const requestOptions: RequestInit = {
+      method: "GET",
+   }
+
+   return callService<any>(`runner/workflows/examples`, requestOptions)
+}
+
+const getWorkflowExmple = async (id: string): Promise<ResponseContent<Workflow>> => {
+   const requestOptions: RequestInit = {
+      method: "GET",
+   }
+
+   return callService<any>(`runner/workflows/examples/${id}`, requestOptions)
+}
+
+export { createWorkflow, runWorkflow, stopWorkflow, getWorkflowLogs, getWorkflowExmple, getWorkflowExmples }

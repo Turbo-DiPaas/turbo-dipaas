@@ -52,7 +52,7 @@ function Workspace( data :any) {
   const [captureElementClick, setCaptureElementClick] = useState(true);
   const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
   const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
-  const { nodes, setNodes, onNodesChange } = data;
+  const { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange } = data;
 
 
   const onEdgeClick = (event, edge) => {
@@ -61,7 +61,10 @@ function Workspace( data :any) {
 
   const dispatch = useDispatch()
   const onNodeClick = (event, node) => {
-    dispatch(setSelectedNodeData(node.data));
+    dispatch(setSelectedNodeData({
+      ...node.data,
+      position: {...node.position}
+    }));
   }
 
   // initialize app on first render
@@ -85,7 +88,6 @@ function Workspace( data :any) {
   const reactFlowWrapper = useRef<any>(null);
   const connectingNodeId = useRef(null);
   // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { project } = useReactFlow();
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
