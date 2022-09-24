@@ -164,7 +164,7 @@ function PropertiesTab (data) {
    }
 
    function setActivityResource(newValue: any) {
-      if (selectedActivity) {
+      if (selectedActivity && newValue.length > 0) {
          const resourcesMap = new Map()
          workflow.structure.resources.forEach((v) => {
             const matchingResCatalog = resourceCatalog.find((resCat) => resCat.type === v.type)
@@ -182,17 +182,15 @@ function PropertiesTab (data) {
          } else {
             selectedActivity!.resources?.forEach((v, i) => {
                const currentActivityResource = resourcesMap.get(v)
-               if (currentActivityResource?.type === newResource?.type) {
+               if (currentActivityResource?.resource?.type === newResource?.resource?.type) {
                   oldResourceArrayId = i
                }
             })
 
             if (oldResourceArrayId >= 0) {
-               if (selectedActivityCopy.resources) {
-                  selectedActivityCopy.resources![oldResourceArrayId] = newValue
-               } else {
-                  selectedActivityCopy.resources = [newValue]
-               }
+               selectedActivityCopy.resources![oldResourceArrayId] = newValue
+            } else {
+               selectedActivityCopy.resources!.push(newValue)
             }
          }
 
@@ -238,34 +236,14 @@ function PropertiesTab (data) {
          setMultiInputParam(fieldName, fieldName, functionInputs.length + 1, true)
          setMultiInputParam(newValue, fieldName, functionInputs.length + 1, false)
 
-         const notMatchingParams = selectedActivityCopy?.params?.filter((v) => v.name !== fieldName) ?? []
-         selectedActivityCopy.params = [...notMatchingParams, {name: fieldName, value: newValue}]
+         const paramsToSave = selectedActivityCopy?.params?.filter((v) => v.name === 'transactionRecipient') ?? []
+         selectedActivityCopy.params = [...paramsToSave, {name: fieldName, value: newValue}]
 
          fieldMap.set(fieldName, paramMap)
          mapperParams.set(selectedActivity.id, fieldMap)
 
-         selectedActivityCopy.params = []
-         paramMap.forEach((v) => {
-            selectedActivityCopy.params?.push(v)
-         })
-
          setMapperParams(mapperParams)
 
-         setSelectedActivity(selectedActivityCopy)
-         upsertAsset(selectedActivityCopy)
-      }
-   }
-
-   function setEVMParam(newValue: any, fieldName: string) {
-      if (selectedActivity) {
-         const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
-         const updatedParam: Param = { name: fieldName, value: newValue }
-         const notMatchingParams = selectedActivityCopy.params?.filter((v) => v.name !== fieldName)
-         if (selectedActivityCopy.params?.length !== notMatchingParams?.length) {
-            selectedActivityCopy.params! = [...notMatchingParams ?? [], updatedParam]
-         } else {
-            selectedActivityCopy.params?.push(updatedParam)
-         }
          setSelectedActivity(selectedActivityCopy)
          upsertAsset(selectedActivityCopy)
       }
@@ -323,8 +301,7 @@ function PropertiesTab (data) {
                             return (
                                 <>
                                    <GridItem colSpan={2}>
-                                      Name: <Input value={v.name} id={id}
-                                                   onChange={(e) => {console.log(e.target.value); setMultiInputParam(e.target.value, field.name, i, true)}}></Input>
+                                      Name: <Input value={v.name} id={id}></Input>
                                    </GridItem>
                                    <GridItem colSpan={4}>
                                       Value: <Input value={v.value + '' ?? ''} id={id}

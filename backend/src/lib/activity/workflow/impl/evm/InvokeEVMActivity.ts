@@ -3,19 +3,26 @@ import WorkflowActivity from '../../WorkflowActivity'
 import {ethers} from "ethers";
 import EVMABIResource from "../../../../resource/evm/EVMABIResource";
 import GenericEVMConnectionResource from "../../../../resource/evm/GenericEVMConnectionResource";
+import {getLogger} from "../../../../../app/logger";
+import {Logger} from "../../../../../types/Logger";
 
 export default class InvokeEVMActivity extends WorkflowActivity {
+   logger: Logger
 
    constructor(id: string, name: string, params: Map<string, any> = new Map(), resourceIds: string[] = []) {
       super(id, name, params, resourceIds)
+
+      this.logger = getLogger()
    }
 
    protected run(params: Map<string, any> = this.params): Promise<ActivityResult> {
+      this.logger.trace('Inside ' + this.name + '. Working')
       const abiResource = this.getResource(EVMABIResource)
       const connectionResource = this.getResource(GenericEVMConnectionResource)
       const selectedFunction = params.get('selectedFunction')
-      let transactionParams: any[] = params.get('transactionParams')
+      let transactionParams: any[] = params.get('transactionParams') ?? []
       const transactionRecipient = params.get('transactionRecipient')
+      this.logger.trace('About to get abi interface')
       const abiInterface = new ethers.utils.Interface(JSON.stringify(abiResource?.getABI()))
       const returnData: Map<string, any> = new Map()
 
@@ -26,7 +33,7 @@ export default class InvokeEVMActivity extends WorkflowActivity {
 
       try {
          const functionToExecute = abiInterface.getFunction(selectedFunction)
-         transactionParams = []
+         this.logger.trace('function to execute')
          const paramsMap = new Map()
 
          if (!transactionParams || transactionParams.length === 0) {
@@ -41,9 +48,12 @@ export default class InvokeEVMActivity extends WorkflowActivity {
             }
          }
 
+         this.logger.trace(JSON.stringify(transactionParams))
+
          const encodedData = abiInterface.encodeFunctionData(functionToExecute, transactionParams)
          const signer = connectionResource!.getSigner()
 
+         console.count()
          if (functionToExecute.stateMutability !== 'view' && functionToExecute.stateMutability !== 'pure') {
             promiseToResolve = signer.sendTransaction({
                data: encodedData,

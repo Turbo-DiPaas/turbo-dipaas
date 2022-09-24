@@ -10,7 +10,6 @@ import Container from "typedi";
 import EVMABIResource from "../../../../../src/lib/resource/evm/EVMABIResource";
 import {ResourceTypeEnum} from "../../../../../../common/src/enums/ResourceTypeEnum";
 import GenericEVMConnectionResource from "../../../../../src/lib/resource/evm/GenericEVMConnectionResource";
-import GenericEVMConnectionResourceMock from "../../../../mock/evm/GenericEVMConnectionResourceMock";
 import {testSetup} from "../../../../testSetup";
 
 chai.use(solidity) // solidiity matchers, e.g. expect().to.be.revertedWith("message")
@@ -32,7 +31,12 @@ describe('InvokeEVMActivity', () => {
         abiResParams.set('abi', StorageArtifact.abi)
 
         const abiResource = new EVMABIResource(abiResourceId, 'test abi resource', ResourceTypeEnum.EVMABI, abiResParams)
-        const connResource = new GenericEVMConnectionResourceMock(connResId, 'test connection resource', ResourceTypeEnum.EVMConnection, new Map())
+
+        const connParams = new Map()
+        connParams.set('url', 'http://localhost:8545')
+        connParams.set('privateKey', '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
+
+        const connResource = new GenericEVMConnectionResource(connResId, 'test connection resource', ResourceTypeEnum.EVMConnection, connParams)
 
         Container.set([
            {id: abiResourceId, value: abiResource},
@@ -53,6 +57,8 @@ describe('InvokeEVMActivity', () => {
         invokeEVMActivity.params.set('selectedFunction', '"store"')
         invokeEVMActivity.params.set('transactionParams', [5])
         const result = await invokeEVMActivity.invoke(context)
+
+        console.log(result)
 
         expect(await storageContract.retrieve()).to.be.equal(5)
         expect(result.status).to.be.equal(200)
