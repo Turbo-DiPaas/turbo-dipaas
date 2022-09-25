@@ -13,7 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppStateReducer } from "../../types/interface/AppState";
 import { createWorkflow, getWorkflowLogs, runWorkflow, stopWorkflow, getWorkflowExmples, getWorkflowExmple } from "../../service/runner/Workflow";
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { setWorkflow } from '../../redux/reducers/workspaceNode';
 import { Edge, Node } from 'react-flow-renderer';
 
@@ -49,8 +49,10 @@ function ControlsPanel(data) {
     const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
     const { isOpen: isOpenLogsModal, onOpen: onOpenLogsModal, onClose: onCloseLogsModal } = useDisclosure()
     const { isOpen: isOpenExamplesModal, onOpen: onOpenExamplesModal, onClose: onCloseExamplesModal } = useDisclosure()
+    const { isOpen: isOpenDescriptionModal, onOpen: onOpenDescriptionModal, onClose: onCloseDescriptionModal } = useDisclosure()
     const [logs, setLogs] = useState(<></>)
     const [exampleWorkflows, setExampleWorkflows] = useState(<></>)
+    const [descriptionHTML, setDescriptionHTML] = useState(<></>)
 
     const { setNodes, setEdges } = data;
 
@@ -72,8 +74,22 @@ function ControlsPanel(data) {
         })
     }
 
-    function onSelectExample(id: string) {        
+    function showDescription(description: string) {
+        setDescriptionHTML (
+            <div>
+                {
+                    description.split('\n').map((v) => {
+                        return <Text>{v}</Text>
+                    })
+                }
+            </div>
+        )
+    }
+
+    function onSelectExample(id: string) {
+        onCloseExamplesModal()
         getWorkflowExmple(id).then(res => {
+            showDescription(res.data?.description ?? 'SEDRLFVSDCLKASJNGALSFGVASLDFGJ')
         dispatch(setWorkflow(res.data!))
             let nodes: Node[] =
                 res.data!.structure.activities.map(activity => {
@@ -101,6 +117,7 @@ function ControlsPanel(data) {
 
             setNodes(nodes)
             setEdges(edges)
+            onOpenDescriptionModal()
         })
         onCloseExamplesModal()
     }
@@ -149,6 +166,24 @@ function ControlsPanel(data) {
 
                         <ModalFooter>
                             <Button colorScheme='blue' mr={3} onClick={onCloseLogsModal}>
+                                Close
+                            </Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+
+                <Modal size={'4xl'} isOpen={isOpenDescriptionModal} onClose={onCloseDescriptionModal}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Example description</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <div>
+                                {descriptionHTML}
+                            </div>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button colorScheme='blue' mr={3} onClick={onCloseDescriptionModal}>
                                 Close
                             </Button>
                         </ModalFooter>
