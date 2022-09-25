@@ -75,6 +75,8 @@ const useStyles = createUseStyles({
    }
 
    function saveForm() {
+       //TODO: it won't work if there's possibility to remove resources, but it's good enough
+      const resourceId = `r${workflow.structure.resources.length}`
       dispatch(setWorkflow({
          id: workflow.id,
          name: workflow.name,
@@ -95,8 +97,8 @@ const useStyles = createUseStyles({
                   return el;
                }}) : workflow.structure.resources.concat([{
                   type: selectedResource!.type,
-                  name: selectedResourceStruct!.name,
-                  id: (Math.random() * 1000).toString(),
+                  name: `(${resourceId}) ${selectedResourceStruct!.name}`,
+                  id: resourceId,
                   params: selectedResource?.params,
                } as Resource]),
          }
