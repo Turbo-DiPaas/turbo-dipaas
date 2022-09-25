@@ -31,32 +31,36 @@ export default class LoggerImpl implements Logger {
     }
 
     log(message: any, logLevel: LogLevel): void {
-        let dt = LocalDateTime.now()
-        const logMessage = dt.toString() + ' [' + getLogLevelString(logLevel) + ']: ' + JSON.stringify(message)
+        const targetLogLevel = process.env.LOG_LEVEL ?? LogLevel.INFO
 
-        let stats = fs.statSync("log.txt")
-        let fileSizeInBytes = stats.size;
-        // Convert the file size to megabytes (optional)
-        let fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
+        if (targetLogLevel <= logLevel ?? LogLevel.INFO) {
+            let dt = LocalDateTime.now()
+            const logMessage = dt.toString() + ' [' + getLogLevelString(logLevel) + ']: ' + JSON.stringify(message)
 
-        if (fileSizeInMegabytes > 10) {
+            let stats = fs.statSync("log.txt")
+            let fileSizeInBytes = stats.size;
+            // Convert the file size to megabytes (optional)
+            let fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
+
+            if (fileSizeInMegabytes > 10) {
+                try {
+                    fs.unlinkSync('log.txt')
+                } catch (e) {
+                    console.error(e)
+                }
+            }
+
             try {
-                fs.unlinkSync('log.txt')
-            } catch (e) {
-                console.error(e)
+                if (!fs.existsSync('log.txt')) {
+                    fs.writeFile('log.txt', '', () => {})
+                }
+                fs.appendFile('log.txt', logMessage + '\n', () => {})
+            } catch(err) {
+                console.error(err)
             }
-        }
 
-        try {
-            if (!fs.existsSync('log.txt')) {
-                fs.writeFile('log.txt', '', () => {})
-            }
-            fs.appendFile('log.txt', logMessage + '\n', () => {})
-        } catch(err) {
-            console.error(err)
+            console.log(logMessage)
         }
-
-        console.log(logMessage)
     }
 
     trace(message: any): void {
