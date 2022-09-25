@@ -79,10 +79,11 @@ function ControlsPanel(data) {
                 res.data!.structure.activities.map(activity => {
                     return {
                         id: activity.id,
+                        ...(activity.id === 'a0' && {type: 'input'}),
                         // we are removing the half of the node width (75) to center the new node
                         position: { x: activity.position!.x, y: activity.position!.y },
                         data: {
-                            label: `activity.name (id: ${activity.id})`,
+                            label: `${activity.name} (id: ${activity.id})`,
                             id: activity.id
                         }
                     }
@@ -92,6 +93,7 @@ function ControlsPanel(data) {
                     return {
                         id: transition.id,
                         type: 'smoothstep',
+                        label: transition.type,
                         source: transition.from,
                         target: transition.to
                     }

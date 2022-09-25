@@ -6,6 +6,7 @@ import MapperActivity from "./workflow/impl/general/MapperActivity";
 
 import Scheduler from "./trigger/impl/general/Scheduler"
 import EVMEventTrigger from "./trigger/impl/evm/EVMEventTrigger";
+import SleepActivity from "./workflow/impl/general/SleepActivity";
 
 export const ActivityList: any = {
     LogActivity,
@@ -14,5 +15,6 @@ export const ActivityList: any = {
     HTTPRequestReplyActivity,
     MapperActivity,
     Scheduler,
+    SleepActivity,
     EVMEventTrigger
 }

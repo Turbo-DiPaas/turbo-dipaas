@@ -6,6 +6,7 @@ export enum ActivityCategoryEnum {
 
 export enum ActivityEnum {
     LOG_ACTIVITY = 'LogActivity',
+    SLEEP_ACTIVITY = 'SleepActivity',
     INVOKE_EVM = 'InvokeEVMActivity',
     NO_OP = 'NoOpActivity',
     MAPPER = 'MapperActivity',

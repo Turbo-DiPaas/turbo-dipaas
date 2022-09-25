@@ -15,8 +15,6 @@ const rfStyle = {
   // backgroundColor: '#EFEFEF',
 };
 
-let id = 1;
-const getId = () => `${id++}`;
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
@@ -31,6 +29,8 @@ function Workspace( data :any) {
   const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
   const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
   const { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, onEdgeClick } = data;
+
+  const getId = () => `${nodes.length}`;
 
   const dispatch = useDispatch()
   const onNodeClick = (event, node) => {

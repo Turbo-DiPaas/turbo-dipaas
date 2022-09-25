@@ -6,6 +6,7 @@ import {activityToContractAbi} from "../evm/abiUtils";
 
 const dataMappers = new Map<string, (any, Resource) => RecursiveTree>()
 dataMappers.set(ActivityEnum.MAPPER, mapMapperActivity)
+dataMappers.set(ActivityEnum.SLEEP_ACTIVITY, mapNoOutputActivity)
 dataMappers.set(ActivityEnum.LOG_ACTIVITY, mapNoOutputActivity)
 dataMappers.set(ActivityEnum.NO_OP, mapNoOutputActivity)
 dataMappers.set(ActivityEnum.INVOKE_EVM, mapEVMInvokeActivity)
@@ -20,7 +21,7 @@ export function mapActivitiesResponse(activity: any[], resources: any[]): Recurs
 
 export function mapActivityResponse(activity: any, resource: any[]): RecursiveTree {
     const mapperFunction = dataMappers.get(activity.type)
-    const response = mapperFunction!(activity, resource)
+    const response = (mapperFunction ?? mapNoOutputActivity)(activity, resource)
     return {name: `${activity.name} (id: ${activity.id})`, data: response.data}
 }
 
