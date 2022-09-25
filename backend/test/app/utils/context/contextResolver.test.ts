@@ -2,8 +2,10 @@ import chai, { expect } from 'chai'
 import WorkflowContext from "../../../../src/app/WorkflowContext";
 import {ActivityResult} from "turbo-dipaas-common/src/types/activity/ActivityResult";
 import {evaluateProps} from "../../../../src/app/utils/context/contextResolver";
+import setup from '../../../../src/config/setup'
 
 describe('ContextResolver', () => {
+   setup()
    let workflowContext: WorkflowContext
    let propsToEvaluate: Map<string, any>
    beforeEach(() => {

@@ -1,23 +1,15 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import ReactFlow, {
-   addEdge,
-   Background,
-   BackgroundVariant,
-   useEdgesState,
-   useNodesState,
-   useReactFlow
-} from 'react-flow-renderer';
+import ReactFlow, {addEdge, Background, BackgroundVariant, useReactFlow} from 'react-flow-renderer';
 import {useDispatch, useSelector} from 'react-redux'
-import {setActivityCatalog, setSelectedNodeData, setResourceCatalog, setWorkflow} from '../redux/reducers/workspaceNode'
+import {setActivityCatalog, setResourceCatalog, setSelectedNodeData, setWorkflow} from '../redux/reducers/workspaceNode'
 import TextUpdaterNode from './TextUpdaterNode';
 import {getActivities} from "../service/designer/Activity";
 import {AppStateReducer} from "../types/interface/AppState";
-import PropertiesTab from "../component/properties-panel/PropertiesTab";
 import ConnectionLine from './ConnectionLine';
-import {Activity} from "turbo-dipaas-common/src/types/api/workflow/Activity";
-import {ResourceEnum} from "../types/enums/DesignStructEnum";
 import {getResources} from "../service/designer/Resource";
-import {ActivityEnum} from "../types/enums/DesignStructEnum";
+import {Workflow} from "../../../common/src/types/api/workflow/Workflow";
+import {TransitionType} from "../types/enums/DesignStructEnum";
+import {useDisclosure} from "@chakra-ui/react";
 
 const rfStyle = {
   // backgroundColor: '#EFEFEF',
@@ -38,12 +30,7 @@ function Workspace( data :any) {
   const [captureElementClick, setCaptureElementClick] = useState(true);
   const selectedActivityNode = useSelector((state: AppStateReducer) => state.app.selectedActivityNode);
   const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
-  const { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange } = data;
-
-
-  const onEdgeClick = (event, edge) => {
-    console.log(edge)
-  }
+  const { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, onEdgeClick } = data;
 
   const dispatch = useDispatch()
   const onNodeClick = (event, node) => {
@@ -100,13 +87,23 @@ function Workspace( data :any) {
 
         setNodes((nds) => nds.concat(newNode));
         setEdges((eds) =>
-          eds.concat({ id: transactionUid,type: 'smoothstep', source: connectingNodeId.current as any, target: uid })
+          eds.concat(
+              {id: transactionUid,
+                type: 'smoothstep',
+                label: 'success',
+                source: connectingNodeId.current as any,
+                target: uid,
+                markerEnd: {
+                  type: 'arrow'
+                }
+              })
         );
 
-        const updatedWorkflow = JSON.parse(JSON.stringify(workflow))
+        const updatedWorkflow: Workflow = JSON.parse(JSON.stringify(workflow))
 
         updatedWorkflow.structure.transitions.push({
           id: transactionUid,
+          type: TransitionType.SUCCESS,
           from: `${connectingNodeId.current}`,
           to: uid
         })

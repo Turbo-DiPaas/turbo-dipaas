@@ -1,4 +1,9 @@
-import { ActivityEnum, ResourceEnum, TriggerActivityEnum } from 'turbo-dipaas-common/src/enums/DesignStructEnum'
+import {
+    ActivityEnum,
+    ResourceEnum,
+    TransitionType,
+    TriggerActivityEnum
+} from 'turbo-dipaas-common/src/enums/DesignStructEnum'
 import {Workflow} from 'turbo-dipaas-common/src/types/api/workflow/Workflow'
 
 export const ExampleWorkflows: Workflow[] = [
@@ -12,6 +17,7 @@ export const ExampleWorkflows: Workflow[] = [
                 {
                     "id": "1",
                     "from": "0",
+                    "type": TransitionType.SUCCESS,
                     "to": "1"
                 }
             ],
@@ -75,6 +81,7 @@ export const ExampleWorkflows: Workflow[] = [
             "transitions": [
                 {
                     "id": "1",
+                    "type": TransitionType.SUCCESS,
                     "from": "0",
                     "to": "1"
                 }

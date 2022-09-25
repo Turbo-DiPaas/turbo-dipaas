@@ -18,6 +18,11 @@ export enum AssetType {
     TRANSITION
 }
 
+export enum TransitionType {
+    SUCCESS = 'SuccessTransition',
+    CONDITION = 'ConditionalTransition',
+    ERROR = 'ErrorTransition'
+}
 
 export enum InputFieldTypeEnum {
     FREE_INPUT,

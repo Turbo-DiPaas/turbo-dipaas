@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { ReactFlowProvider, useEdgesState, useNodesState } from 'react-flow-renderer';
 import './App.css';
 import Workspace from './workspace/Workspace';
 import ResourcesPanel from './component/resources-panel/ResourcesPanel';
 import ControlsPanel from './component/controls-panel/ControlsPanel';
-import { ChakraProvider } from '@chakra-ui/react'
+import {ChakraProvider, useDisclosure} from '@chakra-ui/react'
 import PropertiesTab from "./component/properties-panel/PropertiesTab";
 import {createUseStyles} from 'react-jss'
 import Tree from './component/properties-tree/PropertiesTab';
@@ -12,6 +12,7 @@ import {RecursiveTree} from "./types/struct/RecursiveTree";
 import {useSelector} from "react-redux";
 import {AppStateReducer} from "./types/interface/AppState";
 import {mapActivitiesResponse} from "./lib/activity/activityResponse";
+import ModifyTransition from "./component/resources-panel/ModifyTransition";
 const useStyles = createUseStyles({
    gridContainer: {
       display: 'grid',
@@ -77,6 +78,15 @@ function App() {
     const activities = useSelector((state: AppStateReducer) => state.app.workflow.structure.activities);
     const resources = useSelector((state: AppStateReducer) => state.app.workflow.structure.resources);
 
+    const [ selectedEdge, setSelectedEdge ] = useState<any>({})
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const onEdgeClick = (event, edge) => {
+        console.log(edge)
+        setSelectedEdge(edge)
+        onOpen()
+    }
 
   return (
      <div>
@@ -87,8 +97,9 @@ function App() {
                </div>
                <div style={{height: '500px',width: '100%', float:'left'}}>
                   <ReactFlowProvider>
-                     <Workspace nodes={nodes} setNodes={setNodes} setEdges={setEdges} edges={edges} onEdgesChange={onEdgesChange} onNodesChange={onNodesChange}></Workspace>
+                     <Workspace nodes={nodes} setNodes={setNodes} setEdges={setEdges} edges={edges} onEdgesChange={onEdgesChange} onNodesChange={onNodesChange} onEdgeClick={onEdgeClick}></Workspace>
                   </ReactFlowProvider>
+                   <ModifyTransition editedTransitionId={selectedEdge.id} isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
                </div>
                <div style={padding16}>
                   <ControlsPanel setNodes={setNodes} setEdges={setEdges} />
