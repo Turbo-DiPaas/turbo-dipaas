@@ -16,7 +16,7 @@ import ModifyTransition from "./component/resources-panel/ModifyTransition";
 const useStyles = createUseStyles({
    gridContainer: {
       display: 'grid',
-      gridTemplateColumns: '305px 1100px 305px',
+      gridTemplateColumns: '22% auto 22%',
       columnGap: '24px',
       padding: '24px 72px 24px 72px',
       '& > div': {
