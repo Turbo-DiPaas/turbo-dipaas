@@ -11,5 +11,5 @@ export default abstract class TransitionBase {
       this.condition = condition
    }
 
-   abstract canTransact(context: WorkflowContext): boolean
+   abstract canTransact(context: WorkflowContext): Promise<boolean>
 }

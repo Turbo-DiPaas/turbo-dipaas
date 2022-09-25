@@ -11,14 +11,18 @@ export default class HTTPRequestReplyActivity extends WorkflowActivity {
 
    protected run(params: Map<string, any> = this.params): Promise<ActivityResult> {
       const connectionResource = this.getResource(HTTPConnectionResource)
+      const urlFromParams = this.params.get('url')
+      const postData = this.params.get('postData')
+      const evaluatedUrl = urlFromParams.trim().startsWith('http') ? urlFromParams : connectionResource?.getUrl()
       const activityResult = {
          status: 200,
          returnData: new Map()
       } as ActivityResult
 
       return axios.request({
-         url: connectionResource?.getUrl(),
+         url: evaluatedUrl,
          method: connectionResource?.getMethod(),
+         ...((connectionResource?.getMethod() !== 'GET' && postData?.length > 0) && {data: postData}),
          headers: connectionResource?.getHeaders()
       }).then(response => {
             activityResult.status = response.status

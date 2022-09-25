@@ -30,8 +30,8 @@ export default class WorkflowProcess {
    }
 
    async processActivityTransition(activityTransition?: ActivityTransition): Promise<void> {
-      if (activityTransition?.transition.canTransact(this.context)
-         && !this.context.getActivityResult(activityTransition?.activity.id)) {
+      if (await activityTransition?.transition.canTransact(this.context)
+         && !this.context.getActivityResult(activityTransition?.activity.id ?? '')) {
          const activity = activityTransition!.activity
          this.currentActivities.set(activity.id, activity)
 

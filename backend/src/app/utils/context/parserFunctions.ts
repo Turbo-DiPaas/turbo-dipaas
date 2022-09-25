@@ -22,8 +22,20 @@ const addFunctions = () => {
       return JSON.parse(val)
    });
 
+   mozjexl.addTransform('stringify', function(val: string) {
+      const parsed = JSON.parse(val)
+      return parsed ? JSON.stringify(parsed) : val
+   });
+
    mozjexl.addTransform('length', function(val: string) {
       return val.length
+   });
+
+   mozjexl.addBinaryOp('<ifabsent>', 20, function(left: string, right: string) {
+      if (left === null || typeof left === 'undefined') {
+         return left
+      }
+      return right
    });
 }
 

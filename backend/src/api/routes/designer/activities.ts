@@ -82,6 +82,11 @@ const activities: ActivityDetailsStruct[] = [
                             'type': InputFieldTypeEnum.RESOURCE_REF,
                             'resourceType': ResourceEnum.HTTP_CONNECTION
                         },
+                        {
+                            'name': 'url',
+                            'displayName': 'URL',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        }
                     ]
                 }
             ]
@@ -125,6 +130,30 @@ const activities: ActivityDetailsStruct[] = [
                     'name': TabEnum.GENERAL,
                     'description': 'General tab',
                     'fields': []
+                }
+            ]
+        }
+    },
+    {
+        'id': 'f3544ff8-3353-11ed-a261-bff218faee41',
+        'name': 'Sleep',
+        'description': 'Waits for specified duration of time',
+        'updated': '2022-09-25T00:00:00Z',
+        'category': ActivityCategoryEnum.GENERAL,
+        'type': ActivityEnum.SLEEP_ACTIVITY,
+        'structure': {
+            tabs: [
+                {
+                    'type': TabEnum.GENERAL,
+                    'name': TabEnum.GENERAL,
+                    'description': 'General tab',
+                    'fields': [
+                        {
+                            'name': 'duration',
+                            'displayName': 'Duration in milliseconds',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        }
+                    ]
                 }
             ]
         }

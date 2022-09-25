@@ -2,8 +2,10 @@ import chai, { expect } from 'chai'
 import WorkflowContext from "../../../../src/app/WorkflowContext";
 import {ActivityResult} from "turbo-dipaas-common/src/types/activity/ActivityResult";
 import {evaluateProps} from "../../../../src/app/utils/context/contextResolver";
+import setup from '../../../../src/config/setup'
 
 describe('ContextResolver', () => {
+   setup()
    let workflowContext: WorkflowContext
    let propsToEvaluate: Map<string, any>
    beforeEach(() => {
@@ -66,5 +68,17 @@ describe('ContextResolver', () => {
       const result = await evaluateProps(propsToEvaluate, workflowContext)
       expect(result.size).to.be.equal(1)
       expect(result.get('name')).to.be.equal('test of ,  and .')
+   })
+
+   it('invokes self defined function', async () => {
+      propsToEvaluate.set('name', '"" + c.errorresult <ifabsent> 20 + ", " + b.nonexisting|optional + " and " + a.xyz|optional + "."')
+      propsToEvaluate.set('value', '("" + c.errorresult <ifabsent> 50) + 3')
+      propsToEvaluate.set('value2', '(("" + a1.counter <ifabsent> 1) + 2)')
+
+      const result = await evaluateProps(propsToEvaluate, workflowContext)
+      expect(result.size).to.be.equal(3)
+      expect(result.get('name')).to.be.equal('20,  and .')
+      expect(result.get('value')).to.be.equal(53)
+      expect(result.get('value2')).to.be.equal(3)
    })
 })

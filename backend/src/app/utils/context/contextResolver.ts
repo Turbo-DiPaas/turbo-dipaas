@@ -13,22 +13,17 @@ addFunctions()
  * @returns new map containing evaluated values
  */
 const evaluateProps = async (props: Map<string, any>, context: WorkflowContext): Promise<Map<string, any>> => {
-   const logger = getLogger()
    const resultMap: Map<string, any> = new Map()
-   const workflowContextObject: any = context.getWorkflowContextObject()
    const evaluationPromises: Promise<any>[] = []
 
-
    props.forEach((v, k) => {
-      //TODO: inform user about the error
-      const evalValue = typeof v !== 'string' ? JSON.stringify(v) : v
-      logger.trace("evaluating prop " + k + " with val=" + evalValue)
+      // const evalValue = typeof v !== 'string' ? JSON.stringify(v) : v
       evaluationPromises.push(
-          mozjexl.eval(evalValue, workflowContextObject).then((res: any) => {
+          evaluateSingleProp(v, context).then((res: any) => {
              resultMap.set(k, res)
           }).catch((e: any) =>{
-             logger.error(e.toString())
-             resultMap.set(k, evalValue)
+             // resultMap.set(k, evalValue)
+             resultMap.set(k, v)
           })
       )
    })
@@ -37,4 +32,18 @@ const evaluateProps = async (props: Map<string, any>, context: WorkflowContext):
 
    return resultMap
 }
-export {evaluateProps}
+
+const evaluateSingleProp = async (evaluationParam: any, context: WorkflowContext): Promise<any> => {
+   const logger = getLogger()
+   const workflowContextObject: any = context.getWorkflowContextObject()
+   //TODO: inform user about the error
+   const evalValue = typeof evaluationParam !== 'string' ? JSON.stringify(evaluationParam) : evaluationParam
+   logger.trace("evaluating val=" + evalValue)
+   return mozjexl.eval(evalValue, workflowContextObject).then((res: any) => {
+      return res
+   }).catch((e: any) =>{
+      logger.error(e.toString())
+   })
+}
+
+export {evaluateProps, evaluateSingleProp}
