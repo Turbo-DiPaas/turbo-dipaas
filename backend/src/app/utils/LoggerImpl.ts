@@ -46,7 +46,15 @@ export default class LoggerImpl implements Logger {
                 console.error(e)
             }
         }
-        fs.appendFile('log.txt', logMessage + '\n', () => {})
+
+        try {
+            if (!fs.existsSync('log.txt')) {
+                fs.writeFile('log.txt', '', () => {})
+            }
+            fs.appendFile('log.txt', logMessage + '\n', () => {})
+        } catch(err) {
+            console.error(err)
+        }
 
         console.log(logMessage)
     }
