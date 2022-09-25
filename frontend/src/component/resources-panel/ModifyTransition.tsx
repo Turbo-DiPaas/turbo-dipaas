@@ -25,7 +25,7 @@ const useStyles = createUseStyles({
 
 function ModifyTransition(data :any) {
     const classes = useStyles();
-    const { isOpen, onOpen, onClose, editedTransitionId } = data;
+    const { isOpen, onOpen, onClose, setEdges, editedTransitionId } = data;
 
     const [selectedTransition, setSelectedTransition] = useState<Transition | undefined>();
     const workflow = useSelector((state: AppStateReducer) => state.app.workflow);
@@ -38,6 +38,13 @@ function ModifyTransition(data :any) {
     }, [isOpen])
 
     function saveForm() {
+        setEdges((nds) => {return nds.map(el => {
+            if(el.id === selectedTransition?.id) {
+                return {...el, markerEnd: {...el.markerEnd},  label: `${selectedTransition?.type}`}
+            }
+            return el;
+        })});
+
         const notMatchingTransitions = workflow.structure.transitions.filter((v) => v.id !== selectedTransition!.id)
         dispatch(setWorkflow({
             id: workflow.id,

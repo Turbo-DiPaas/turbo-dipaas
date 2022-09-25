@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import ReactFlow, {addEdge, Background, BackgroundVariant, useReactFlow} from 'react-flow-renderer';
+import ReactFlow, {addEdge, Background, BackgroundVariant, StraightEdge, useReactFlow} from 'react-flow-renderer';
 import {useDispatch, useSelector} from 'react-redux'
 import {setActivityCatalog, setResourceCatalog, setSelectedNodeData, setWorkflow} from '../redux/reducers/workspaceNode'
 import TextUpdaterNode from './TextUpdaterNode';
@@ -90,7 +90,7 @@ function Workspace( data :any) {
           eds.concat(
               {id: transactionUid,
                 type: 'smoothstep',
-                label: 'success',
+                label: 'SuccessTransition',
                 source: connectingNodeId.current as any,
                 target: uid,
                 markerEnd: {

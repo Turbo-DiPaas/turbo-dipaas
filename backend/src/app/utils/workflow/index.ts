@@ -10,6 +10,7 @@ import TransitionBase from "../../../lib/transition/TransitionBase";
 import {Resource} from "../../../../../common/src/types/api/workflow/Resource";
 import Container from "typedi";
 import {ResourceList} from "../../../lib/resource/ResourceList";
+import {TransitionList} from "../../../lib/transition/TransitionList";
 
 const workflowFromJson = (workflow: WorkflowStruct): Workflow => {
     const activities: ActivityBase[] = []
@@ -35,7 +36,7 @@ const workflowFromJson = (workflow: WorkflowStruct): Workflow => {
     });
 
     workflow.structure.transitions?.forEach((transition: Transition) => {
-        let transitionObject = new SuccessTransition(transition.from, transition.to)
+        let transitionObject = new TransitionList[transition.type](transition.from, transition.to, transition.condition);
         transitions.push(transitionObject)
     })
     const rootGroup = new ActivityGroup(activities, transitions, groups)

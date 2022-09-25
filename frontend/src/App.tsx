@@ -99,7 +99,7 @@ function App() {
                   <ReactFlowProvider>
                      <Workspace nodes={nodes} setNodes={setNodes} setEdges={setEdges} edges={edges} onEdgesChange={onEdgesChange} onNodesChange={onNodesChange} onEdgeClick={onEdgeClick}></Workspace>
                   </ReactFlowProvider>
-                   <ModifyTransition editedTransitionId={selectedEdge.id} isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+                   <ModifyTransition editedTransitionId={selectedEdge.id} setEdges={setEdges} isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
                </div>
                <div style={padding16}>
                   <ControlsPanel setNodes={setNodes} setEdges={setEdges} />
