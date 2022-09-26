@@ -17,12 +17,18 @@ export default class InvokeEVMActivity extends WorkflowActivity {
 
    protected run(params: Map<string, any> = this.params): Promise<ActivityResult> {
       const returnData: Map<string, any> = new Map()
+      const isRaw = params.get('isRawTransaction') ?? false
+      const value = params.get('value') ?? '0'
+
       let promiseToResolve = Promise.resolve({
          status: 200,
          returnData,
       } as ActivityResult)
 
       try {
+         if (isRaw) {
+            return this.handleRawTransaction(params)
+         }
          const abiResource = this.getResource(EVMABIResource)
          const connectionResource = this.getResource(GenericEVMConnectionResource)
          const selectedFunction = params.get('selectedFunction')
@@ -61,26 +67,10 @@ export default class InvokeEVMActivity extends WorkflowActivity {
          if (functionToExecute.stateMutability !== 'view' && functionToExecute.stateMutability !== 'pure') {
             promiseToResolve = signer.sendTransaction({
                data: encodedData,
+               value: value,
                to: transactionRecipient
             }).then(v => {
-               returnData.set('value', v.value.toString())
-               returnData.set('from', v.from)
-               returnData.set('data', v.data)
-               returnData.set('type', v.type)
-               returnData.set('hash', v.hash)
-               returnData.set('blockHash', v.blockHash)
-               returnData.set('blockNumber', v.blockNumber)
-               returnData.set('confirmations', v.confirmations)
-               returnData.set('timestamp', v.timestamp)
-               returnData.set('chainId', v.chainId)
-               returnData.set('gasLimit', v.gasLimit.toString())
-               returnData.set('gasPrice', v.gasPrice)
-               // @ts-ignore
-               returnData.set('maxFeePerGas', v.maxFeePerGas.toString())
-               // @ts-ignore
-               returnData.set('maxPriorityFeePerGas', v.maxPriorityFeePerGas.toString())
-               returnData.set('nonce', v.nonce)
-               returnData.set('to', v.to)
+               this.transactionResponseToMap(returnData, v)
 
                return Promise.resolve({
                   status: 200,
@@ -106,6 +96,7 @@ export default class InvokeEVMActivity extends WorkflowActivity {
                      decodedResultArr[i] = currElem.toString()
                   }
                }
+
                returnData.set('callResult', decodedResultArr)
 
                return Promise.resolve({
@@ -130,5 +121,72 @@ export default class InvokeEVMActivity extends WorkflowActivity {
       }
 
       return promiseToResolve
+   }
+
+   private handleRawTransaction(params: Map<string, any> = this.params): Promise<ActivityResult> {
+      const value = params.get('value') ?? '0'
+      const data = params.get('rawInput') ?? ''
+      const to = params.get('transactionRecipient')
+      const resultMap = new Map()
+      const connectionResource = this.getResource(GenericEVMConnectionResource)
+      if (params.get('transactionType') === 'send') {
+         const signer = connectionResource?.getSigner()
+         signer?.sendTransaction({
+            data,
+            to,
+            value
+         }).then((v) => {
+            this.transactionResponseToMap(resultMap, v)
+         }).catch((e) => {
+            return {
+               status: 500,
+               returnData: resultMap,
+               error: e
+            } as ActivityResult
+         })
+
+      } else {
+         const provider = connectionResource?.getProvider()
+         provider?.call({
+            data,
+            to
+         }).then((v) => {
+            resultMap.set('data', v)
+         }).catch((e) => {
+            return {
+               status: 500,
+               returnData: resultMap,
+               error: e
+            } as ActivityResult
+         })
+      }
+
+      return Promise.resolve(
+         {
+            status: 200,
+            returnData: resultMap,
+         } as ActivityResult
+      )
+   }
+
+   private transactionResponseToMap(returnData: Map<string, any>, v: ethers.providers.TransactionResponse) {
+      returnData.set('value', v.value.toString())
+      returnData.set('from', v.from)
+      returnData.set('data', v.data)
+      returnData.set('type', v.type)
+      returnData.set('hash', v.hash)
+      returnData.set('blockHash', v.blockHash)
+      returnData.set('blockNumber', v.blockNumber)
+      returnData.set('confirmations', v.confirmations)
+      returnData.set('timestamp', v.timestamp)
+      returnData.set('chainId', v.chainId)
+      returnData.set('gasLimit', v.gasLimit.toString())
+      returnData.set('gasPrice', v.gasPrice)
+      // @ts-ignore
+      returnData.set('maxFeePerGas', v.maxFeePerGas.toString())
+      // @ts-ignore
+      returnData.set('maxPriorityFeePerGas', v.maxPriorityFeePerGas.toString())
+      returnData.set('nonce', v.nonce)
+      returnData.set('to', v.to)
    }
 }

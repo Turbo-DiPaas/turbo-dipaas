@@ -30,26 +30,63 @@ const activities: ActivityDetailsStruct[] = [
                             'displayName': 'Function to invoke',
                             'type': InputFieldTypeEnum.EVM_ABI_FUNCTION
                         },
-                        // {
-                        //     'name': 'selectedFunction',
-                        //     'displayName': 'Function name',
-                        //     'type': InputFieldTypeEnum.FREE_INPUT
-                        // },
-                        // {
-                        //     'name': 'transactionParams',
-                        //     'displayName': 'Transaction params',
-                        //     'type': InputFieldTypeEnum.FREE_INPUT
-                        // },
                         {
                             'name': 'transactionRecipient',
                             'displayName': 'Recipient address',
                             'type': InputFieldTypeEnum.ADDRESS
                         },
                         {
+                            'name': 'value',
+                            'displayName': 'Value (wei)',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        },
+                        {
                             'name': 'abi',
                             'displayName': 'ABI Resource',
                             'type': InputFieldTypeEnum.RESOURCE_REF,
                             'resourceType': ResourceEnum.EVM_ABI
+                        },
+                        {
+                            'name': 'EVMConnection',
+                            'displayName': 'EVM Connection Resource',
+                            'type': InputFieldTypeEnum.RESOURCE_REF,
+                            'resourceType': ResourceEnum.EVM_CONNECTION
+                        },
+                    ]
+                },
+                {
+                    'type': TabEnum.GENERAL,
+                    'name': 'Raw',
+                    'description': 'Raw call or send transaction',
+                    'fields': [
+                        {
+                            'name': 'isRawTransaction',
+                            'displayName': 'Is raw',
+                            'type': InputFieldTypeEnum.BOOLEAN
+                        },
+                        {
+                            'name': 'transactionType',
+                            'displayName': 'Transaction type',
+                            'type': InputFieldTypeEnum.DROPDOWN,
+                            'options': [
+                                'send',
+                                'call'
+                            ]
+                        },
+                        {
+                            'name': 'transactionRecipient',
+                            'displayName': 'Recipient address',
+                            'type': InputFieldTypeEnum.ADDRESS
+                        },
+                        {
+                            'name': 'value',
+                            'displayName': 'Value (wei)',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        },
+                        {
+                            'name': 'rawInput',
+                            'displayName': 'Raw hex data',
+                            'type': InputFieldTypeEnum.FREE_INPUT
                         },
                         {
                             'name': 'EVMConnection',

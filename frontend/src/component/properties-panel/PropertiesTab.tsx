@@ -6,7 +6,7 @@ import {ActivityDetailsStruct} from "turbo-dipaas-common/src/types/api/design/Ac
 import {TabStruct} from "turbo-dipaas-common/src/types/api/design/TabStruct";
 import {
    Button,
-   Checkbox,
+   Checkbox, CircularProgress,
    Divider,
    FormControl,
    FormLabel, Grid, GridItem,
@@ -43,14 +43,19 @@ function PropertiesTab (data) {
    const [availableAssetOptions, setAvailableAssetOptions] = useState<AvailableAssetOptions | undefined>()
    const [resolvedAddresses, setResolvedAddresses] = useState<Map<string, Address[]>>(new Map())
    const [mapperParams, setMapperParams] = useState<Map<string, Map<string, Map<number, Param>>>>(new Map(new Map(new Map())))
+   const [isResolvingAddress, setIsResolvingAddress] = useState<boolean>(false)
    const {setNodes} = data;
 
    const addressResolver = new MultiAddressResolver()
    function resolveAddress(id: string, forField: string) {
       if (!id.startsWith('0x')) {
+         setIsResolvingAddress(true)
          addressResolver.resolve(id).then((v) => {
             resolvedAddresses.set(forField, v)
             setResolvedAddresses(resolvedAddresses)
+            setIsResolvingAddress(false)
+         }).catch((e) => {
+            setIsResolvingAddress(false)
          })
       }
    }
@@ -404,13 +409,16 @@ function PropertiesTab (data) {
 
          case InputFieldTypeEnum.ADDRESS:
             mappedFieldInput = (
-                <Grid templateColumns='repeat(2, 1fr)' gap={6}>
-                   <GridItem>
+                <Grid templateColumns='repeat(12, 1fr)' gap={6}>
+                   <GridItem colSpan={5}>
                       Address: <Input id={id}
                                       value={matchingParam?.value ? matchingParam!.value + '' : ''}
                                       onChange={(e) => {resolveAddress(e.target.value, field.name); setActivityParam(e.target.value, field.name)}}></Input>
                    </GridItem>
-                   <GridItem>
+                   <GridItem colSpan={1}>
+                      <CircularProgress display={isResolvingAddress ? 'block' : 'none'} isIndeterminate color='green.300' />
+                   </GridItem>
+                   <GridItem colSpan={6}>
                       Resolved Address:
                       <Select
                           onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
@@ -428,7 +436,7 @@ function PropertiesTab (data) {
                 <div>
                    <Select id={id}
                            onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
-                      {(field as unknown as SelectFieldStruct).options.map((v) => {
+                      {(field as unknown as SelectFieldStruct).options?.map((v) => {
                          return <option selected={v === matchingParam?.value}>{v}</option>
                       })}
                    </Select>

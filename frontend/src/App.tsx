@@ -7,7 +7,7 @@ import ControlsPanel from './component/controls-panel/ControlsPanel';
 import {ChakraProvider, useDisclosure} from '@chakra-ui/react'
 import PropertiesTab from "./component/properties-panel/PropertiesTab";
 import {createUseStyles} from 'react-jss'
-import Tree from './component/properties-tree/PropertiesTab';
+import Tree from './component/properties-tree/PropertiesTree';
 import {RecursiveTree} from "./types/struct/RecursiveTree";
 import {useSelector} from "react-redux";
 import {AppStateReducer} from "./types/interface/AppState";

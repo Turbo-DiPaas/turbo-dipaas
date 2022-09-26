@@ -50,44 +50,69 @@ function mapEVMEventSchedulerActivity(activity: any, resource: any[]): Recursive
 function mapEVMInvokeActivity(activity: any, resource: any[]): RecursiveTree {
     const resp: RecursiveTree = {name: '', data: []}
     const selectedFunction = activity.params?.find((v) => v.name === 'selectedFunction')?.value
+    const isRaw = activity.params?.find((v) => v.name === 'isRawTransaction')?.value ?? false
+    const isSend = activity.params?.find((v) => v.name === 'transactionType')?.value === 'send'
 
-    try {
-        const abiInterface = activityToContractAbi(activity, resource)
-        if (abiInterface && selectedFunction && selectedFunction.length > 0) {
-            const functionToExecute = abiInterface.getFunction(selectedFunction + '')
-            const isReadFunction = (functionToExecute.stateMutability === 'view' || functionToExecute.stateMutability === 'pure')
+    if (!isRaw) {
+        try {
+            const abiInterface = activityToContractAbi(activity, resource)
+            if (abiInterface && selectedFunction && selectedFunction.length > 0) {
+                const functionToExecute = abiInterface.getFunction(selectedFunction + '')
+                const isReadFunction = (functionToExecute.stateMutability === 'view' || functionToExecute.stateMutability === 'pure')
 
-            if (isReadFunction) {
-                const callResult: RecursiveTree = {name: 'callResult', data: []}
-                functionToExecute.outputs?.forEach((v, i) => {
-                    const name = v.name ? v.name : `[${i}] (${v.type})`
-                    callResult.data?.push({name: name, data: null})
-                })
+                if (isReadFunction) {
+                    const callResult: RecursiveTree = {name: 'callResult', data: []}
+                    functionToExecute.outputs?.forEach((v, i) => {
+                        const name = v.name ? v.name : `[${i}] (${v.type})`
+                        callResult.data?.push({name: name, data: null})
+                    })
 
-                resp.data?.push(callResult)
+                    resp.data?.push(callResult)
+                }
+
+                if (!isReadFunction) {
+                    resp.data?.push({ name: 'value', data: null})
+                    resp.data?.push({ name: 'from', data: null})
+                    resp.data?.push({ name: 'data', data: null})
+                    resp.data?.push({ name: 'type', data: null})
+                    resp.data?.push({ name: 'hash', data: null})
+                    resp.data?.push({ name: 'blockHash', data: null})
+                    resp.data?.push({ name: 'blockNumber', data: null})
+                    resp.data?.push({ name: 'confirmations', data: null})
+                    resp.data?.push({ name: 'timestamp', data: null})
+                    resp.data?.push({ name: 'chainId', data: null})
+                    resp.data?.push({ name: 'gasLimit', data: null})
+                    resp.data?.push({ name: 'gasPrice', data: null})
+                    resp.data?.push({ name: 'maxFeePerGas', data: null})
+                    resp.data?.push({ name: 'maxPriorityFeePerGas', data: null})
+                    resp.data?.push({ name: 'nonce', data: null})
+                    resp.data?.push({ name: 'to', data: null})
+                }
             }
-
-            if (!isReadFunction) {
-                resp.data?.push({ name: 'value', data: null})
-                resp.data?.push({ name: 'from', data: null})
-                resp.data?.push({ name: 'data', data: null})
-                resp.data?.push({ name: 'type', data: null})
-                resp.data?.push({ name: 'hash', data: null})
-                resp.data?.push({ name: 'blockHash', data: null})
-                resp.data?.push({ name: 'blockNumber', data: null})
-                resp.data?.push({ name: 'confirmations', data: null})
-                resp.data?.push({ name: 'timestamp', data: null})
-                resp.data?.push({ name: 'chainId', data: null})
-                resp.data?.push({ name: 'gasLimit', data: null})
-                resp.data?.push({ name: 'gasPrice', data: null})
-                resp.data?.push({ name: 'maxFeePerGas', data: null})
-                resp.data?.push({ name: 'maxPriorityFeePerGas', data: null})
-                resp.data?.push({ name: 'nonce', data: null})
-                resp.data?.push({ name: 'to', data: null})
-            }
+        } catch (e) {
+            console.error(e)
         }
-    } catch (e) {
-        console.error(e)
+    } else {
+        if (isSend) {
+            resp.data?.push({ name: 'value', data: null})
+            resp.data?.push({ name: 'from', data: null})
+            resp.data?.push({ name: 'data', data: null})
+            resp.data?.push({ name: 'type', data: null})
+            resp.data?.push({ name: 'hash', data: null})
+            resp.data?.push({ name: 'blockHash', data: null})
+            resp.data?.push({ name: 'blockNumber', data: null})
+            resp.data?.push({ name: 'confirmations', data: null})
+            resp.data?.push({ name: 'timestamp', data: null})
+            resp.data?.push({ name: 'chainId', data: null})
+            resp.data?.push({ name: 'gasLimit', data: null})
+            resp.data?.push({ name: 'gasPrice', data: null})
+            resp.data?.push({ name: 'maxFeePerGas', data: null})
+            resp.data?.push({ name: 'maxPriorityFeePerGas', data: null})
+            resp.data?.push({ name: 'nonce', data: null})
+            resp.data?.push({ name: 'to', data: null})
+        } else {
+            resp.data?.push({ name: 'data', data: null})
+        }
     }
 
     return resp

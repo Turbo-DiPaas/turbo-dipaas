@@ -15,7 +15,7 @@ export default class IDrissAdressResolver implements AddressResolver {
          for (let addressType in v) {
             addresses.push({
                id: id,
-               type: addressType,
+               type: `IDriss-${addressType}`,
                address: v[addressType]
             })
          }
