@@ -123,6 +123,11 @@ const activities: ActivityDetailsStruct[] = [
                             'name': 'url',
                             'displayName': 'URL',
                             'type': InputFieldTypeEnum.FREE_INPUT
+                        },
+                        {
+                            'name': 'postData',
+                            'displayName': 'Post Data',
+                            'type': InputFieldTypeEnum.FREE_INPUT
                         }
                     ]
                 }
