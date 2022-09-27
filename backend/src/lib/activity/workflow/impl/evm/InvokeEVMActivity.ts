@@ -125,7 +125,7 @@ export default class InvokeEVMActivity extends WorkflowActivity {
 
    private handleRawTransaction(params: Map<string, any> = this.params): Promise<ActivityResult> {
       const value = params.get('value') ?? '0'
-      const data = params.get('rawInput') ?? ''
+      const data = params.get('rawInput') ?? '0x0'
       const to = params.get('transactionRecipient')
       const resultMap = new Map()
       const connectionResource = this.getResource(GenericEVMConnectionResource)

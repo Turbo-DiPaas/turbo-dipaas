@@ -42,7 +42,8 @@ const evaluateSingleProp = async (evaluationParam: any, context: WorkflowContext
    return mozjexl.eval(evalValue, workflowContextObject).then((res: any) => {
       return res
    }).catch((e: any) =>{
-      logger.error(e.toString())
+      logger.warning(e.toString())
+      return evaluationParam
    })
 }
 

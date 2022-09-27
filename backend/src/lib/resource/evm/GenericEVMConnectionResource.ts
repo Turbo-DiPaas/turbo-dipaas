@@ -13,10 +13,13 @@ export default class GenericEVMConnectionResource extends ResourceBase {
    setup(): void {
       const privateKey: string = this.getProperty('privateKey')
       const provider = new ethers.providers.JsonRpcProvider(this.getURL())
-      const signer = new ethers.Wallet(privateKey, provider)
-
-      this.params.set('provider', signer.provider)
-      this.params.set('signer', signer)
+      if (privateKey && privateKey.length > 0) {
+         const signer = new ethers.Wallet(privateKey, provider)
+         this.params.set('provider', signer.provider)
+         this.params.set('signer', signer)
+      } else {
+         this.params.set('provider', provider)
+      }
    }
 
    getURL(): string {

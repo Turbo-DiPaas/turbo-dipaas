@@ -44,19 +44,24 @@ function PropertiesTab (data) {
    const [resolvedAddresses, setResolvedAddresses] = useState<Map<string, Address[]>>(new Map())
    const [mapperParams, setMapperParams] = useState<Map<string, Map<string, Map<number, Param>>>>(new Map(new Map(new Map())))
    const [isResolvingAddress, setIsResolvingAddress] = useState<boolean>(false)
+   const [addressResolveTimeout, setAddressResolveTimeout] = useState<any>(null)
    const {setNodes} = data;
 
    const addressResolver = new MultiAddressResolver()
    function resolveAddress(id: string, forField: string) {
       if (!id.startsWith('0x')) {
-         setIsResolvingAddress(true)
-         addressResolver.resolve(id).then((v) => {
-            resolvedAddresses.set(forField, v)
-            setResolvedAddresses(resolvedAddresses)
-            setIsResolvingAddress(false)
-         }).catch((e) => {
-            setIsResolvingAddress(false)
-         })
+         clearTimeout(addressResolveTimeout)
+         setAddressResolveTimeout(setTimeout(function () {
+            setIsResolvingAddress(true)
+            addressResolver.resolve(id).then((v) => {
+               resolvedAddresses.clear()
+               resolvedAddresses.set(forField, v)
+               setResolvedAddresses(resolvedAddresses)
+               setIsResolvingAddress(false)
+            }).catch((e) => {
+               setIsResolvingAddress(false)
+            })
+          }, 400))
       }
    }
 
