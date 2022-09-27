@@ -13,7 +13,7 @@ export default class HTTPRequestReplyActivity extends WorkflowActivity {
       const connectionResource = this.getResource(HTTPConnectionResource)
       const urlFromParams = this.params.get('url')
       const postData = this.params.get('postData')
-      const evaluatedUrl = urlFromParams.trim().startsWith('http') ? urlFromParams : connectionResource?.getUrl()
+      const evaluatedUrl = urlFromParams?.trim().startsWith('http') ? urlFromParams : connectionResource?.getUrl()
       const activityResult = {
          status: 200,
          returnData: new Map()
