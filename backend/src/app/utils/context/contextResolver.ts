@@ -17,13 +17,13 @@ const evaluateProps = async (props: Map<string, any>, context: WorkflowContext):
    const evaluationPromises: Promise<any>[] = []
 
    props.forEach((v, k) => {
-      // const evalValue = typeof v !== 'string' ? JSON.stringify(v) : v
+      const evalValue = typeof v !== 'string' ? JSON.stringify(v) : v
       evaluationPromises.push(
           evaluateSingleProp(v, context).then((res: any) => {
              resultMap.set(k, res)
           }).catch((e: any) =>{
-             // resultMap.set(k, evalValue)
-             resultMap.set(k, v)
+             resultMap.set(k, evalValue)
+             // resultMap.set(k, v)
           })
       )
    })
@@ -43,7 +43,7 @@ const evaluateSingleProp = async (evaluationParam: any, context: WorkflowContext
       return res
    }).catch((e: any) =>{
       logger.warning(e.toString())
-      return evaluationParam
+      return evalValue
    })
 }
 

@@ -21,7 +21,7 @@ export default class HTTPConnectionResource extends ResourceBase {
    getProtocol(): string {
       let parsedProto = this.parsedUrl().protocol
       if (parsedProto?.endsWith(':')) {
-         parsedProto = parsedProto?.substring(0, parsedProto?.length - 2)
+         parsedProto = parsedProto?.substring(0, parsedProto?.length - 1)
       }
 
       return this.getProperty('protocol') ?? parsedProto ?? ''
