@@ -210,9 +210,17 @@ function PropertiesTab (data) {
    }
 
    function setActivityParam(newValue: any, fieldName: string) {
+      setActivityParamGeneric(newValue, fieldName, false)
+   }
+
+   function setActivityParamQuoteValue(newValue: any, fieldName: string) {
+      setActivityParamGeneric(newValue, fieldName, true)
+   }
+
+   function setActivityParamGeneric(newValue: any, fieldName: string, quote: boolean) {
       if (selectedActivity) {
          const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
-         const updatedParam: Param = { name: fieldName, value: newValue }
+         const updatedParam: Param = { name: fieldName, value: (quote ? JSON.stringify(newValue) : newValue) }
          const notMatchingParams = selectedActivityCopy.params?.filter((v) => v.name !== fieldName)
          if (selectedActivityCopy.params?.length !== notMatchingParams?.length) {
             selectedActivityCopy.params! = [...notMatchingParams ?? [], updatedParam]
@@ -302,7 +310,7 @@ function PropertiesTab (data) {
          setMultiInputParam(newValue, fieldName, fieldName, false)
 
          const paramsToSave = selectedActivityCopy?.params?.filter((v) => v.name === 'transactionRecipient') ?? []
-         selectedActivityCopy.params = [...paramsToSave, {name: fieldName, value: newValue}]
+         selectedActivityCopy.params = [...paramsToSave, {name: fieldName, value: JSON.stringify(newValue)}]
 
          fieldMap.set(fieldName, paramMap)
          mapperParams.set(selectedActivity.id, fieldMap)
@@ -440,7 +448,7 @@ function PropertiesTab (data) {
             mappedFieldInput = (
                 <div>
                    <Select id={id}
-                           onChange={(e) => {setActivityParam(e.target.value, field.name)}}>
+                           onChange={(e) => {setActivityParamQuoteValue(e.target.value, field.name)}}>
                       {(field as unknown as SelectFieldStruct).options?.map((v) => {
                          return <option selected={v === matchingParam?.value}>{v}</option>
                       })}
