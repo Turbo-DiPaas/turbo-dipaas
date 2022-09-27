@@ -174,7 +174,7 @@ function PropertiesTab (data) {
       }
    }
 
-   function setActivityResource(newValue: any, fieldname) {
+   function setActivityResource(newValue: any) {
       if (selectedActivity && newValue.length > 0) {
          const resourcesMap = new Map()
          workflow.structure.resources.forEach((v) => {
@@ -454,7 +454,7 @@ function PropertiesTab (data) {
             mappedFieldInput = (
                 <div>
                    <Select id={id}
-                           onChange={(e) => {setActivityResource(e.target.value, field.name)}}
+                           onChange={(e) => {setActivityResource(e.target.value)}}
                            value={workflow.structure.resources.filter((v) => {
                               return v.type === resourceType
                            }).map((v) => {
