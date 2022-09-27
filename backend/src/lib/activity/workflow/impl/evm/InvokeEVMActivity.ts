@@ -18,7 +18,7 @@ export default class InvokeEVMActivity extends WorkflowActivity {
    protected run(params: Map<string, any> = this.params): Promise<ActivityResult> {
       const returnData: Map<string, any> = new Map()
       const isRaw = params.get('isRawTransaction') ?? false
-      const value = params.get('value') ?? '0'
+      const value = params.has('value') ? params.get('value') + '' : '0'
 
       let promiseToResolve = Promise.resolve({
          status: 200,
@@ -57,7 +57,7 @@ export default class InvokeEVMActivity extends WorkflowActivity {
 
             for (let [k,v] of params) {
                if (paramsMap.has(k))
-               transactionParams.push(v)
+                  transactionParams.push(v)
             }
          }
 
@@ -124,49 +124,59 @@ export default class InvokeEVMActivity extends WorkflowActivity {
    }
 
    private handleRawTransaction(params: Map<string, any> = this.params): Promise<ActivityResult> {
-      const value = params.get('value') ?? '0'
-      const data = params.get('rawInput') ?? '0x0'
+      const value = params.has('value') ? params.get('value') + '' : '0'
+      const data = params.get('rawInput') ?? '0x00'
       const to = params.get('transactionRecipient')
       const resultMap = new Map()
+      let promiseToResolve = Promise.resolve({
+         status: 200,
+         returnData: resultMap,
+      } as ActivityResult)
       const connectionResource = this.getResource(GenericEVMConnectionResource)
+
       if (params.get('transactionType') === 'send') {
          const signer = connectionResource?.getSigner()
-         signer?.sendTransaction({
+         promiseToResolve = signer!.sendTransaction({
             data,
             to,
             value
          }).then((v) => {
             this.transactionResponseToMap(resultMap, v)
+
+            return Promise.resolve({
+               status: 200,
+               returnData: resultMap,
+            } as ActivityResult)
          }).catch((e) => {
-            return {
+            return Promise.resolve({
                status: 500,
                returnData: resultMap,
                error: e
-            } as ActivityResult
+            } as ActivityResult)
          })
 
       } else {
          const provider = connectionResource?.getProvider()
-         provider?.call({
+         promiseToResolve = provider!.call({
             data,
             to
          }).then((v) => {
             resultMap.set('data', v)
+
+            return Promise.resolve({
+               status: 200,
+               returnData: resultMap,
+            } as ActivityResult)
          }).catch((e) => {
-            return {
+            return Promise.resolve({
                status: 500,
                returnData: resultMap,
                error: e
-            } as ActivityResult
+            } as ActivityResult)
          })
       }
 
-      return Promise.resolve(
-         {
-            status: 200,
-            returnData: resultMap,
-         } as ActivityResult
-      )
+      return promiseToResolve
    }
 
    private transactionResponseToMap(returnData: Map<string, any>, v: ethers.providers.TransactionResponse) {

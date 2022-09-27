@@ -11,6 +11,7 @@ import EVMABIResource from "../../../../../src/lib/resource/evm/EVMABIResource";
 import {ResourceTypeEnum} from "../../../../../../common/src/enums/ResourceTypeEnum";
 import GenericEVMConnectionResource from "../../../../../src/lib/resource/evm/GenericEVMConnectionResource";
 import {testSetup} from "../../../../testSetup";
+import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/signers";
 
 chai.use(solidity) // solidiity matchers, e.g. expect().to.be.revertedWith("message")
 
@@ -19,11 +20,13 @@ describe('InvokeEVMActivity', () => {
     let invokeEVMActivity: InvokeEVMActivity
     let storageContract: Storage
     const context = new WorkflowContext()
+    let signers: SignerWithAddress[]
 
     const abiResourceId = 'abires'
     const connResId = 'evmconnres'
 
     beforeEach(async () => {
+        signers = await ethers.getSigners()
         const Storage = await ethers.getContractFactory("Storage")
         storageContract = await Storage.deploy() as Storage
 
@@ -54,13 +57,42 @@ describe('InvokeEVMActivity', () => {
         expect(res instanceof GenericEVMConnectionResource).to.be.true
     })
 
-    it('allows to change smart contract state', async () => {
+    it('allows to retrieve data from raw call', async () => {
+        const receivingAddress = signers[1].address
         invokeEVMActivity.params.set('selectedFunction', '"store"')
-        invokeEVMActivity.params.set('transactionParams', [5])
+        invokeEVMActivity.params.set('transactionParams', [39])
         const result = await invokeEVMActivity.invoke(context)
 
-        expect(await storageContract.retrieve()).to.be.equal(5)
+        invokeEVMActivity.params.set('transactionRecipient', storageContract.address)
+        //Storage.retrieve()
+        invokeEVMActivity.params.set('rawInput', '"0x2e64cec1"')
+        invokeEVMActivity.params.set('transactionType', '"call"')
+        invokeEVMActivity.params.set('isRawTransaction', true)
+
+        const balanceBefore = await ethers.provider.getBalance(receivingAddress)
+        const result2 = await invokeEVMActivity.invoke(context)
+        const balanceAfter = await ethers.provider.getBalance(receivingAddress)
+
         expect(result.status).to.be.equal(200)
+        expect(result2.status).to.be.equal(200)
+        expect(result2.returnData.get('data')).to.be.equal('0x0000000000000000000000000000000000000000000000000000000000000027')
+        expect(result2.returnData.size).to.be.equal(1)
+        expect(balanceAfter.toString()).to.be.equal(balanceBefore.toString())
+    })
+
+    it('allows to send raw transaction', async () => {
+        const receivingAddress = signers[1].address
+        invokeEVMActivity.params.set('value', '2 * (10^18)')
+        invokeEVMActivity.params.set('transactionRecipient', receivingAddress)
+        invokeEVMActivity.params.set('transactionType', '"send"')
+        invokeEVMActivity.params.set('isRawTransaction', true)
+
+        const balanceBefore = await ethers.provider.getBalance(receivingAddress)
+        const result = await invokeEVMActivity.invoke(context)
+        const balanceAfter = await ethers.provider.getBalance(receivingAddress)
+
+        expect(result.status).to.be.equal(200)
+        expect(balanceAfter.toString()).to.be.equal(balanceBefore.add('2000000000000000000').toString())
     })
 
     it('retrieves smart contract state properly', async () => {
@@ -77,5 +109,14 @@ describe('InvokeEVMActivity', () => {
 
         expect(retrieveResult.status).to.be.equal(200)
         expect(retrieveResult.returnData.get('callResult')).to.be.eql(['39'])
+    })
+
+    it('can change smart contract state', async () => {
+        invokeEVMActivity.params.set('selectedFunction', '"store"')
+        invokeEVMActivity.params.set('transactionParams', [5])
+        const result = await invokeEVMActivity.invoke(context)
+
+        expect(await storageContract.retrieve()).to.be.equal(5)
+        expect(result.status).to.be.equal(200)
     })
 })
