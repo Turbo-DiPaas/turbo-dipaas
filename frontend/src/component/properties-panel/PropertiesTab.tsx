@@ -96,6 +96,7 @@ function PropertiesTab (data) {
    }, [selectedActivityNode])
 
    function changeActivityType (id: string | undefined, newType: string) {
+      
       // @ts-ignore
       const newActivityStruct = availableAssetOptions?.matchingAssetCatalog?.find((v) => {return v.name === newType}) as ActivityDetailsStruct | undefined
       const newActivity: Activity = {
@@ -173,7 +174,7 @@ function PropertiesTab (data) {
       }
    }
 
-   function setActivityResource(newValue: any) {
+   function setActivityResource(newValue: any, fieldname) {
       if (selectedActivity && newValue.length > 0) {
          const resourcesMap = new Map()
          workflow.structure.resources.forEach((v) => {
@@ -453,7 +454,13 @@ function PropertiesTab (data) {
             mappedFieldInput = (
                 <div>
                    <Select id={id}
-                           onChange={(e) => {setActivityResource(e.target.value)}}>
+                           onChange={(e) => {setActivityResource(e.target.value, field.name)}}
+                           value={workflow.structure.resources.filter((v) => {
+                              return v.type === resourceType
+                           }).map((v) => {
+                              return selectedActivity?.resources?.find(selectedResource => selectedResource === v.id ) || ''
+                              }).find((ww) => ww.length) || ''}
+                              >
                       <option/>
                       {workflow.structure.resources.filter((v) => {
                          return v.type === resourceType
