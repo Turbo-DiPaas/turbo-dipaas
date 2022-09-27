@@ -220,7 +220,7 @@ function PropertiesTab (data) {
    function setActivityParamGeneric(newValue: any, fieldName: string, quote: boolean) {
       if (selectedActivity) {
          const selectedActivityCopy: Activity = JSON.parse(JSON.stringify(selectedActivity))
-         const updatedParam: Param = { name: fieldName, value: (quote ? JSON.stringify(newValue) : newValue) }
+         const updatedParam: Param = { name: fieldName, value: quote ? JSON.stringify(newValue) : newValue }
          const notMatchingParams = selectedActivityCopy.params?.filter((v) => v.name !== fieldName)
          if (selectedActivityCopy.params?.length !== notMatchingParams?.length) {
             selectedActivityCopy.params! = [...notMatchingParams ?? [], updatedParam]
