@@ -1,7 +1,8 @@
 export enum ActivityCategoryEnum {
     EVM = 'EVM',
     HTTP = 'HTTP',
-    GENERAL = 'General'
+    GENERAL = 'General',
+    IPFS = 'IPFS'
 }
 
 export enum ActivityEnum {
@@ -10,7 +11,9 @@ export enum ActivityEnum {
     INVOKE_EVM = 'InvokeEVMActivity',
     NO_OP = 'NoOpActivity',
     MAPPER = 'MapperActivity',
-    HTTP_REQUEST_REPLY = 'HTTPRequestReplyActivity'
+    HTTP_REQUEST_REPLY = 'HTTPRequestReplyActivity',
+    IPFS_ADD_FILE = 'IPFSAddFileActivity',
+    IPFS_LIST_FILES = 'IPFSListFilesActivity'
 }
 
 export enum AssetType {
@@ -44,7 +47,8 @@ export enum ResourceEnum {
 
 export enum ResourceCategoryEnum {
     EVM = 'EVM',
-    HTTP = 'HTTP'
+    HTTP = 'HTTP',
+    IPFS = 'IPFS'
 }
 
 export enum TabEnum {

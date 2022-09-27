@@ -293,6 +293,71 @@ const activities: ActivityDetailsStruct[] = [
                 }
             ]
         }
+    },
+    {
+        'id': 'e64b1ac3-f523-429a-be35-e47af7fd7afc',
+        'name': 'IPFSAddFileActivity',
+        'description': 'Uploads the data as a IPFS file to the specified location',
+        'updated': '2022-09-27T00:00:00Z',
+        'category': ActivityCategoryEnum.IPFS,
+        'type': ActivityEnum.IPFS_ADD_FILE,
+        'structure': {
+            tabs: [
+                {
+                    'type': TabEnum.GENERAL,
+                    'name': TabEnum.GENERAL,
+                    'description': 'General tab',
+                    'fields': [
+                        {
+                            'name': 'data',
+                            'displayName': 'Data',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        },
+                        {
+                            'name': 'filePath',
+                            'displayName': 'File Path',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        },
+                        {
+                            'name': 'IPFSConnection',
+                            'displayName': 'IPFS Connection Resource',
+                            'type': InputFieldTypeEnum.RESOURCE_REF,
+                            'resourceType': ResourceEnum.IPFS_CONNECTON
+                        },
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        'id': 'e64b1ac3-f523-429a-be35-e47af7fd7afz',
+        'name': 'IPFSListFilesActivity',
+        'description': 'Runs the "ls" command agains specified cid',
+        'updated': '2022-09-27T00:00:00Z',
+        'category': ActivityCategoryEnum.IPFS,
+        'type': ActivityEnum.IPFS_LIST_FILES,
+        'structure': {
+            tabs: [
+                {
+                    'type': TabEnum.GENERAL,
+                    'name': TabEnum.GENERAL,
+                    'description': 'General tab',
+                    'fields': [
+                        {
+                            'name': 'cid',
+                            'displayName': 'CID',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        },
+                        {
+                            'name': 'IPFSConnection',
+                            'displayName': 'IPFS Connection Resource',
+                            'type': InputFieldTypeEnum.RESOURCE_REF,
+                            'resourceType': ResourceEnum.IPFS_CONNECTON
+                        },
+                    ]
+                }
+            ]
+        }
     }
 ]
 

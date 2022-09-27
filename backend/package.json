@@ -49,6 +49,7 @@
     "axios": "^0.27.2",
     "cors": "^2.8.5",
     "ethers": "^5.7.1",
+    "ipfs-http-client": "^56.0.2",
     "mozjexl": "^1.1.6",
     "node-cron": "^3.0.2",
     "nodemon": "^2.0.19",

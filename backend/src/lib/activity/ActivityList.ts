@@ -8,6 +8,9 @@ import Scheduler from "./trigger/impl/general/Scheduler"
 import EVMEventTrigger from "./trigger/impl/evm/EVMEventTrigger";
 import SleepActivity from "./workflow/impl/general/SleepActivity";
 
+import IPFSAddFileActivity from "./workflow/impl/ipfs/IPFSAddFileActivity";
+import IPFSListFilesActivity from "./workflow/impl/ipfs/IPFSListFilesActivity"
+
 export const ActivityList: any = {
     LogActivity,
     InvokeEVMActivity,
@@ -16,5 +19,7 @@ export const ActivityList: any = {
     MapperActivity,
     Scheduler,
     SleepActivity,
-    EVMEventTrigger
+    EVMEventTrigger,
+    IPFSAddFileActivity,
+    IPFSListFilesActivity
 }

@@ -98,6 +98,31 @@ const resources: ResourceDetailsStruct[] = [
                 }
             ]
         }
+    },
+    {
+        'id': 'ac666271-badd-4e46-87d9-a87c71e59091',
+        'name': 'IPFS Connection',
+        'description': 'IPFS Connection',
+        'updated': '2022-09-27T00:00:00Z',
+        'icon': '/assets/resource-small.png',
+        'type': ResourceEnum.IPFS_CONNECTON,
+        'category': ResourceCategoryEnum.IPFS,
+        'structure': {
+            tabs: [
+                {
+                    'type': TabEnum.GENERAL,
+                    'name': TabEnum.GENERAL,
+                    'description': 'General tab',
+                    'fields': [
+                        {
+                            'name': 'url',
+                            'displayName': 'URL',
+                            'type': InputFieldTypeEnum.FREE_INPUT
+                        }
+                    ]
+                }
+            ]
+        }
     }
 ]
 /**
