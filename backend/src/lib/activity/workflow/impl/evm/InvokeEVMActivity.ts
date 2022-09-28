@@ -128,13 +128,11 @@ export default class InvokeEVMActivity extends WorkflowActivity {
       const data = params.get('rawInput') ?? '0x00'
       const to = params.get('transactionRecipient')
       const resultMap = new Map()
-      let promiseToResolve = Promise.resolve({
-         status: 200,
-         returnData: resultMap,
-      } as ActivityResult)
+      let promiseToResolve: Promise<ActivityResult>
       const connectionResource = this.getResource(GenericEVMConnectionResource)
 
-      if (params.get('transactionType') === 'send') {
+      // please keep in mind that we're using UNEVALUATED "this.params" here
+      if (this.params.get('transactionType') === 'send') {
          const signer = connectionResource?.getSigner()
          promiseToResolve = signer!.sendTransaction({
             data,
