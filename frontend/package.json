@@ -37,6 +37,7 @@
   },
   "scripts": {
     "start": "env-cmd -f ./config/.env.example craco start",
+    "start-dev": "env-cmd -f ./config/.env.dev craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject"
