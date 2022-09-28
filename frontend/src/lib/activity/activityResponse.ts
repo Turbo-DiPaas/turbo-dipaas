@@ -49,7 +49,7 @@ function mapEVMEventSchedulerActivity(activity: any, resource: any[]): Recursive
 
 function mapEVMInvokeActivity(activity: any, resource: any[]): RecursiveTree {
     const resp: RecursiveTree = {name: '', data: []}
-    const selectedFunction = activity.params?.find((v) => v.name === 'selectedFunction')?.value
+    const selectedFunction = (activity.params?.find((v) => v.name === 'selectedFunction')?.value ?? '').replaceAll('"', '')
     const isRaw = activity.params?.find((v) => v.name === 'isRawTransaction')?.value ?? false
     const isSend = activity.params?.find((v) => v.name === 'transactionType')?.value === 'send'
 
