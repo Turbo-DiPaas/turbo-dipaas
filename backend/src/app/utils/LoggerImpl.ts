@@ -1,5 +1,5 @@
 import {Logger, LogLevel} from "../../types/Logger";
-import {LocalDateTime} from "@js-joda/core";
+import {ZonedDateTime} from "@js-joda/core";
 import * as fs from "fs";
 
 const getLogLevelString = (ll: LogLevel) => {
@@ -34,7 +34,7 @@ export default class LoggerImpl implements Logger {
         const targetLogLevel = process.env.LOG_LEVEL ?? LogLevel.INFO
 
         if (targetLogLevel <= logLevel ?? LogLevel.INFO) {
-            let dt = LocalDateTime.now()
+            let dt = ZonedDateTime.now().withFixedOffsetZone()
             const logMessage = dt.toString() + ' [' + getLogLevelString(logLevel) + ']: ' + JSON.stringify(message)
 
             let stats = fs.statSync("log.txt")
