@@ -37,7 +37,11 @@ export default class EVMEventTrigger extends WorkflowTriggerBase {
             eventData.args?.slice(eventArgsShift, eventData.args?.length ?? eventArgsShift)
                 .forEach((v: any) => {
                if (v._isBigNumber) {
-                  parsedArgs.push(v.toString())
+                  parsedArgs.push(v.toString().trim())
+               } else if (typeof v === 'string') {
+                  parsedArgs.push(v.trim())
+               } else {
+                  parsedArgs.push(v)
                }
             })
 
