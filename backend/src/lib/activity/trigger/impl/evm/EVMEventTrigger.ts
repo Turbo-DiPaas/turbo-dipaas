@@ -29,7 +29,8 @@ export default class EVMEventTrigger extends WorkflowTriggerBase {
 
          const eventSighash = eventToListenTo.format(ethers.utils.FormatTypes.sighash)
 
-         const eventArgsShift = eventToListenTo.anonymous ? 0 : 1
+         // const eventArgsShift = eventToListenTo.anonymous ? 0 : 1
+         const eventArgsShift = 0
 
          contract.on(eventSighash, async (...values) => {
             const eventData = values[eventToListenTo.inputs.length]
